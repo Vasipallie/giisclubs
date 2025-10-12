@@ -279,7 +279,7 @@ app.route('/:shortlink').get(async (req, res) => {
     //update the visits count
     await supabase
     .from('shortcuts')
-    .update({ visits: (data.visits || 0) + 1 })
+    .update({ visits: (data.visits) + 1 })
     .eq('id', shortlink);
     res.redirect(data.link);
 });
