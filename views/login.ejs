@@ -8,14 +8,14 @@
     <style>        
         @font-face {
             font-family: 'Garet';
-            src: url('fonts/GaretR.ttf') format('truetype');
+            src: url('fonts/GaretR.otf') format('opentype');
             font-weight: 400;
             font-style: normal;
         }
         
         @font-face {
             font-family: 'Garet';
-            src: url('fonts/GaretH.ttf') format('truetype');
+            src: url('fonts/GaretH.otf') format('opentype');
             font-weight: 700;
             font-style: normal;
         }
@@ -494,7 +494,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="nav-container">
             <a href="/" class="logo-text">
@@ -507,15 +506,12 @@
             <li><a href="/">Home</a></li>
             <li><a href="/explore">Explore Clubs</a></li>
             <li><a href="/club-index">Register Club</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
                 </ul>
             </nav>
             <button class="mobile-menu-toggle">☰</button>
         </div>
     </header>
 
-    <!-- Mobile Navigation Menu -->
     <div class="mobile-nav-overlay"></div>
     <div class="mobile-nav-menu">
         <button class="mobile-nav-close">✕</button>
@@ -523,12 +519,9 @@
             <li><a href="/">Home</a></li>
             <li><a href="/explore">Explore Clubs</a></li>
             <li><a href="/club-index">Register Club</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
         </ul>
     </div>
 
-    <!-- Login Form -->
     <div class="login-container">
         <div class="login">
             <div class="logo-container">
@@ -554,7 +547,7 @@
                 <button type="submit" class="login-btn">Sign In</button>
                 
                 <div class="signup-link">
-                    <a href="/signup">Register Your Club with Us</a>
+                    <a href="/club-index">Register Your Club with Us</a>
                 </div>
             </form>
         </div>

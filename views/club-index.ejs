@@ -130,7 +130,7 @@
         
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: url('resources/bg.jpg') no-repeat center center/cover;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -152,6 +152,18 @@
             background-size: cover;
         }
         
+        .hero-content-wrapper {
+            background: rgba(117, 117, 117, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 60px 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+        
         .hero-content {
             max-width: 1000px;
             position: relative;
@@ -161,7 +173,7 @@
         .hero-tagline {
             font-size: 72px;
             font-weight: 900;
-            color: #1a237e;
+            color: white;
             margin-bottom: 30px;
             letter-spacing: -2px;
             line-height: 1.1;
@@ -170,14 +182,14 @@
         .hero-subtitle {
             font-size: 32px;
             font-weight: 300;
-            color: #555;
+            color: white;
             margin-bottom: 50px;
             line-height: 1.3;
         }
         
         .hero-description {
             font-size: 18px;
-            color: #666;
+            color: white;
             margin-bottom: 40px;
             max-width: 600px;
             margin-left: auto;
@@ -679,6 +691,99 @@
     </nav>
 
     <main>
+        <section class="hero">
+            <div class="hero-content-wrapper">
+                <div class="hero-content">
+                    <h1 class="hero-tagline">Register Your Club</h1>
+                    <p class="hero-subtitle">Join the GIIS Clubs Network</p>
+                    <p class="hero-description">
+                        Connect your student organization with our comprehensive digital tools platform and unlock professional resources for your club.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="section-container">
+                <h2 class="section-title">Register Your Club/Organization</h2>
+                <p class="section-subtitle">
+                    Professional digital tools designed specifically for student clubs and organizations registered on GiisClubs.org to streamline operations and enhance engagement.
+                </p>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-category">Digital Tools</div>
+                        <h3 class="card-title">QR Code Generator</h3>
+                        <p class="card-description">
+                            Create professional QR codes for events, membership drives, and quick access to club resources. Multiple styles and customization options available.
+                        </p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-category">Link Management</div>
+                        <h3 class="card-title">URL Shortener</h3>
+                        <p class="card-description">
+                            Professional link shortening service for club materials, social media, and communications. More reliable and customizable than generic shorteners.
+                        </p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-category">Link Organization</div>
+                        <h3 class="card-title">Club LinkList</h3>
+                        <p class="card-description">
+                            Create a centralized hub for all your club's important links. Perfect for social media bios and member onboarding materials.
+                        </p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-category">Club Directory</div>
+                        <h3 class="card-title">Club Registry</h3>
+                        <p class="card-description">
+                            Browse and discover student clubs and organizations registered on GiisClubs.Org. Appeal to a wider audience by promoting your club's socials and activities.
+                        </p>
+                        <div class="card-meta">
+                            <a href="/explore" style="color: #1a237e; font-weight: 600; text-decoration: none;">Explore Clubs →</a>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-category">Clubs & Organizations</div>
+                        <h3 class="card-title">Open for All</h3>
+                        <p class="card-description">
+                            GiisClubs.org is open to all student clubs/organizations, whether your club is associated with GIIS or an external entity. Register today to access our suite of digital tools.
+                        </p>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-category">Authentication</div>
+                        <h3 class="card-title">Secure Access</h3>
+                        <p class="card-description">
+                            Club-specific authentication system to manage your organization's digital presence and access exclusive tools and features.
+                        </p>
+                        <div class="card-meta">
+                            <a href="/login" style="color: #1a237e; font-weight: 600; text-decoration: none;">Club Login →</a>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section alt">
+            <div class="section-container">
+                <h2 class="section-title">Register Your Student Organization</h2>
+                <p class="section-subtitle" style="margin-bottom: 40px;">
+                    Add your club to the GiisClubs.org student organizations directory and gain access to all the available digital tools.
+                </p>
+                
+                <div style="background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; margin: 0 auto; max-width: 1200px;">
+                    <div style="position: relative; width: 100%; height: 800px;">
+                        <div data-fillout-id="dZxDCKeB8nus" data-fillout-embed-type="standard" style="width:100%;height:100%;" data-fillout-inherit-parameters></div>
+                        <script src="https://server.fillout.com/embed/v1/"></script>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
 

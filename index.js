@@ -69,21 +69,191 @@ app.route('/home').get(async (req, res) => {
     if (error || !user) {
         return res.redirect('/login');
     }
-    res.render('home', { user });
+    res.render('chome', { user });
+});
+
+app.route('/explore').get(async (req, res) => {
+    try {
+        // Get all clubs from the database
+        const { data: clubs, error } = await supabase
+            .from('clubs')
+            .select('*')
+            .order('name', { ascending: true });
+        
+        if (error) {
+            console.error('Error fetching clubs:', error);
+            return res.render('explore', { clubs: [] });
+        }
+        
+        res.render('explore', { clubs: clubs || [] });
+    } catch (error) {
+        console.error('Error in explore route:', error);
+        res.render('explore', { clubs: [] });
+    }
+});
+
+app.route('/shorten').get(async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.redirect('/login');
+    }
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.redirect('/login');
+    }
+    
+    console.log(user.id);
+    // Get user's club from users table
+    const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('club')
+        .eq('id', user.id)
+        .single();
+    
+    console.log(userData.club);
+    // Get all links for this club
+    const { data: links, error: linksError } = await supabase
+        .from('shortcuts')
+        .select('*')
+        .eq('club', userData.club)
+    ;
+    
+    res.render('shorten', { user, club: userData.club, links: links || [] });
+});
+
+app.route('/qrcode').get(async (req, res) => {
+    res.render('qrgen');
 });
 
 app.post('/create', async (req, res) => {
-    const { link } = req.body;
-    const { data, error } = await supabase
-    .from('shortcuts')
-    .insert([{ link }])
-    .single();
-
-    if (error) {
-        return res.status(500).send('Error creating shortcut');
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
     }
-    res.redirect('/');
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    // Get user's club
+    const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('club')
+        .eq('id', user.id)
+        .single();
+    
+    if (userError || !userData?.club) {
+        return res.status(403).json({ error: 'No club associated with your account' });
+    }
+    
+    const { link, customId } = req.body;
+    
+    // Generate random ID if no custom ID provided
+    const id = customId || Math.random().toString(36).substring(2, 8);
+    
+    const { data, error: insertError } = await supabase
+        .from('shortcuts')
+        .insert([{ 
+            id: id,
+            link: link,
+            club: userData.club
+        }])
+        .select()
+        .single();
+
+    if (insertError) {
+        return res.status(500).json({ error: 'Error creating shortcut: ' + insertError.message });
+    }
+    
+    res.json({ success: true, data });
 });
+
+app.put('/update/:id', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    // Get user's club
+    const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('club')
+        .eq('id', user.id)
+        .single();
+    
+    if (userError || !userData?.club) {
+        return res.status(403).json({ error: 'No club associated with your account' });
+    }
+    
+    const { id } = req.params;
+    const { link } = req.body;
+    
+    const { data, error: updateError } = await supabase
+        .from('shortcuts')
+        .update({ link })
+        .eq('id', id)
+        .eq('club', userData.club)
+        .select()
+        .single();
+
+    if (updateError) {
+        return res.status(500).json({ error: 'Error updating shortcut' });
+    }
+    
+    if (!data) {
+        return res.status(404).json({ error: 'Shortcut not found or not owned by your club' });
+    }
+    
+    res.json({ success: true, data });
+});
+app.delete('/delete/:id', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    // Get user's club
+    const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('club')
+        .eq('id', user.id)
+        .single();
+    
+    if (userError || !userData?.club) {
+        return res.status(403).json({ error: 'No club associated with your account' });
+    }
+    
+    const { id } = req.params;
+    
+    const { error: deleteError } = await supabase
+        .from('shortcuts')
+        .delete()
+        .eq('id', id)
+        .eq('club', userData.club);
+
+    if (deleteError) {
+        return res.status(500).json({ error: 'Error deleting shortcut' });
+    }
+    
+    res.json({ success: true });
+});
+app.route('/club-index').get(async (req, res) => {
+    res.render('club-index');
+});
+
+
 
 //ANY OTHER ROUTES MUST BE PLACED ABOVE THIS LINE
 app.route('/:shortlink').get(async (req, res) => {
@@ -96,6 +266,11 @@ app.route('/:shortlink').get(async (req, res) => {
     if (error || !data) {
         return res.status(404).render('404');
     }
+    //update the visits count
+    await supabase
+    .from('shortcuts')
+    .update({ visits: (data.visits || 0) + 1 })
+    .eq('id', shortlink);
     res.redirect(data.link);
 });
 

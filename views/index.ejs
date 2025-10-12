@@ -8,14 +8,14 @@
     <style>
         @font-face {
             font-family: 'Garet';
-            src: url('fonts/GaretR.ttf') format('truetype');
+            src: url('fonts/GaretR.otf') format('opentype');
             font-weight: 400;
             font-style: normal;
         }
         
         @font-face {
             font-family: 'Garet';
-            src: url('fonts/GaretH.ttf') format('truetype');
+            src: url('fonts/GaretH.otf') format('opentype');
             font-weight: 700;
             font-style: normal;
         }
@@ -157,7 +157,17 @@
             overflow: hidden;
         }
         
-        
+        .hero-content-wrapper {
+            background: rgba(117, 117, 117, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 60px 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+        }
         
         .hero-content {
             max-width: 1000px;
@@ -585,6 +595,11 @@
                 padding: 100px 20px 60px;
             }
             
+            .hero-content-wrapper {
+                padding: 40px 30px;
+                border-radius: 15px;
+            }
+            
             .content-section {
                 padding: 60px 20px;
             }
@@ -601,6 +616,11 @@
             
             .hero-subtitle {
                 font-size: 20px;
+            }
+            
+            .hero-content-wrapper {
+                padding: 30px 20px;
+                border-radius: 12px;
             }
             
             .section-title {
@@ -670,7 +690,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="nav-container">
             <a href="/">
@@ -680,11 +699,9 @@
             </a>
             <nav>
                 <ul class="nav-links">
-                    <li><a href="/">Home</a></li><!-- 
+                    <li><a href="/">Home</a></li> 
                     <li><a href="/explore">Explore Clubs</a></li>
                     <li><a href="/club-index">Register Club</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/contact">Contact</a></li> -->
                 </ul>
             </nav>
             <div class="nav-actions">
@@ -694,7 +711,6 @@
         </div>
     </header>
 
-    <!-- Mobile Vertical Navigation -->
     <nav class="mobile-nav">
         <div class="mobile-nav-header">
             <div class="logo-section">
@@ -704,35 +720,32 @@
             <button class="mobile-nav-close">✕</button>
         </div>
         <ul class="mobile-nav-links">
-            <li><a href="/">Home</a></li><!-- 
+            <li><a href="/">Home</a></li>
             <li><a href="/explore">Explore Clubs</a></li>
             <li><a href="/club-index">Register Club</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li> -->
         </ul>
         <div class="mobile-nav-cta">
             <a href="/login" class="cta-button">Login</a>
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main>
-        <!-- Hero Section -->
         <section class="hero">
-            <div class="hero-content">
-                <h1 class="hero-tagline">Find. Track. Apply.</h1>
-                <p class="hero-subtitle">with GIIS Clubs Org</p>
-                <p class="hero-description">
-                    We make the whole process of discovering, joining and managing Student Clubs & Organizations at GIIS seamless and engaging. 
-                </p>
-                <div class="hero-buttons">
-                    <a href="/explore" class="btn-primary">Explore Clubs</a>
-                    <a href="/club-index" class="btn-secondary">Register a Club</a>
+            <div class="hero-content-wrapper">
+                <div class="hero-content">
+                    <h1 class="hero-tagline">Find. Track. Apply.</h1>
+                    <p class="hero-subtitle">with GIIS Clubs Org</p>
+                    <p class="hero-description">
+                        We make the whole process of discovering, joining and managing Student Clubs & Organizations at GIIS seamless and engaging. 
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="/explore" class="btn-primary">Explore Clubs</a>
+                        <a href="/club-index" class="btn-secondary">Register a Club</a>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Features Section -->
         <section class="content-section alt">
             <div class="section-container">
                 <h2 class="section-title">GIIS Clubs Org</h2>
@@ -767,7 +780,6 @@
             </div>
         </section>
 
-        <!-- Call to Action Section -->
         <section class="content-section">
             <div class="section-container" style="text-align: center;">
                 <h2 class="section-title">Ready to Get Started?</h2>
@@ -775,15 +787,14 @@
                     Join the GIIS Clubs community today and discover opportunities that will define your academic journey
                 </p>
                 <div class="hero-buttons" style="margin-top: 40px;">
-                    <a href="/explore" class="btn-primary">Browse All Clubs</a>
-                    <a href="/login" class="btn-secondary">Create Account</a>
+                    <a href="/explore" class="btn-primary">Browse All Clubs</a><!-- 
+                    <a href="/login" class="btn-secondary">Create Account</a> -->
                 </div>
             </div>
         </section>
     </main>
 
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-content">
@@ -794,11 +805,9 @@
                 </div>
                 <div class="footer-section">
                     <h3>Quick Links</h3>
-                    <a href="/about">Home</a>
+                    <a href="/">Home</a>
                     <a href="/explore">Explore</a>
                     <a href="/club-index">Register Club</a>
-                    <a href="/about"> About</a>
-                    <a href="/contact">Contact</a>
                 </div>
             </div>
             <div class="footer-bottom">
