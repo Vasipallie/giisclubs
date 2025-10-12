@@ -152,7 +152,16 @@ app.post('/create', async (req, res) => {
     
     // Generate random ID if no custom ID provided
     const id = customId || Math.random().toString(36).substring(2, 8);
-    
+     
+    const { data: existing, error: existingError } = await supabase
+        .from('shortcuts')
+        .select('*')
+        .eq('id', id)
+        .single();
+    if (existing) {
+        return res.status(400).json({ error: 'Custom ID already in use. Please choose another one.' });
+    }
+
     const { data, error: insertError } = await supabase
         .from('shortcuts')
         .insert([{ 
@@ -166,6 +175,7 @@ app.post('/create', async (req, res) => {
     if (insertError) {
         return res.status(500).json({ error: 'Error creating shortcut: ' + insertError.message });
     }
+    
     
     res.json({ success: true, data });
 });
