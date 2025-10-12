@@ -270,16 +270,17 @@ app.route('/:shortlink').get(async (req, res) => {
     const { shortlink } = req.params;
     const { data, error } = await supabase
     .from('shortcuts')
-    .select('link')
+    .select('*')
     .eq('id', shortlink)
     .single();
     if (error || !data) {
         return res.status(404).render('404');
     }
+    console.log(data.visits)
     //update the visits count
     await supabase
     .from('shortcuts')
-    .update({ visits: (data.visits) + 1 })
+    .update({ visits: (data.visits+1) })
     .eq('id', shortlink);
     res.redirect(data.link);
 });
