@@ -172,15 +172,6 @@ app.post('/create', async (req, res) => {
 });
 
 app.post('/idadd', async (req, res) => {
-    const token = req.cookies.token;
-    // Get user's club
-    const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('club')
-        .eq('id', user.id)
-        .single();
-    
-    const { link, customId } = req.body;
     
     // Generate random ID if no custom ID provided
     const id = customId || Math.random().toString(36).substring(2, 8);
