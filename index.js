@@ -173,6 +173,8 @@ app.post('/create', async (req, res) => {
 
 app.post('/idadd', async (req, res) => {
     
+    const { link, customId } = req.body;
+    
     // Generate random ID if no custom ID provided
     const id = customId || Math.random().toString(36).substring(2, 8);
      
