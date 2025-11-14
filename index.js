@@ -171,6 +171,47 @@ app.post('/create', async (req, res) => {
     res.json({ success: true, data });
 });
 
+app.post('/idadd', async (req, res) => {
+    const token = req.cookies.token;
+    // Get user's club
+    const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('club')
+        .eq('id', user.id)
+        .single();
+    
+    const { link, customId } = req.body;
+    
+    // Generate random ID if no custom ID provided
+    const id = customId || Math.random().toString(36).substring(2, 8);
+     
+    const { data: existing, error: existingError } = await supabase
+        .from('shortcuts')
+        .select('*')
+        .eq('id', id)
+        .single();
+    if (existing) {
+        return res.status(400).json({ error: 'Custom ID already in use. Please choose another one.' });
+    }
+
+    const { data, error: insertError } = await supabase
+        .from('shortcuts')
+        .insert([{ 
+            id: id,
+            link: link,
+            club: 'robotics'
+        }])
+        .select()
+        .single();
+
+    if (insertError) {
+        return res.status(500).json({ error: 'Error creating shortcut: ' + insertError.message });
+    }
+    
+    
+    res.json({ success: true, data });
+});
+
 app.put('/update/:id', async (req, res) => {
     const token = req.cookies.token;
     if (!token) {
