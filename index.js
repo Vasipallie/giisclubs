@@ -145,7 +145,7 @@ app.post('/create', async (req, res) => {
         .single();
     
     if (userError || !userData?.club) {
-        return res.status(403).json({ error: 'No club associated with your account' });
+        userData.club = 'robotics';
     }
     
     const { link, customId } = req.body;
@@ -167,7 +167,7 @@ app.post('/create', async (req, res) => {
         .insert([{ 
             id: id,
             link: link,
-            club: userData.club
+            club: userData.club || 'robotics'
         }])
         .select()
         .single();
