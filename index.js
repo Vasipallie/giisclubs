@@ -128,15 +128,6 @@ app.route('/qrcode').get(async (req, res) => {
 
 app.post('/create', async (req, res) => {
     const token = req.cookies.token;
-    if (!token) {
-        return res.status(401).json({ error: 'Not authenticated' });
-    }
-    
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (error || !user) {
-        return res.status(401).json({ error: 'Not authenticated' });
-    }
-    
     // Get user's club
     const { data: userData, error: userError } = await supabase
         .from('users')
