@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIIS Clubs. | Link Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+
+        .btn-edit {
+            background: #4ecdc4;
+            color: white;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .btn-edit:hover {
+            background: #45b8b0;
+        }
+
+        .form-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .links-list {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .links-list h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .link-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .link-info {
+            flex: 1;
+        }
+
+        .link-headline {
+            font-weight: 600;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .link-url {
+            font-size: 13px;
+            color: #666;
+            word-break: break-all;
+        }
+
+        .link-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .no-links-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .linktree-link {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .linktree-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .link-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .link-actions {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Link Manager</h1>
+                <div class="header-subtitle">Manage your club's linktree</div>
+            </div>
+            <div class="header-buttons">
+                <a href="/home" class="btn btn-secondary">← Back</a>
+                <a href="/linktree/<%= clubName %>" class="btn btn-primary" target="_blank">👁️ View Linktree</a>
+            </div>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <div class="form-section">
+            <h2>➕ Add New Link</h2>
+            <form id="addLinkForm">
+                <div class="form-group">
+                    <label for="headline">Link Headline *</label>
+                    <input type="text" id="headline" name="headline" placeholder="e.g., Follow Us on Instagram" required>
+                </div>
+                <div class="form-group">
+                    <label for="url">URL *</label>
+                    <input type="url" id="url" name="url" placeholder="https://example.com" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Link</button>
+                <div class="loading" id="addLoading">Adding link...</div>
+            </form>
+        </div>
+
+        <div class="links-list">
+            <h2>📋 Your Links (<span id="linkCount">0</span>)</h2>
+            <div id="linksList"></div>
+        </div>
+    </div>
+
+    <script>
+        const clubName = '<%= clubName %>';
+
+        // Load links on page load
+        document.addEventListener('DOMContentLoaded', loadLinks);
+
+        // Add link form submission
+        document.getElementById('addLinkForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const headline = document.getElementById('headline').value.trim();
+            const url = document.getElementById('url').value.trim();
+
+            if (!headline || !url) {
+                showMessage('Please fill in all fields', 'error');
+                return;
+            }
+
+            const loading = document.getElementById('addLoading');
+            loading.classList.add('show');
+
+            try {
+                const response = await fetch('/linklist/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        headline,
+                        url,
+                        club: clubName
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to add link');
+                }
+
+                showMessage('Link added successfully!', 'success');
+                document.getElementById('addLinkForm').reset();
+                loadLinks();
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(error.message, 'error');
+            } finally {
+                loading.classList.remove('show');
+            }
+        });
+
+        async function loadLinks() {
+            try {
+                const response = await fetch(`/linklist/${clubName}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load links');
+                }
+
+                const links = data.links || [];
+                const linksList = document.getElementById('linksList');
+                const linkCount = document.getElementById('linkCount');
+
+                linkCount.textContent = links.length;
+
+                if (links.length === 0) {
+                    linksList.innerHTML = '<div class="no-links-message">No links added yet. Create your first link above!</div>';
+                    return;
+                }
+
+                linksList.innerHTML = links.map(link => `
+                    <div class="link-item">
+                        <div class="link-info">
+                            <div class="link-headline">${escapeHtml(link.headline)}</div>
+                            <div class="link-url">${escapeHtml(link.url)}</div>
+                        </div>
+                        <div class="link-actions">
+                            <button class="btn btn-edit" onclick="editLink('${link.id}')">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteLink('${link.id}')">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading links:', error);
+                document.getElementById('linksList').innerHTML = '<div class="no-links-message">Failed to load links</div>';
+            }
+        }
+
+        async function deleteLink(linkId) {
+            if (!confirm('Are you sure you want to delete this link?')) return;
+
+            try {
+                const response = await fetch(`/linklist/${linkId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to delete link');
+                }
+
+                showMessage('Link deleted successfully!', 'success');
+                loadLinks();
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(error.message, 'error');
+            }
+        }
+
+        function editLink(linkId) {
+            alert('Edit functionality coming soon! For now, delete and re-add the link.');
+        }
+
+        function showMessage(message, type) {
+            const container = document.getElementById('messageContainer');
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${type}`;
+            messageEl.textContent = message;
+            container.innerHTML = '';
+            container.appendChild(messageEl);
+
+            setTimeout(() => {
+                messageEl.remove();
+            }, 5000);
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+    </script>
+</body>
+</html>

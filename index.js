@@ -288,7 +288,179 @@ app.route('/club-index').get(async (req, res) => {
     res.render('club-index');
 });
 
+// Linklist Manager Dashboard - Get the manager page
+app.route('/linklist-manager').get(async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.redirect('/login');
+    }
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.redirect('/login');
+    }
+    
+    // Get user's club from users table
+    const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('club')
+        .eq('id', user.id)
+        .single();
+    
+    if (userError || !userData?.club) {
+        return res.status(403).render('404');
+    }
+    
+    res.render('linklist-manager', { user, clubName: userData.club });
+});
 
+// Get links for a club (API endpoint)
+app.route('/linklist/:club').get(async (req, res) => {
+    const { club } = req.params;
+    
+    try {
+        const { data: links, error } = await supabase
+            .from('linklist')
+            .select('*')
+            .eq('club', club)
+            .order('created_at', { ascending: false });
+        
+        if (error) {
+            return res.status(500).json({ error: 'Failed to fetch links' });
+        }
+        
+        res.json({ links: links || [] });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Add a new link
+app.post('/linklist/add', async (req, res) => {
+    const token = req.cookies.token;
+    const { headline, url, club } = req.body;
+    
+    if (!headline || !url) {
+        return res.status(400).json({ error: 'Headline and URL are required' });
+    }
+    
+    // If token exists, verify user owns the club
+    if (token) {
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        if (!error && user) {
+            const { data: userData, error: userError } = await supabase
+                .from('users')
+                .select('club')
+                .eq('id', user.id)
+                .single();
+            
+            if (!userError && userData?.club && userData.club !== club) {
+                return res.status(403).json({ error: 'Unauthorized' });
+            }
+        }
+    }
+    
+    try {
+        const { data, error } = await supabase
+            .from('linklist')
+            .insert([{
+                headline,
+                url,
+                club,
+                created_at: new Date().toISOString()
+            }])
+            .select()
+            .single();
+        
+        if (error) {
+            return res.status(500).json({ error: 'Failed to add link' });
+        }
+        
+        res.json({ success: true, data });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Delete a link
+app.delete('/linklist/:id', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    // Get user's club
+    const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('club')
+        .eq('id', user.id)
+        .single();
+    
+    if (userError || !userData?.club) {
+        return res.status(403).json({ error: 'No club associated with your account' });
+    }
+    
+    const { id } = req.params;
+    
+    try {
+        // First, get the link to verify ownership
+        const { data: linkData, error: linkError } = await supabase
+            .from('linklist')
+            .select('*')
+            .eq('id', id)
+            .single();
+        
+        if (linkError || !linkData) {
+            return res.status(404).json({ error: 'Link not found' });
+        }
+        
+        if (linkData.club !== userData.club) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+        
+        const { error: deleteError } = await supabase
+            .from('linklist')
+            .delete()
+            .eq('id', id);
+        
+        if (deleteError) {
+            return res.status(500).json({ error: 'Failed to delete link' });
+        }
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Public linktree view - displays all links for a club
+app.route('/linktree/:club').get(async (req, res) => {
+    const { club } = req.params;
+    
+    try {
+        const { data: links, error } = await supabase
+            .from('linklist')
+            .select('*')
+            .eq('club', club)
+            .order('created_at', { ascending: false });
+        
+        if (error) {
+            return res.render('404');
+        }
+        
+        res.render('linktree', { clubName: club, links: links || [] });
+    } catch (error) {
+        console.error('Error:', error);
+        res.render('404');
+    }
+});
 
 //ANY OTHER ROUTES MUST BE PLACED ABOVE THIS LINE
 app.route('/:shortlink').get(async (req, res) => {

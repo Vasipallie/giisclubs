@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= clubName %> - GIIS Clubs.</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .club-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            margin: 0 auto 20px;
+            font-weight: bold;
+        }
+
+        .club-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .club-subtitle {
+            font-size: 14px;
+            color: #999;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .link-button {
+            display: block;
+            padding: 18px;
+            background: #f5f5f5;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .link-button:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .link-headline {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .link-url {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .link-button:hover .link-url {
+            opacity: 1;
+        }
+
+        .no-links {
+            color: #999;
+            padding: 40px 20px;
+            font-size: 16px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #999;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .club-name {
+                font-size: 24px;
+            }
+
+            .club-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="club-icon">
+                <%= clubName.charAt(0).toUpperCase() %>
+            </div>
+            <div class="club-name"><%= clubName %></div>
+            <div class="club-subtitle">All links in one place</div>
+        </div>
+
+        <div class="links-container">
+            <% if (links && links.length > 0) { %>
+                <% links.forEach(link => { %>
+                    <a href="<%= link.url %>" target="_blank" rel="noopener noreferrer" class="link-button">
+                        <div class="link-headline"><%= link.headline %></div>
+                        <div class="link-url"><%= link.url.replace(/^https?:\/\/(www\.)?/, '').substring(0, 40) %><%= link.url.length > 40 ? '...' : '' %></div>
+                    </a>
+                <% }); %>
+            <% } else { %>
+                <div class="no-links">No links added yet</div>
+            <% } %>
+        </div>
+
+        <div class="footer">
+            Powered by GIIS Clubs.
+        </div>
+    </div>
+</body>
+</html>
