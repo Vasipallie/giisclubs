@@ -1089,6 +1089,17 @@
         p {
             line-height: 1.7;
         }
+        /* Disable hover animations */
+        *, *::before, *::after {
+            transition: none !important;
+            animation: none !important;
+        }
+
+        *:hover {
+            transform: none !important;
+            box-shadow: none !important;
+            filter: none !important;
+        }
     </style>
 </head>
 <body>
