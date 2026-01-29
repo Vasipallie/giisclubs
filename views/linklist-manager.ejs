@@ -262,10 +262,25 @@
             margin-bottom: 12px;
             border: 1px solid #e5e7eb;
             border-left: 4px solid #1a237e;
+            cursor: grab;
+            gap: 12px;
+        }
+
+        .link-item:active {
+            cursor: grabbing;
+        }
+
+        .drag-handle {
+            color: #9ca3af;
+            font-weight: bold;
+            font-size: 18px;
+            user-select: none;
+            flex-shrink: 0;
         }
 
         .link-info {
             flex: 1;
+            min-width: 0;
         }
 
         .link-headline {
@@ -284,6 +299,59 @@
         .link-actions {
             display: flex;
             gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            color: #111827;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
         }
 
         .no-links-message {
@@ -429,12 +497,38 @@
 
         <div class="links-list">
             <h2>Your Links (<span id="linkCount">0</span>)</h2>
-            <div id="linksList"></div>
+            <div id="linksList" class="sortable-list"></div>
+        </div>
+    </div>
+
+    <!-- Edit Link Modal -->
+    <div id="editModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Link</h3>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="editHeadline">Headline *</label>
+                    <input type="text" id="editHeadline" required>
+                </div>
+                <div class="form-group">
+                    <label for="editUrl">URL *</label>
+                    <input type="url" id="editUrl" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
         const clubName = '<%= clubName %>';
+        let currentEditingLinkId = null;
+        let draggedElement = null;
 
         // Load links on page load
         document.addEventListener('DOMContentLoaded', loadLinks);
@@ -504,22 +598,154 @@
                 }
 
                 linksList.innerHTML = links.map(link => `
-                    <div class="link-item">
+                    <div class="link-item" draggable="true" data-id="${link.id}">
+                        <div class="drag-handle">::</div>
                         <div class="link-info">
                             <div class="link-headline">${escapeHtml(link.headline)}</div>
                             <div class="link-url">${escapeHtml(link.url)}</div>
                         </div>
                         <div class="link-actions">
-                            <button class="btn btn-edit" onclick="editLink('${link.id}')">Edit</button>
+                            <button class="btn btn-edit" onclick="openEditModal('${link.id}', '${escapeHtml(link.headline).replace(/'/g, "\\'")}', '${escapeHtml(link.url).replace(/'/g, "\\'")}')">Edit</button>
                             <button class="btn btn-danger" onclick="deleteLink('${link.id}')">Delete</button>
                         </div>
                     </div>
                 `).join('');
+
+                // Add drag-and-drop listeners
+                setupDragAndDrop();
             } catch (error) {
                 console.error('Error loading links:', error);
                 document.getElementById('linksList').innerHTML = '<div class="no-links-message">Failed to load links</div>';
             }
         }
+
+        function setupDragAndDrop() {
+            const items = document.querySelectorAll('.link-item');
+            
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.style.opacity = '0.5';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.style.opacity = '1';
+            draggedElement = null;
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if (draggedElement !== this) {
+                const list = document.getElementById('linksList');
+                const items = Array.from(list.children);
+                const draggedIndex = items.indexOf(draggedElement);
+                const targetIndex = items.indexOf(this);
+
+                if (draggedIndex < targetIndex) {
+                    this.parentNode.insertBefore(draggedElement, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(draggedElement, this);
+                }
+
+                saveOrder();
+            }
+
+            return false;
+        }
+
+        async function saveOrder() {
+            const items = document.querySelectorAll('.link-item');
+            const links = Array.from(items).map((item, index) => ({
+                id: item.dataset.id,
+                order: index
+            }));
+
+            try {
+                const response = await fetch('/linklist/reorder', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ links })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save order');
+                }
+
+                showMessage('Order saved!', 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Failed to save order', 'error');
+                loadLinks();
+            }
+        }
+
+        function openEditModal(linkId, headline, url) {
+            currentEditingLinkId = linkId;
+            document.getElementById('editHeadline').value = headline;
+            document.getElementById('editUrl').value = url;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            currentEditingLinkId = null;
+        }
+
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const headline = document.getElementById('editHeadline').value.trim();
+            const url = document.getElementById('editUrl').value.trim();
+
+            if (!headline || !url) {
+                showMessage('Please fill in all fields', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/linklist/${currentEditingLinkId}/edit`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ headline, url })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to update link');
+                }
+
+                showMessage('Link updated successfully!', 'success');
+                closeEditModal();
+                loadLinks();
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(error.message, 'error');
+            }
+        });
 
         async function deleteLink(linkId) {
             if (!confirm('Are you sure you want to delete this link?')) return;
@@ -541,10 +767,6 @@
                 console.error('Error:', error);
                 showMessage(error.message, 'error');
             }
-        }
-
-        function editLink(linkId) {
-            alert('Edit functionality coming soon! For now, delete and re-add the link.');
         }
 
         function showMessage(message, type) {

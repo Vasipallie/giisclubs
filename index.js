@@ -472,7 +472,7 @@ app.route('/linklist-manager').get(async (req, res) => {
     res.render('linklist-manager', { user, clubName: club.name });
 });
 
-// Get links for a club (API endpoint)
+// Get links for a club (API endpoint) - now sorted by order
 app.route('/linklist/:club').get(async (req, res) => {
     const { club } = req.params;
     
@@ -481,6 +481,7 @@ app.route('/linklist/:club').get(async (req, res) => {
             .from('linklist')
             .select('*')
             .eq('club', club)
+            .order('order', { ascending: true })
             .order('created_at', { ascending: false });
         
         if (error) {
@@ -599,6 +600,119 @@ app.delete('/linklist/:id', async (req, res) => {
     }
 });
 
+// Edit a linklist link
+app.put('/linklist/:id/edit', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    // Get user's club
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name')
+        .eq('id', user.id)
+        .single();
+    
+    if (!club?.name) {
+        return res.status(403).json({ error: 'No club associated with your account' });
+    }
+    
+    const { id } = req.params;
+    const { headline, url } = req.body;
+    
+    if (!headline || !url) {
+        return res.status(400).json({ error: 'Headline and URL are required' });
+    }
+    
+    try {
+        // First, verify the link belongs to the user's club
+        const { data: linkData } = await supabase
+            .from('linklist')
+            .select('*')
+            .eq('id', id)
+            .single();
+        
+        if (!linkData || linkData.club !== club.name) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+        
+        const { error: updateError } = await supabase
+            .from('linklist')
+            .update({ headline, url })
+            .eq('id', id);
+        
+        if (updateError) {
+            return res.status(500).json({ error: 'Failed to update link' });
+        }
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Reorder linklist links
+app.put('/linklist/reorder', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    // Get user's club
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name')
+        .eq('id', user.id)
+        .single();
+    
+    if (!club?.name) {
+        return res.status(403).json({ error: 'No club associated with your account' });
+    }
+    
+    const { links } = req.body; // Array of { id, order }
+    
+    if (!Array.isArray(links)) {
+        return res.status(400).json({ error: 'Links must be an array' });
+    }
+    
+    try {
+        for (const item of links) {
+            // Verify each link belongs to user's club before updating
+            const { data: linkData } = await supabase
+                .from('linklist')
+                .select('club')
+                .eq('id', item.id)
+                .single();
+            
+            if (!linkData || linkData.club !== club.name) {
+                return res.status(403).json({ error: 'Unauthorized' });
+            }
+            
+            await supabase
+                .from('linklist')
+                .update({ order: item.order })
+                .eq('id', item.id);
+        }
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // Public linktree view - displays all links for a club
 app.route('/linktree/:club').get(async (req, res) => {
     const { club } = req.params;
@@ -640,6 +754,122 @@ app.route('/linktree/:club').get(async (req, res) => {
     } catch (error) {
         console.error('Error:', error);
         res.render('404');
+    }
+});
+
+// Create Club routes (admin only)
+app.route('/create-club').get(async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.redirect('/login');
+    }
+
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.redirect('/login');
+    }
+
+    // Check if user is admin (has existing club or is designated admin)
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+    // Allow admins (those with clubs) to create new clubs
+    if (!club) {
+        return res.status(403).render('404');
+    }
+
+    res.render('create-club');
+});
+
+app.post('/create-club', async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        if (error || !user) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        // Check if user is admin (has existing club)
+        const { data: adminClub } = await supabase
+            .from('clubs')
+            .select('id')
+            .eq('id', user.id)
+            .single();
+
+        if (!adminClub) {
+            return res.status(403).json({ error: 'Only admins can create clubs' });
+        }
+
+        const { name, description, link_text, link } = req.body;
+
+        if (!name || !description) {
+            return res.status(400).json({ error: 'Club name and description are required' });
+        }
+
+        // Check if club name already exists
+        const { data: existingClub } = await supabase
+            .from('clubs')
+            .select('id')
+            .eq('name', name)
+            .single();
+
+        if (existingClub) {
+            return res.status(409).json({ error: 'A club with this name already exists' });
+        }
+
+        // Create a new user account for the club (using club name as email)
+        const clubEmail = `${name.toLowerCase().replace(/\s+/g, '.')}@giisclubs.local`;
+        const clubPassword = Math.random().toString(36).slice(-12); // Random password
+
+        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+            email: clubEmail,
+            password: clubPassword,
+            email_confirm: true
+        });
+
+        if (authError) {
+            console.error('Auth error:', authError);
+            return res.status(500).json({ error: 'Failed to create club account' });
+        }
+
+        // Create club entry in database with the new user ID
+        const { data: newClub, error: clubError } = await supabase
+            .from('clubs')
+            .insert({
+                id: authData.user.id,
+                name,
+                description,
+                link_text: link_text || null,
+                link: link || null,
+                logo: null,
+                banner: null
+            })
+            .select()
+            .single();
+
+        if (clubError) {
+            console.error('Club creation error:', clubError);
+            // Try to delete the created user if club creation fails
+            await supabase.auth.admin.deleteUser(authData.user.id);
+            return res.status(500).json({ error: 'Failed to create club' });
+        }
+
+        res.json({ 
+            success: true, 
+            message: 'Club created successfully',
+            club: newClub
+        });
+
+    } catch (error) {
+        console.error('Error creating club:', error);
+        res.status(500).json({ error: error.message });
     }
 });
 
