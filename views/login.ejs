@@ -30,7 +30,7 @@
             font-family: 'Garet', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: #1a1a2e;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f7fb;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -38,23 +38,6 @@
             padding: 20px;
             position: relative;
             overflow: hidden;
-        }
-        
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
-            animation: gradient-shift 8s ease infinite;
-        }
-        
-        @keyframes gradient-shift {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
         }
         
         body::after {
@@ -114,10 +97,7 @@
         .logo-text {
             font-size: 20px;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #1a237e;
             text-decoration: none;
             letter-spacing: -0.5px;
         }
@@ -142,7 +122,7 @@
         }
         
         .nav-links a:hover {
-            color: #667eea;
+            color: #1a237e;
         }
         
         .nav-links a::after {
@@ -152,7 +132,7 @@
             left: 0;
             width: 0;
             height: 3px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: #1a237e;
             transition: width 0.3s ease;
         }
         
@@ -162,8 +142,8 @@
         
         .back-btn {
             background: transparent;
-            color: #667eea;
-            border: 2px solid #667eea;
+            color: #1a237e;
+            border: 2px solid #1a237e;
             padding: 10px 20px;
             border-radius: 25px;
             text-decoration: none;
@@ -175,10 +155,10 @@
         }
         
         .back-btn:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1a237e;
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 20px rgba(26, 35, 126, 0.2);
         }
         
         /* Login Container */
@@ -208,7 +188,7 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: #1a237e;
             border-radius: 24px 24px 0 0;
         }
         
@@ -233,21 +213,12 @@
             width: auto;
             margin-bottom: 25px;
             filter: drop-shadow(0 8px 12px rgba(102, 126, 234, 0.2));
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
         }
         
         .login-title {
             font-size: 32px;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #1a237e;
             margin-bottom: 12px;
             letter-spacing: -0.5px;
         }
@@ -260,7 +231,7 @@
         }
         
         .error-message {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            background: #ef4444;
             border: none;
             color: white;
             padding: 15px 18px;
@@ -269,7 +240,7 @@
             text-align: center;
             margin-bottom: 28px;
             font-weight: 600;
-            box-shadow: 0 8px 16px rgba(255, 107, 107, 0.25);
+            box-shadow: 0 8px 16px rgba(239, 68, 68, 0.25);
             animation: shake 0.5s ease-in-out;
         }
         
@@ -314,16 +285,16 @@
         
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #1a237e;
             background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 4px rgba(26, 35, 126, 0.1);
             transform: translateY(-2px);
         }
         
         .login-btn {
             width: 100%;
             height: 52px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1a237e;
             color: white;
             border: none;
             border-radius: 12px;
@@ -334,7 +305,7 @@
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             margin: 25px 0 20px;
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 20px rgba(26, 35, 126, 0.25);
             position: relative;
             overflow: hidden;
         }
@@ -346,13 +317,13 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: rgba(255, 255, 255, 0.25);
             transition: left 0.5s ease;
         }
         
         .login-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 28px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 12px 28px rgba(26, 35, 126, 0.35);
         }
         
         .login-btn:hover::before {
@@ -394,12 +365,12 @@
             left: 0;
             width: 0;
             height: 2px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: #1a237e;
             transition: width 0.3s ease;
         }
         
         .signup-link a:hover {
-            color: #764ba2;
+            color: #1a237e;
         }
         
         .signup-link a:hover::after {
@@ -419,7 +390,7 @@
         }
         
         .mobile-menu-toggle:hover {
-            color: #667eea;
+            color: #1a237e;
         }
         
         .mobile-nav-overlay {
@@ -716,12 +687,12 @@
         }
 
         .nav-links a::after {
-            background: linear-gradient(90deg, var(--primary), var(--accent));
+            background: var(--primary);
             height: 3px;
         }
 
         .cta-button, .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: var(--primary);
             box-shadow: var(--shadow);
             border-radius: 14px;
         }

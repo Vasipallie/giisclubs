@@ -36,96 +36,68 @@
         /* Header */
         .header {
             background: #ffffff;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            width: 100%;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+            position: sticky;
             top: 0;
             z-index: 1000;
-            padding: 0;
         }
-        
+
         .nav-container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 30px;
+            padding: 14px 24px;
+            gap: 16px;
         }
-        
+
         .logo-section {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
-        
+
         .logo {
-            height: 70px;
+            height: 52px;
             width: auto;
         }
-        
-        .logo-text {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1a237e;
-            text-decoration: none;
-            letter-spacing: -0.5px;
-        }
-        
+
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 40px;
+            gap: 28px;
             list-style: none;
         }
-        
+
         .nav-links a {
-            color: #333;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            position: relative;
-            padding: 8px 0;
-        }
-        
-        .nav-links a:hover {
-            color: #1a237e;
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #1a237e, #3f51b5);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
-        .cta-button {
-            background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 25px;
+            color: #1f2937;
             text-decoration: none;
             font-weight: 600;
             font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
             border: none;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
-        
+
         .cta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(26, 35, 126, 0.3);
+            box-shadow: 0 10px 20px rgba(26, 35, 126, 0.25);
         }
         
         /* Hero Section */
@@ -449,139 +421,9 @@
             padding: 8px;
         }
         
-        /* Mobile Vertical Navbar */
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: #ffffff;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            flex-direction: column;
-            transform: translateY(-100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .mobile-nav.active {
-            display: flex;
-            transform: translateY(0);
-        }
-        
-        .mobile-nav-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .mobile-nav-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #333;
-            cursor: pointer;
-            padding: 8px;
-        }
-        
-        .mobile-nav-links {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            background: #ffffff;
-        }
-        
-        .mobile-nav-links li {
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .mobile-nav-links a {
-            display: block;
-            color: #333;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 16px;
-            padding: 18px 20px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .mobile-nav-links a:hover {
-            background: #f8f9ff;
-            color: #1a237e;
-            padding-left: 30px;
-        }
-        
-        .mobile-nav-links a::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 0;
-            background: linear-gradient(135deg, #1a237e, #3f51b5);
-            transition: width 0.3s ease;
-        }
-        
-        .mobile-nav-links a:hover::before {
-            width: 4px;
-        }
-        
-        .mobile-nav-cta {
-            padding: 20px;
-            background: #f8f9ff;
-            border-top: 1px solid #f0f0f0;
-        }
-        
-        .mobile-nav-cta .cta-button {
-            width: 100%;
-            text-align: center;
-            display: block;
-            padding: 15px 25px;
-        }
-        
-        /* Hide desktop nav on mobile, show mobile nav */
-        @media (max-width: 968px) {
-            .nav-links, .nav-actions {
+        @media (max-width: 768px) {
+            .nav-links {
                 display: none;
-            }
-            
-            .mobile-menu-toggle {
-                display: block;
-            }
-            
-            body {
-                padding-top: 80px;
-            }
-            
-            .mobile-nav {
-                display: flex;
-            }
-            
-            .hero-tagline {
-                font-size: 48px;
-            }
-            
-            .hero-subtitle {
-                font-size: 24px;
-            }
-            
-            .nav-container {
-                padding: 15px 20px;
-            }
-            
-            .hero {
-                padding: 100px 20px 60px;
-            }
-            
-            .content-section {
-                padding: 60px 20px;
-            }
-            
-            .stats-section {
-                padding: 60px 20px;
             }
         }
         
@@ -1172,33 +1014,22 @@
 <body>
     <header class="header">
         <div class="nav-container">
-            <a href="/">
-            <div class="logo-section" >
+            <a href="/home" class="logo-section">
                 <img src="resources/2.png" alt="GIIS Clubs" class="logo">
-            </div>
             </a>
             <nav>
                 <ul class="nav-links">
+                    <li><a href="/home">Dashboard</a></li>
+                    <li><a href="/linklist-manager">Linktree Manager</a></li>
                     <li><a href="/shorten">Shorten Links</a></li>
-                    <li><a href="/qrcode">QR Code Generator</a></li>
+                    <li><a href="/qrcode">QR Generator</a></li>
                 </ul>
             </nav>
-            <button class="mobile-menu-toggle">☰</button>
+            <div class="nav-actions">
+                <a href="/home" class="cta-button">Back to Dashboard</a>
+            </div>
         </div>
     </header>
-
-    <nav class="mobile-nav">
-        <div class="mobile-nav-header">
-            <div class="logo-section">
-                <img src="resources/2.png" alt="GIIS Clubs" class="logo">
-            </div>
-            <button class="mobile-nav-close">✕</button>
-        </div>
-        <ul class="mobile-nav-links">
-            <li><a href="/shorten">Shorten Links</a></li>
-            <li><a href="/qrcode">QR Code Generator</a></li>
-        </ul>
-    </nav>
 
     <!-- Main Content -->
         <main>

@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import cron from 'node-cron';
 import { time } from 'console';
 import dotenv from 'dotenv';
+import fs from 'fs';
 
 
 dotenv.config();
@@ -69,7 +70,13 @@ app.route('/home').get(async (req, res) => {
     if (error || !user) {
         return res.redirect('/login');
     }
-    res.render('chome', { user });
+    const { data: userData } = await supabase
+        .from('users')
+        .select('club')
+        .eq('id', user.id)
+        .single();
+
+    res.render('chome', { user, clubName: userData?.club || '' });
 });
 
 app.route('/explore').get(async (req, res) => {
@@ -455,7 +462,19 @@ app.route('/linktree/:club').get(async (req, res) => {
             return res.render('404');
         }
         
-        res.render('linktree', { clubName: club, links: links || [] });
+        // Check for logo file with common extensions
+        const logoExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp'];
+        let logoPath = null;
+        
+        for (const ext of logoExtensions) {
+            const possiblePath = path.join(__dirname, 'views', 'logos', `${club}${ext}`);
+            if (fs.existsSync(possiblePath)) {
+                logoPath = `/logos/${club}-p${ext}`;
+                break;
+            }
+        }
+        
+        res.render('linktree', { clubName: club, links: links || [], logoPath });
     } catch (error) {
         console.error('Error:', error);
         res.render('404');
