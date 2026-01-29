@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GIIS Clubs. | Link Manager</title>
     <style>
+        @font-face {
+            font-family: 'Garet';
+            src: url('fonts/GaretR.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Garet';
+            src: url('fonts/GaretH.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -12,35 +25,103 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f7fa;
-            color: #333;
+            font-family: 'Garet', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fb;
+            color: #111827;
+        }
+
+        .topbar {
+            background: #ffffff;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 24px;
+            gap: 16px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            height: 52px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #1f2937;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(26, 35, 126, 0.25);
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 32px 24px 80px;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+            padding: 22px 24px;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
         }
 
         .header h1 {
             font-size: 28px;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            color: #111827;
         }
 
         .header-subtitle {
-            color: #666;
+            color: #6b7280;
             font-size: 14px;
         }
 
@@ -50,13 +131,13 @@
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 10px 18px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
@@ -64,58 +145,60 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1a237e;
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 12px 24px rgba(26, 35, 126, 0.25);
         }
 
         .btn-secondary {
-            background: #e0e0e0;
-            color: #333;
+            background: #eef2f7;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
         }
 
         .btn-secondary:hover {
-            background: #d0d0d0;
+            background: #e5e7eb;
         }
 
         .btn-danger {
-            background: #ff6b6b;
+            background: #ef4444;
             color: white;
             padding: 8px 12px;
             font-size: 12px;
         }
 
         .btn-danger:hover {
-            background: #ff5252;
+            background: #dc2626;
         }
 
         .btn-edit {
-            background: #4ecdc4;
+            background: #2563eb;
             color: white;
             padding: 8px 12px;
             font-size: 12px;
         }
 
         .btn-edit:hover {
-            background: #45b8b0;
+            background: #1d4ed8;
         }
 
         .form-section {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+            margin-bottom: 24px;
         }
 
         .form-section h2 {
-            font-size: 20px;
-            margin-bottom: 20px;
-            color: #333;
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: #111827;
         }
 
         .form-group {
@@ -126,26 +209,27 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
-            font-size: 14px;
+            color: #111827;
+            font-size: 13px;
         }
 
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            padding: 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
             font-size: 14px;
             font-family: inherit;
-            transition: border-color 0.3s;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #ffffff;
         }
 
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #1a237e;
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.12);
         }
 
         .form-row {
@@ -155,27 +239,29 @@
         }
 
         .links-list {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
         }
 
         .links-list h2 {
-            font-size: 20px;
-            margin-bottom: 20px;
-            color: #333;
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: #111827;
         }
 
         .link-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 8px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
             margin-bottom: 12px;
-            border-left: 4px solid #667eea;
+            border: 1px solid #e5e7eb;
+            border-left: 4px solid #1a237e;
         }
 
         .link-info {
@@ -184,14 +270,14 @@
 
         .link-headline {
             font-weight: 600;
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 5px;
+            font-size: 15px;
+            color: #111827;
+            margin-bottom: 6px;
         }
 
         .link-url {
             font-size: 13px;
-            color: #666;
+            color: #6b7280;
             word-break: break-all;
         }
 
@@ -214,36 +300,40 @@
         }
 
         .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
         }
 
         .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
         }
 
         .linktree-link {
             text-align: center;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 12px 18px;
+            background: #1a237e;
             color: white;
-            border-radius: 8px;
+            border-radius: 12px;
             text-decoration: none;
             display: inline-block;
             margin-bottom: 20px;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
         .linktree-link:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 12px 24px rgba(26, 35, 126, 0.25);
         }
 
         @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
             .form-row {
                 grid-template-columns: 1fr;
             }
@@ -277,6 +367,25 @@
     </style>
 </head>
 <body>
+    <header class="topbar">
+        <div class="nav-container">
+            <a href="/home" class="logo-section">
+                <img src="resources/2.png" alt="GIIS Clubs" class="logo">
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/home">Dashboard</a></li>
+                    <li><a href="/linklist-manager">Linktree Manager</a></li>
+                    <li><a href="/shorten">Shorten Links</a></li>
+                    <li><a href="/qrcode">QR Generator</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <a href="/home" class="cta-button">Back to Dashboard</a>
+            </div>
+        </div>
+    </header>
+
     <div class="container">
         <div class="header">
             <div>
