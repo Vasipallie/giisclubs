@@ -1168,9 +1168,9 @@
                     <div class="cards-grid" id="clubsGrid">
                         <% clubs.forEach(club => { %>
                             <div class="card club-card" data-club-name="<%= club.name.toLowerCase() %>" data-club-description="<%= (club.description || '').toLowerCase() %>">
-                                <% if (club.logo) { %>
+                                <% if (club.banner) { %>
                                     <div class="club-logo">
-                                        <img src="logos/<%= club.logo %>" alt="<%= club.name %> Logo" onerror="this.style.display='none'">
+                                        <img src="<%= club.banner %>" alt="<%= club.name %> Logo" onerror="this.style.display='none'">
                                     </div>
                                 <% } else { %>
                                     <div class="club-logo-placeholder">

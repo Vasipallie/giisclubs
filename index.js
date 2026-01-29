@@ -9,6 +9,7 @@ import cron from 'node-cron';
 import { time } from 'console';
 import dotenv from 'dotenv';
 import fs from 'fs';
+import multer from 'multer';
 
 
 dotenv.config();
@@ -32,6 +33,51 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Multer configuration for image uploads
+const logoDir = path.join(__dirname, 'views', 'logos');
+const resourceDir = path.join(__dirname, 'views', 'resources');
+
+// Ensure directories exist
+if (!fs.existsSync(logoDir)) fs.mkdirSync(logoDir, { recursive: true });
+if (!fs.existsSync(resourceDir)) fs.mkdirSync(resourceDir, { recursive: true });
+
+const imageStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        if (file.fieldname === 'banner_upload') {
+            return cb(null, resourceDir);
+        }
+        return cb(null, logoDir);
+    },
+    filename: (req, file, cb) => {
+        // Get club name from req.clubName (set before multer)
+        const clubName = (req.clubName || 'club').trim();
+        const ext = path.extname(file.originalname).toLowerCase() || '.png';
+
+        console.log('Multer filename generation - clubName:', req.clubName, 'using:', clubName);
+
+        if (file.fieldname === 'banner_upload') {
+            return cb(null, `${clubName}${ext}`);
+        }
+
+        if (file.fieldname === 'logo_p_upload') {
+            return cb(null, `${clubName}${ext}`);
+        }
+
+        return cb(null, `${clubName}${ext}`);
+    }
+});
+
+const uploadImages = multer({
+    storage: imageStorage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (!file.mimetype.startsWith('image/')) {
+            return cb(new Error('Only image uploads are allowed.'));
+        }
+        cb(null, true);
+    }
+});
 
 //routes
 app.route('/').get(async (req, res) => {
@@ -70,13 +116,13 @@ app.route('/home').get(async (req, res) => {
     if (error || !user) {
         return res.redirect('/login');
     }
-    const { data: userData } = await supabase
-        .from('users')
-        .select('club')
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name')
         .eq('id', user.id)
         .single();
 
-    res.render('chome', { user, clubName: userData?.club || '' });
+    res.render('chome', { user, clubName: club?.name || '' });
 });
 
 app.route('/explore').get(async (req, res) => {
@@ -110,27 +156,140 @@ app.route('/shorten').get(async (req, res) => {
         return res.redirect('/login');
     }
     
-    console.log(user.id);
-    // Get user's club from users table
-    const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('club')
+    // Get user's club from clubs table
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name')
         .eq('id', user.id)
         .single();
     
-    console.log(userData.club);
+    if (!club?.name) {
+        return res.render('404');
+    }
+    
     // Get all links for this club
-    const { data: links, error: linksError } = await supabase
+    const { data: links } = await supabase
         .from('shortcuts')
         .select('*')
-        .eq('club', userData.club)
-    ;
+        .eq('club', club.name);
     
-    res.render('shorten', { user, club: userData.club, links: links || [] });
+    res.render('shorten', { user, club: club.name, links: links || [] });
 });
 
 app.route('/qrcode').get(async (req, res) => {
     res.render('qrgen');
+});
+
+app.route('/manage-club').get(async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.redirect('/login');
+    }
+
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.redirect('/login');
+    }
+
+    // Get user's club data directly
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+    if (!club) {
+        return res.render('manage-club', { error: 'Club not found', success: null, club: {} });
+    }
+
+    res.render('manage-club', { club: club || {}, success: req.query.success || null, error: null });
+});
+
+app.post('/manage-club', async (req, res, next) => {
+    // First, authenticate and get club
+    const token = req.cookies.token;
+    if (!token) {
+        return res.redirect('/login');
+    }
+
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.redirect('/login');
+    }
+
+    // Get user's club BEFORE multer processes files
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name')
+        .eq('id', user.id)
+        .single();
+
+    if (!club?.name) {
+        return res.render('manage-club', { error: 'Club not found', club: {}, success: null });
+    }
+
+    // Store club name in req so multer can access it
+    req.clubName = club.name;
+    
+    // Now process uploads with multer
+    uploadImages.fields([{ name: 'banner_upload', maxCount: 1 }, { name: 'logo_p_upload', maxCount: 1 }])(req, res, async (err) => {
+        if (err) {
+            console.error('Multer error:', err.message);
+            return res.render('manage-club', { error: `Upload error: ${err.message}`, club: {}, success: null });
+        }
+        
+        // Continue with the rest of the route
+        const { description, link_text, link } = req.body;
+
+        try {
+            const updateData = {
+                description,
+                link_text,
+                link
+            };
+
+            // If logo was uploaded, save the file path
+            if (req.files && req.files.logo_p_upload && req.files.logo_p_upload.length > 0) {
+                const logoFile = req.files.logo_p_upload[0];
+                const logoPath = `/logos/${logoFile.filename}`;
+                updateData.logo = logoPath;
+                console.log('Logo uploaded:', logoPath);
+            }
+
+            // If banner was uploaded, save the file path
+            if (req.files && req.files.banner_upload && req.files.banner_upload.length > 0) {
+                const bannerFile = req.files.banner_upload[0];
+                const bannerPath = `/resources/${bannerFile.filename}`;
+                updateData.banner = bannerPath;
+                console.log('Banner uploaded:', bannerPath);
+            }
+
+            console.log('Updating club with data:', updateData);
+
+            // Update clubs table by user ID
+            const { error: updateError } = await supabase
+                .from('clubs')
+                .update(updateData)
+                .eq('id', user.id);
+
+            if (updateError) {
+                console.error('Supabase update error:', updateError);
+                return res.render('manage-club', { error: 'Failed to update club profile', club: club, success: null });
+            }
+
+            // Fetch updated club data
+            const { data: updatedClub } = await supabase
+                .from('clubs')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+
+            res.render('manage-club', { club: updatedClub || club, success: 'Club profile updated successfully', error: null });
+        } catch (err) {
+            console.error('Error in /manage-club POST:', err);
+            res.render('manage-club', { error: 'An error occurred while updating your profile', club: club, success: null });
+        }
+    });
 });
 
 app.post('/create', async (req, res) => {
@@ -224,13 +383,13 @@ app.put('/update/:id', async (req, res) => {
     }
     
     // Get user's club
-    const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('club')
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name')
         .eq('id', user.id)
         .single();
     
-    if (userError || !userData?.club) {
+    if (!club?.name) {
         return res.status(403).json({ error: 'No club associated with your account' });
     }
     
@@ -241,7 +400,7 @@ app.put('/update/:id', async (req, res) => {
         .from('shortcuts')
         .update({ link })
         .eq('id', id)
-        .eq('club', userData.club)
+        .eq('club', club.name)
         .select()
         .single();
 
@@ -267,13 +426,13 @@ app.delete('/delete/:id', async (req, res) => {
     }
     
     // Get user's club
-    const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('club')
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name')
         .eq('id', user.id)
         .single();
     
-    if (userError || !userData?.club) {
+    if (!club?.name) {
         return res.status(403).json({ error: 'No club associated with your account' });
     }
     
@@ -283,7 +442,7 @@ app.delete('/delete/:id', async (req, res) => {
         .from('shortcuts')
         .delete()
         .eq('id', id)
-        .eq('club', userData.club);
+        .eq('club', club.name);
 
     if (deleteError) {
         return res.status(500).json({ error: 'Error deleting shortcut' });
@@ -306,18 +465,18 @@ app.route('/linklist-manager').get(async (req, res) => {
         return res.redirect('/login');
     }
     
-    // Get user's club from users table
-    const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('club')
+    // Get user's club from clubs table
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name')
         .eq('id', user.id)
         .single();
     
-    if (userError || !userData?.club) {
+    if (!club?.name) {
         return res.status(403).render('404');
     }
     
-    res.render('linklist-manager', { user, clubName: userData.club });
+    res.render('linklist-manager', { user, clubName: club.name });
 });
 
 // Get links for a club (API endpoint)
@@ -355,13 +514,13 @@ app.post('/linklist/add', async (req, res) => {
     if (token) {
         const { data: { user }, error } = await supabase.auth.getUser(token);
         if (!error && user) {
-            const { data: userData, error: userError } = await supabase
-                .from('users')
-                .select('club')
+            const { data: userClub } = await supabase
+                .from('clubs')
+                .select('name')
                 .eq('id', user.id)
                 .single();
             
-            if (!userError && userData?.club && userData.club !== club) {
+            if (userClub?.name && userClub.name !== club) {
                 return res.status(403).json({ error: 'Unauthorized' });
             }
         }
@@ -403,13 +562,13 @@ app.delete('/linklist/:id', async (req, res) => {
     }
     
     // Get user's club
-    const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('club')
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name')
         .eq('id', user.id)
         .single();
     
-    if (userError || !userData?.club) {
+    if (!club?.name) {
         return res.status(403).json({ error: 'No club associated with your account' });
     }
     
@@ -427,7 +586,7 @@ app.delete('/linklist/:id', async (req, res) => {
             return res.status(404).json({ error: 'Link not found' });
         }
         
-        if (linkData.club !== userData.club) {
+        if (linkData.club !== club.name) {
             return res.status(403).json({ error: 'Unauthorized' });
         }
         
@@ -452,6 +611,13 @@ app.route('/linktree/:club').get(async (req, res) => {
     const { club } = req.params;
     
     try {
+        // Fetch club data including logo field
+        const { data: clubData, error: clubError } = await supabase
+            .from('clubs')
+            .select('logo')
+            .eq('name', club)
+            .single();
+        
         const { data: links, error } = await supabase
             .from('linklist')
             .select('*')
@@ -462,15 +628,18 @@ app.route('/linktree/:club').get(async (req, res) => {
             return res.render('404');
         }
         
-        // Check for logo file with common extensions
-        const logoExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp'];
-        let logoPath = null;
+        // Use logo from database if available, otherwise check for image file
+        let logoPath = clubData?.logo || null;
         
-        for (const ext of logoExtensions) {
-            const possiblePath = path.join(__dirname, 'views', 'logos', `${club}${ext}`);
-            if (fs.existsSync(possiblePath)) {
-                logoPath = `/logos/${club}-p${ext}`;
-                break;
+        // If no logo in database, check for image files in logos folder
+        if (!logoPath) {
+            const logoExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp'];
+            for (const ext of logoExtensions) {
+                const possiblePath = path.join(__dirname, 'views', 'logos', `${club}${ext}`);
+                if (fs.existsSync(possiblePath)) {
+                    logoPath = `/logos/${club}${ext}`;
+                    break;
+                }
             }
         }
         
