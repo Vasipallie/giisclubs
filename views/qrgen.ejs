@@ -737,17 +737,17 @@
                 <p class="section-subtitle" style="color: #666;">Preview and download your generated QR code</p>
                 
                 <div class="qr-output" id="qr-output">
-                    <div class="qr-icon">📱</div>
+                    <div class="qr-icon">QR</div>
                     <div class="qr-placeholder">Your QR code will appear here</div>
                     <p style="color: #999; font-size: 14px;">Enter content and click "Generate QR Code" to create your custom QR code</p>
                 </div>
                 
                 <div class="qr-actions" id="qr-actions" style="display: none;">
                     <button class="btn-secondary" onclick="downloadQR()">
-                        📥 Download PNG
+                        Download PNG
                     </button>
                     <button class="btn-secondary" onclick="downloadSVG()">
-                        📄 Download SVG
+                        Download SVG
                     </button>
                 </div>
             </div>
@@ -978,7 +978,7 @@
             };
             
             img.onerror = function() {
-                output.innerHTML = '<div style="color: #ff0000;">❌ Unable to generate QR code. Please check your internet connection.</div>';
+                output.innerHTML = '<div style="color: #ff0000;">Unable to generate QR code. Please check your internet connection.</div>';
                 showAlert('Failed to generate QR code. Please try again later.', 'error');
             };
         }

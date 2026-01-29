@@ -1044,7 +1044,7 @@
                 
                 <div class="create-section">
                     <h2 class="section-title">
-                        <span>🔗</span>
+                        <span>Link</span>
                         Create New Short Link
                     </h2>
                     
@@ -1067,7 +1067,7 @@
                 
                 <div class="links-section">
                     <h2 class="section-title">
-                        <span>📋</span>
+                        <span>Copy</span>
                         Your Short Links
                     </h2>
                     
@@ -1085,14 +1085,14 @@
                                     </div>
                                     <div class="destination-url"><%= link.link %></div>
                                     <div class="link-stats">
-                                        <span>👥 <%= link.visits || 0 %> visits</span>
-                                        <span>📅 <%= new Date(link.created_at).toLocaleDateString() %></span>
+                                        <span><%= link.visits || 0 %> visits</span>
+                                        <span><%= new Date(link.created_at).toLocaleDateString() %></span>
                                     </div>
                                 </div>
                             <% }) %>
                         <% } else { %>
                             <div class="empty-state">
-                                <div class="empty-icon">🔗</div>
+                                <div class="empty-icon">Links</div>
                                 <h3>No links yet</h3>
                                 <p>Create your first short link above to get started!</p>
                             </div>
