@@ -34,39 +34,8 @@ app.use(express.static(path.join(__dirname, 'views')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Multer configuration for image uploads
-const logoDir = path.join(__dirname, 'views', 'logos');
-const resourceDir = path.join(__dirname, 'views', 'resources');
-
-// Ensure directories exist
-if (!fs.existsSync(logoDir)) fs.mkdirSync(logoDir, { recursive: true });
-if (!fs.existsSync(resourceDir)) fs.mkdirSync(resourceDir, { recursive: true });
-
-const imageStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        if (file.fieldname === 'banner_upload') {
-            return cb(null, resourceDir);
-        }
-        return cb(null, logoDir);
-    },
-    filename: (req, file, cb) => {
-        // Get club name from req.clubName (set before multer)
-        const clubName = (req.clubName || 'club').trim();
-        const ext = path.extname(file.originalname).toLowerCase() || '.png';
-
-        console.log('Multer filename generation - clubName:', req.clubName, 'using:', clubName);
-
-        if (file.fieldname === 'banner_upload') {
-            return cb(null, `${clubName}${ext}`);
-        }
-
-        if (file.fieldname === 'logo_p_upload') {
-            return cb(null, `${clubName}${ext}`);
-        }
-
-        return cb(null, `${clubName}${ext}`);
-    }
-});
+// Multer configuration for image uploads (memory storage for serverless)
+const imageStorage = multer.memoryStorage();
 
 const uploadImages = multer({
     storage: imageStorage,
@@ -248,23 +217,47 @@ app.post('/manage-club', async (req, res, next) => {
                 link
             };
 
-            // If logo was uploaded, save the file path
+            const bucket = process.env.SUPABASE_BUCKET || 'club-assets';
+            const safeClubName = (club.name || 'club').trim().replace(/[\\/]/g, '-');
+
+            const uploadToStorage = async (file, folder) => {
+                const ext = path.extname(file.originalname).toLowerCase() || '.png';
+                const storagePath = `${folder}/${safeClubName}${ext}`;
+                const { error: uploadError } = await supabase.storage
+                    .from(bucket)
+                    .upload(storagePath, file.buffer, {
+                        contentType: file.mimetype,
+                        upsert: true
+                    });
+
+                if (uploadError) {
+                    throw uploadError;
+                }
+
+                const { data: publicUrlData } = supabase.storage
+                    .from(bucket)
+                    .getPublicUrl(storagePath);
+
+                return publicUrlData?.publicUrl || null;
+            };
+
+            // If logo was uploaded, save the file URL
             if (req.files && req.files.logo_p_upload && req.files.logo_p_upload.length > 0) {
                 const logoFile = req.files.logo_p_upload[0];
-                const logoPath = `/logos/${logoFile.filename}`;
-                updateData.logo = logoPath;
-                console.log('Logo uploaded:', logoPath);
+                const logoUrl = await uploadToStorage(logoFile, 'logos');
+                if (logoUrl) {
+                    updateData.logo = logoUrl;
+                }
             }
 
-            // If banner was uploaded, save the file path
+            // If banner was uploaded, save the file URL
             if (req.files && req.files.banner_upload && req.files.banner_upload.length > 0) {
                 const bannerFile = req.files.banner_upload[0];
-                const bannerPath = `/resources/${bannerFile.filename}`;
-                updateData.banner = bannerPath;
-                console.log('Banner uploaded:', bannerPath);
+                const bannerUrl = await uploadToStorage(bannerFile, 'resources');
+                if (bannerUrl) {
+                    updateData.banner = bannerUrl;
+                }
             }
-
-            console.log('Updating club with data:', updateData);
 
             // Update clubs table by user ID
             const { error: updateError } = await supabase
