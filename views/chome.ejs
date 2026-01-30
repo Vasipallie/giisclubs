@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> GIIS Clubs. | Home</title>
+    <title>GIIS Clubs | Dashboard</title>
     <link rel="icon" type="image/png" href="resources/1.png">
     <style>
         @font-face {
@@ -25,994 +25,464 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
-        body {
-            font-family: 'Garet', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #ffffff;
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+            --border: #e2e8f0;
+            --sidebar-width: 260px;
         }
         
-        /* Header */
-        .header {
-            background: #ffffff;
-            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
-            position: sticky;
+        body {
+            font-family: 'Garet', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--ink);
+            background-color: var(--surface-soft);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
             top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
             z-index: 1000;
         }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 24px;
-            gap: 16px;
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .logo-section {
+        .sidebar-logo {
+            height: 48px;
+            width: auto;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-soft);
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .sidebar-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .club-info {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .logo {
-            height: 52px;
-            width: auto;
-        }
-
-        .nav-links {
+        .club-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             display: flex;
             align-items: center;
-            gap: 28px;
-            list-style: none;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
         }
 
-        .nav-links a {
-            color: #1f2937;
-            text-decoration: none;
-            font-weight: 600;
+        .club-avatar-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .club-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .club-name {
             font-size: 14px;
-        }
-
-        .nav-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .cta-button {
-            background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 999px;
-            text-decoration: none;
             font-weight: 600;
-            font-size: 13px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(26, 35, 126, 0.25);
-        }
-        
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 120px 30px 80px;
-            position: relative;
+            color: var(--ink);
+            white-space: nowrap;
             overflow: hidden;
+            text-overflow: ellipsis;
         }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="%23ffffff" fill-opacity="0.05" points="0,1000 1000,0 1000,1000"/></svg>');
-            background-size: cover;
+
+        .club-status {
+            font-size: 12px;
+            color: var(--muted);
         }
-        
-        .hero-content {
-            max-width: 1000px;
-            position: relative;
-            z-index: 2;
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
         }
-        
-        .hero-tagline {
-            font-size: 72px;
-            font-weight: 900;
-            color: #1a237e;
-            margin-bottom: 30px;
-            letter-spacing: -2px;
-            line-height: 1.1;
+
+        .page-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 24px 32px;
         }
-        
-        .hero-subtitle {
-            font-size: 32px;
-            font-weight: 300;
-            color: #555;
-            margin-bottom: 50px;
-            line-height: 1.3;
-        }
-        
-        .hero-description {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 40px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
-            color: white;
-            padding: 18px 40px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            color: #1a237e;
-            border: 2px solid #1a237e;
-            padding: 16px 38px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(26, 35, 126, 0.3);
-        }
-        
-        .btn-secondary:hover {
-            background: #1a237e;
-            color: white;
-            transform: translateY(-3px);
-        }
-        
-        /* Stats Section */
-        .stats-section {
-            background: #ffffff;
-            padding: 100px 30px;
-            text-align: center;
-        }
-        
-        .stats-container {
+
+        .page-header-content {
             max-width: 1200px;
-            margin: 0 auto;
         }
-        
-        .stats-title {
-            font-size: 48px;
+
+        .page-title {
+            font-size: 24px;
             font-weight: 700;
-            color: #1a237e;
-            margin-bottom: 20px;
+            color: var(--ink);
+            margin-bottom: 4px;
         }
-        
-        .stats-subtitle {
-            font-size: 20px;
-            color: #666;
-            margin-bottom: 60px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--muted);
         }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
-        }
-        
-        .stat-item {
-            text-align: center;
-            padding: 30px;
-            border-radius: 15px;
-            background: #f8f9ff;
-            transition: all 0.3s ease;
-        }
-        
-        .stat-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        }
-        
-        .stat-number {
-            font-size: 48px;
-            font-weight: 900;
-            color: #1a237e;
-            margin-bottom: 10px;
-            display: block;
-        }
-        
-        .stat-label {
-            font-size: 16px;
-            color: #555;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        /* Content Sections */
-        .content-section {
-            padding: 100px 30px;
-        }
-        
-        .content-section.alt {
-            background: #f8f9ff;
-        }
-        
-        .section-container {
+
+        .content-area {
+            padding: 32px;
             max-width: 1200px;
-            margin: 0 auto;
         }
-        
+
         .section-title {
-            font-size: 42px;
-            font-weight: 700;
-            color: #1a237e;
-            text-align: center;
-            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 16px;
         }
-        
-        .section-subtitle {
-            font-size: 20px;
-            color: #666;
-            text-align: center;
-            margin-bottom: 60px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
+
         /* Cards Grid */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-top: 60px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
         }
-        
+
         .card {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border: 1px solid #f0f0f0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
-        
+
         .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
         }
-        
-        .card-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1a237e;
-            margin-bottom: 15px;
-        }
-        
-        .card-category {
-            font-size: 14px;
-            color: #3f51b5;
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-        }
-        
-        .card-description {
-            color: #666;
-            line-height: 1.7;
-            margin-bottom: 20px;
-        }
-        
-        .card-meta {
-            color: #999;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        /* Dashboard Specific Styles */
-        .hero {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: rgba(37, 99, 235, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 120px 30px 80px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="%23ffffff" fill-opacity="0.05" points="0,1000 1000,0 1000,1000"/></svg>');
-            background-size: cover;
-        }
-        
-        .hero-content {
-            max-width: 1000px;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .hero-tagline {
-            font-size: 72px;
-            font-weight: 900;
-            color: #1a237e;
-            margin-bottom: 30px;
-            letter-spacing: -2px;
-            line-height: 1.1;
-        }
-        
-        .hero-subtitle {
-            font-size: 32px;
-            font-weight: 300;
-            color: #555;
-            margin-bottom: 50px;
-            line-height: 1.3;
-        }
-        
-        .hero-description {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 40px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
-        }
-        
-        /* Footer */
-        .footer {
-            background: #1a237e;
-            color: white;
-            padding: 60px 30px 30px;
-        }
-        
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .footer-section h3 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: white;
-        }
-        
-        .footer-section a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            display: block;
-            margin-bottom: 10px;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-section a:hover {
-            color: white;
-        }
-        
-        .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding-top: 30px;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: white;
-        }
-        
-        /* Mobile Menu */
-        .mobile-menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #333;
-            cursor: pointer;
-            padding: 8px;
-        }
-        
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .hero-tagline {
-                font-size: 36px;
-            }
-            
-            .hero-subtitle {
-                font-size: 20px;
-            }
-            
-            .section-title {
-                font-size: 32px;
-            }
-            
-            .stats-title {
-                font-size: 36px;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn-primary, .btn-secondary {
-                width: 100%;
-                max-width: 300px;
-            }
-            
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-links {
-                flex-direction: column;
-                gap: 15px;
-            }
-        }
-        
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .animate-in {
-            animation: fadeInUp 0.6s ease-out;
+            margin-bottom: 16px;
         }
 
-        /* Friendly refresh */
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --accent: #22c55e;
-            --ink: #0f172a;
-            --muted: #55617a;
-            --surface: #ffffff;
-            --surface-soft: #f3f6fb;
-            --border: #e4e8f0;
-            --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+        .card-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--primary);
+            stroke-width: 2;
+            fill: none;
         }
 
-        body {
-            background-color: var(--surface-soft);
-            color: var(--ink);
-        }
-
-        .header {
-            background: rgba(255, 255, 255, 0.92);
-            border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(12px);
-        }
-
-        .logo-text {
-            color: var(--ink);
-        }
-
-        .nav-links a {
-            color: var(--ink);
-            font-weight: 600;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
-            transform: translateY(-1px);
-        }
-
-        .nav-links a::after {
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            height: 3px;
-        }
-
-        .cta-button, .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            box-shadow: var(--shadow);
-            border-radius: 14px;
-        }
-
-        .cta-button:hover, .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 16px 32px rgba(37, 99, 235, 0.28);
-        }
-
-        .btn-secondary {
-            border-color: var(--primary);
-            color: var(--primary);
-            border-radius: 14px;
-        }
-
-        .btn-secondary:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .hero-content-wrapper, .glass-panel {
-            background: rgba(255, 255, 255, 0.86);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-        }
-
-        .hero-tagline {
-            color: var(--ink);
-        }
-
-        .hero-subtitle, .hero-description {
-            color: var(--muted);
-        }
-
-        .section-title {
-            color: var(--ink);
-        }
-
-        .section-subtitle {
-            color: var(--muted);
-        }
-
-        .card, .stat-item, .feature-card, .info-card, .panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            border-radius: 18px;
-        }
-
-        .card:hover, .feature-card:hover, .info-card:hover, .panel:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.14);
-        }
-
-        .card-description, .stat-label, .body-text, .form-helper {
-            color: var(--muted);
-        }
-
-        .footer {
-            background: #0f172a;
-        }
-
-        .footer a:hover {
-            color: white;
-        }
-
-        /* Enhanced Form Elements */
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        input[type="url"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-family: inherit;
+        .card-title {
             font-size: 16px;
-            transition: all 0.3s ease;
-            background-color: var(--surface);
+            font-weight: 600;
             color: var(--ink);
+            margin-bottom: 8px;
         }
 
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus,
-        input[type="url"]:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-            background-color: var(--surface);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 120px;
+        .card-description {
+            font-size: 14px;
+            color: var(--muted);
             line-height: 1.5;
         }
 
-        label {
-            display: block;
-            margin-bottom: 10px;
+        .card-action {
+            margin-top: 16px;
+            font-size: 13px;
             font-weight: 600;
-            color: var(--ink);
-            font-size: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 22px;
-        }
-
-        /* Button Enhancements */
-        button,
-        [type="button"],
-        [type="submit"],
-        [type="reset"] {
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            padding: 14px 24px;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        /* Link Styling */
-        a {
             color: var(--primary);
-            text-decoration: none;
-            transition: color 0.3s ease;
         }
 
-        a:hover {
-            color: var(--primary-dark);
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1001;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Section Spacing */
-        .content-section {
-            padding: 80px 30px;
+        .mobile-toggle svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--ink);
+            stroke-width: 2;
+            fill: none;
         }
 
-        /* Improved Typography */
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.5px;
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
         }
 
-        p {
-            line-height: 1.7;
-        }
-        /* Disable hover animations */
-        *, *::before, *::after {
-            transition: none !important;
-            animation: none !important;
-        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
 
-        *:hover {
-            transform: none !important;
-            box-shadow: none !important;
-            filter: none !important;
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-toggle {
+                display: flex;
+            }
+
+            .page-header {
+                padding: 24px 16px;
+                padding-top: 72px;
+            }
+
+            .content-area {
+                padding: 24px 16px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="nav-container">
-            <a href="/home" class="logo-section">
-                <img src="resources/2.png" alt="GIIS Clubs" class="logo">
+    <!-- Mobile Toggle -->
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="/home">
+                <img src="resources/2.png" alt="GIIS Clubs" class="sidebar-logo">
             </a>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="/home">Dashboard</a></li>
-                    <li><a href="/linklist-manager">Linktree Manager</a></li>
-                    <li><a href="/shorten">Shorten Links</a></li>
-                    <li><a href="/qrcode">QR Generator</a></li>
-                </ul>
-            </nav>
-            <div class="nav-actions">
-                <a href="/home" class="cta-button">Back to Dashboard</a>
-            </div>
         </div>
-    </header>
 
-    <main>
-        <!-- Dashboard Header -->
-        <section class="hero" style="min-height: 60vh; padding: 100px 30px 60px;">
-            <div class="hero-content">
-                <h1 class="hero-tagline" style="font-size: 48px;">Welcome Back<%= clubName ? ' ' + clubName : '' %>!</h1>
-                <p class="hero-subtitle" style="font-size: 24px;">Your Club Management Dashboard</p>
-                <p class="hero-description">
-                    Access all your club management tools from one convenient location.
-                </p>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <a href="/home" class="nav-link active">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Dashboard
+                </a>
+                <a href="/explore" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Explore Clubs
+                </a>
             </div>
-        </section>
 
-        <!-- Quick Actions Cards -->
-        <section class="content-section">
-            <div class="section-container">
-                <h2 class="section-title">Quick Actions</h2>
-                <p class="section-subtitle">
-                    Everything you need to manage your club's digital presence
-                </p>
-                
-                <div class="cards-grid">
-                    <div class="card">
-                        <div class="card-category">Link Management</div>
-                        <h3 class="card-title">URL Shortener</h3>
-                        <p class="card-description">
-                            Create and manage shortened links for your club's social media, events, and communications.
-                        </p>
-                        <div class="card-meta">
-                            <a href="/shorten" style="color: #1a237e; font-weight: 600; text-decoration: none;">Manage Links →</a>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="card-category">QR Codes</div>
-                        <h3 class="card-title">QR Generator</h3>
-                        <p class="card-description">
-                            Generate professional QR codes for events, membership drives, and quick access to resources.
-                        </p>
-                        <div class="card-meta">
-                            <a href="/qrgen" style="color: #1a237e; font-weight: 600; text-decoration: none;">Generate QR Codes →</a>
-                        </div>
-                    </div>
-                    <!-- 
-                    <div class="card">
-                        <div class="card-category">Link Tree</div>
-                        <h3 class="card-title">Club Links</h3>
-                        <p class="card-description">
-                            Create a centralized hub for all your club's important links and social media profiles.
-                        </p>
-                        <div class="card-meta">
-                            <a href="/clublinks" style="color: #1a237e; font-weight: 600; text-decoration: none;">Manage Link Tree →</a>
-                        </div>
-                    </div>
-                     -->
-                    <div class="card">
-                        <div class="card-category">Club Profile</div>
-                        <h3 class="card-title">Manage Club</h3>
-                        <p class="card-description">
-                            Edit your club profile, update descriptions, and manage your branding assets.
-                        </p>
-                        <div class="card-meta">
-                            <a href="/manage-club" style="color: #1a237e; font-weight: 600; text-decoration: none;">Manage Profile →</a>
-                        </div>
-                    </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Tools</div>
+                <a href="/shorten" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                    URL Shortener
+                </a>
+                <a href="/qrgen" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    QR Generator
+                </a>
+                <a href="/linklist-manager" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    Linktree Manager
+                </a>
+                <a href="/linklist-manager" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
+                    Upload Event Proposal
+                </a>
+                <a href="/linklist-manager" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                    Upload Club Receipts
+                </a>
+            </div>
 
-                    <div class="card">
-                        <div class="card-category">Link Tree</div>
-                        <h3 class="card-title">Linktree Manager</h3>
-                        <p class="card-description">
-                            Create and manage a centralized hub for all your club's important links and resources.
-                        </p>
-                        <div class="card-meta">
-                            <a href="/linklist-manager" style="color: #1a237e; font-weight: 600; text-decoration: none;">Manage Links →</a>
-                        </div>
-                    </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <a href="/manage-club" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    Manage Club
+                </a>
+            </div>
+        </nav>
 
-                    <div class="card">
-                        <div class="card-category">Discovery</div>
-                        <h3 class="card-title">Explore Clubs</h3>
-                        <p class="card-description">
-                            Browse other registered clubs and organizations to discover collaboration opportunities.
-                        </p>
-                        <div class="card-meta">
-                            <a href="/explore" style="color: #1a237e; font-weight: 600; text-decoration: none;">Explore Clubs →</a>
-                        </div>
-                    </div>
+        <div class="sidebar-footer">
+            <div class="club-info">
+                <% if (clubLogo) { %>
+                    <img src="<%= clubLogo %>" alt="Club Logo" class="club-avatar-img">
+                <% } else { %>
+                    <div class="club-avatar"><%= clubName ? clubName.charAt(0).toUpperCase() : 'C' %></div>
+                <% } %>
+                <div class="club-details">
+                    <div class="club-name"><%= clubName || 'Your Club' %></div>
+                    <div class="club-status">Active</div>
                 </div>
             </div>
-        </section>
+        </div>
+    </aside>
 
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <div class="page-header-content">
+                <h1 class="page-title">Welcome back<%= clubName ? ', ' + clubName : '' %>!</h1>
+                <p class="page-subtitle">Manage your club's digital presence from one place</p>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="cards-grid">
+                <a href="/shorten" class="card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                    </div>
+                    <h3 class="card-title">URL Shortener</h3>
+                    <p class="card-description">Create and manage shortened links for your club's social media, events, and communications.</p>
+                    <div class="card-action">Manage Links</div>
+                </a>
+
+                <a href="/qrgen" class="card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    </div>
+                    <h3 class="card-title">QR Generator</h3>
+                    <p class="card-description">Generate professional QR codes for events, membership drives, and quick access to resources.</p>
+                    <div class="card-action">Generate QR Codes</div>
+                </a>
+
+                <a href="/linklist-manager" class="card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    </div>
+                    <h3 class="card-title">Linktree Manager</h3>
+                    <p class="card-description">Create and manage a centralized hub for all your club's important links and resources.</p>
+                    <div class="card-action">Manage Linktree</div>
+                </a>
+
+                <a href="/manage-club" class="card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    </div>
+                    <h3 class="card-title">Manage Club</h3>
+                    <p class="card-description">Edit your club profile, update descriptions, and manage your branding assets.</p>
+                    <div class="card-action">Manage Profile</div>
+                </a>
+
+                <a href="/explore" class="card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </div>
+                    <h3 class="card-title">Explore Clubs</h3>
+                    <p class="card-description">Browse other registered clubs and organizations to discover collaboration opportunities.</p>
+                    <div class="card-action">Explore Now</div>
+                </a>
+            </div>
+        </div>
     </main>
 
-
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-content">
-                    <img src="resources/3.png" alt="GIIS Clubs" class="logo" style="height: 200px; width: auto;">
-                <div class="footer-section">
-                    <h3>GIIS Clubs</h3>
-                    <p>Your gateway to vibrant student organizations at Global Indian International School. Discover, join, and lead clubs that ignite your passions and enhance your campus life.</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <a href="/">Home</a>
-                    <a href="/explore">Explore</a>
-                    <a href="/club-index">Register Club</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025-26 GIIS Clubs. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
     <script>
-        // Mobile navigation toggle
-        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-        const mobileNav = document.querySelector('.mobile-nav');
-        const mobileNavClose = document.querySelector('.mobile-nav-close');
-
-        function toggleMobileNav() {
-            mobileNav.classList.toggle('active');
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.querySelector('.sidebar-overlay').classList.toggle('open');
         }
-        
-        function closeMobileNav() {
-            mobileNav.classList.remove('active');
-        }
-
-        mobileMenuToggle?.addEventListener('click', toggleMobileNav);
-        mobileNavClose?.addEventListener('click', closeMobileNav);
-
-        // Close mobile nav when clicking on a link
-        document.querySelectorAll('.mobile-nav-links a').forEach(link => {
-            link.addEventListener('click', closeMobileNav);
-        });
-
-        // Close mobile nav when clicking outside (optional)
-        document.addEventListener('click', (e) => {
-            if (!mobileNav?.contains(e.target) && !mobileMenuToggle?.contains(e.target)) {
-                closeMobileNav();
-            }
-        });
-
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Header scroll effect
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('.header');
-            if (window.scrollY > 100) {
-                header.style.boxShadow = '0 2px 30px rgba(0, 0, 0, 0.15)';
-            } else {
-                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-            }
-        });
-
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-in');
-                }
-            });
-        }, observerOptions);
-
-        // Observe elements for animation
-        document.querySelectorAll('.stat-item, .card, .section-title').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Dashboard Statistics Loading
-        async function loadDashboardStats() {
-            try {
-                // For now, show placeholder data. Later this can be connected to actual APIs
-                const stats = {
-                    links: Math.floor(Math.random() * 50) + 10,
-                    qrCodes: Math.floor(Math.random() * 30) + 5,
-                    clicks: Math.floor(Math.random() * 500) + 100,
-                    treeLinks: Math.floor(Math.random() * 20) + 3
-                };
-
-                // Animate the numbers counting up
-                animateCounter('links-count', stats.links);
-                animateCounter('qr-count', stats.qrCodes);
-                animateCounter('clicks-count', stats.clicks);
-                animateCounter('tree-links', stats.treeLinks);
-            } catch (error) {
-                console.error('Error loading dashboard stats:', error);
-                // Show default values if there's an error
-                document.getElementById('links-count').textContent = '0';
-                document.getElementById('qr-count').textContent = '0';
-                document.getElementById('clicks-count').textContent = '0';
-                document.getElementById('tree-links').textContent = '0';
-            }
-        }
-
-        function animateCounter(elementId, targetValue) {
-            const element = document.getElementById(elementId);
-            const duration = 2000; // 2 seconds
-            const start = Date.now();
-            const startValue = 0;
-
-            function updateCounter() {
-                const now = Date.now();
-                const progress = Math.min((now - start) / duration, 1);
-                const currentValue = Math.floor(progress * targetValue);
-                element.textContent = currentValue.toLocaleString();
-
-                if (progress < 1) {
-                    requestAnimationFrame(updateCounter);
-                }
-            }
-
-            updateCounter();
-        }
-
-        // Load stats when page loads
-        window.addEventListener('load', loadDashboardStats);
     </script>
-    
 </body>
 </html>

@@ -170,11 +170,11 @@ app.route('/home').get(async (req, res) => {
     }
     const { data: club } = await supabase
         .from('clubs')
-        .select('name')
+        .select('name, logo')
         .eq('id', user.id)
         .single();
 
-    res.render('chome', { user, clubName: club?.name || '' });
+    res.render('chome', { user, clubName: club?.name || '', clubLogo: club?.logo || '' });
 });
 
 app.route('/explore').get(async (req, res) => {
