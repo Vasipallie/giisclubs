@@ -63,11 +63,15 @@ app.route('/signup').get(async (req, res) => {
 
 app.post('/signup', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, clubName, description } = req.body;
 
         // Validate input
         if (!email || !password) {
             return res.status(400).json({ error: 'Email and password are required' });
+        }
+
+        if (!clubName || !description) {
+            return res.status(400).json({ error: 'Club name and description are required' });
         }
 
         // Validate password requirements
@@ -83,16 +87,45 @@ app.post('/signup', async (req, res) => {
             return res.status(400).json({ error: 'Password must contain at least one number' });
         }
 
+        // Check if club name already exists
+        const { data: existingClub } = await supabase
+            .from('clubs')
+            .select('id')
+            .eq('name', clubName)
+            .single();
+
+        if (existingClub) {
+            return res.status(400).json({ error: 'A club with this name already exists' });
+        }
+
         // Create user
-        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+        const { data: authData, error: authError } = await supabase.auth.signUp({
             email,
             password,
-            email_confirm: true
+            options: {
+                data: {
+                    clubName: clubName
+                }
+            }
         });
 
         if (authError) {
             console.error('Auth error:', authError);
             return res.status(400).json({ error: authError.message || 'Failed to create account' });
+        }
+
+        // Create club entry with user's UUID
+        const { error: clubError } = await supabase
+            .from('clubs')
+            .insert({
+                id: authData.user.id,
+                name: clubName,
+                description: description
+            });
+
+        if (clubError) {
+            console.error('Club creation error:', clubError);
+            return res.status(400).json({ error: 'Failed to create club. Please try again.' });
         }
 
         res.json({ 

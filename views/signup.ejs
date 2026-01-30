@@ -215,6 +215,16 @@
 
             <form id="signupForm">
                 <div class="form-group">
+                    <label for="clubName">Club Name *</label>
+                    <input type="text" id="clubName" name="clubName" placeholder="Enter your club name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Club Description *</label>
+                    <textarea id="description" name="description" placeholder="Describe your club..." required style="padding: 12px 14px; border-radius: 12px; border: 1px solid #e5e7eb; font-size: 14px; font-family: inherit; min-height: 100px; resize: vertical;"></textarea>
+                </div>
+
+                <div class="form-group">
                     <label for="email">Email Address *</label>
                     <input type="email" id="email" name="email" placeholder="your@email.com" required>
                 </div>
@@ -252,9 +262,22 @@
         document.getElementById('signupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            const clubName = document.getElementById('clubName').value.trim();
+            const description = document.getElementById('description').value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validate club fields
+            if (!clubName) {
+                showError('Club name is required');
+                return;
+            }
+
+            if (!description) {
+                showError('Club description is required');
+                return;
+            }
 
             // Validate password requirements
             if (password.length < 8) {
@@ -286,7 +309,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ email, password, clubName, description })
                 });
 
                 const data = await response.json();
