@@ -56,6 +56,56 @@ app.route('/').get(async (req, res) => {
 app.route('/login').get(async (req, res) => {
     res.render('login');
 })
+
+app.route('/signup').get(async (req, res) => {
+    res.render('signup', { error: null, success: null });
+});
+
+app.post('/signup', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Validate input
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required' });
+        }
+
+        // Validate password requirements
+        if (password.length < 8) {
+            return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+        }
+
+        if (!/[A-Z]/.test(password)) {
+            return res.status(400).json({ error: 'Password must contain at least one uppercase letter' });
+        }
+
+        if (!/[0-9]/.test(password)) {
+            return res.status(400).json({ error: 'Password must contain at least one number' });
+        }
+
+        // Create user
+        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+            email,
+            password,
+            email_confirm: true
+        });
+
+        if (authError) {
+            console.error('Auth error:', authError);
+            return res.status(400).json({ error: authError.message || 'Failed to create account' });
+        }
+
+        res.json({ 
+            success: true, 
+            message: 'Account created successfully. You can now log in.'
+        });
+
+    } catch (error) {
+        console.error('Error creating account:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.post('/login', (req, res) => {
     const loginemail = req.body.loginemail;
     const loginpassword = req.body.loginpassword;
@@ -754,122 +804,6 @@ app.route('/linktree/:club').get(async (req, res) => {
     } catch (error) {
         console.error('Error:', error);
         res.render('404');
-    }
-});
-
-// Create Club routes (admin only)
-app.route('/create-club').get(async (req, res) => {
-    const token = req.cookies.token;
-    if (!token) {
-        return res.redirect('/login');
-    }
-
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (error || !user) {
-        return res.redirect('/login');
-    }
-
-    // Check if user is admin (has existing club or is designated admin)
-    const { data: club } = await supabase
-        .from('clubs')
-        .select('id')
-        .eq('id', user.id)
-        .single();
-
-    // Allow admins (those with clubs) to create new clubs
-    if (!club) {
-        return res.status(403).render('404');
-    }
-
-    res.render('create-club');
-});
-
-app.post('/create-club', async (req, res) => {
-    try {
-        const token = req.cookies.token;
-        if (!token) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-
-        const { data: { user }, error } = await supabase.auth.getUser(token);
-        if (error || !user) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-
-        // Check if user is admin (has existing club)
-        const { data: adminClub } = await supabase
-            .from('clubs')
-            .select('id')
-            .eq('id', user.id)
-            .single();
-
-        if (!adminClub) {
-            return res.status(403).json({ error: 'Only admins can create clubs' });
-        }
-
-        const { name, description, link_text, link } = req.body;
-
-        if (!name || !description) {
-            return res.status(400).json({ error: 'Club name and description are required' });
-        }
-
-        // Check if club name already exists
-        const { data: existingClub } = await supabase
-            .from('clubs')
-            .select('id')
-            .eq('name', name)
-            .single();
-
-        if (existingClub) {
-            return res.status(409).json({ error: 'A club with this name already exists' });
-        }
-
-        // Create a new user account for the club (using club name as email)
-        const clubEmail = `${name.toLowerCase().replace(/\s+/g, '.')}@giisclubs.local`;
-        const clubPassword = Math.random().toString(36).slice(-12); // Random password
-
-        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-            email: clubEmail,
-            password: clubPassword,
-            email_confirm: true
-        });
-
-        if (authError) {
-            console.error('Auth error:', authError);
-            return res.status(500).json({ error: 'Failed to create club account' });
-        }
-
-        // Create club entry in database with the new user ID
-        const { data: newClub, error: clubError } = await supabase
-            .from('clubs')
-            .insert({
-                id: authData.user.id,
-                name,
-                description,
-                link_text: link_text || null,
-                link: link || null,
-                logo: null,
-                banner: null
-            })
-            .select()
-            .single();
-
-        if (clubError) {
-            console.error('Club creation error:', clubError);
-            // Try to delete the created user if club creation fails
-            await supabase.auth.admin.deleteUser(authData.user.id);
-            return res.status(500).json({ error: 'Failed to create club' });
-        }
-
-        res.json({ 
-            success: true, 
-            message: 'Club created successfully',
-            club: newClub
-        });
-
-    } catch (error) {
-        console.error('Error creating club:', error);
-        res.status(500).json({ error: error.message });
     }
 });
 
