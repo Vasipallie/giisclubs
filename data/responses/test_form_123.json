@@ -1,0 +1,37 @@
+[
+  {
+    "id": "resp_1770028051149_mbl010",
+    "data": {
+      "field_f1": "John Doe",
+      "field_f2": "john@example.com",
+      "field_f3": "Option A",
+      "field_f4": [
+        "Check 1",
+        "Check 2"
+      ],
+      "field_f5": "4"
+    },
+    "submittedAt": "2026-02-02T10:27:31.149Z"
+  },
+  {
+    "id": "resp_1770028065986_wuddre",
+    "data": {
+      "field_f1": "Jane Smith",
+      "field_f2": "jane@test.com",
+      "field_f3": "Option B",
+      "field_f4": [
+        "Check 3"
+      ],
+      "field_f5": "5"
+    },
+    "submittedAt": "2026-02-02T10:27:45.986Z"
+  },
+  {
+    "id": "resp_1770028268673_ol6p9s",
+    "data": {
+      "field_f1": "Test User",
+      "field_f2": "test@test.com"
+    },
+    "submittedAt": "2026-02-02T10:31:08.673Z"
+  }
+]

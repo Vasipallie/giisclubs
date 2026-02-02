@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Builder | GIIS Clubs</title>
+    <link rel="icon" type="image/png" href="/resources/1.png">
+    <style>
+        @font-face {
+            font-family: 'Garet';
+            src: url('/fonts/GaretR.otf') format('opentype');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Garet';
+            src: url('/fonts/GaretH.otf') format('opentype');
+            font-weight: 700;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Garet', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .logo { height: 40px; }
+        .form-title-input {
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 6px;
+            min-width: 200px;
+            background: transparent;
+            font-family: inherit;
+        }
+        .form-title-input:hover, .form-title-input:focus {
+            background: #f5f5f5;
+            outline: none;
+        }
+        .header-actions { display: flex; gap: 10px; }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-family: inherit;
+        }
+        .btn svg { width: 18px; height: 18px; }
+        .btn-secondary { background: #f0f0f0; color: #333; }
+        .btn-secondary:hover { background: #e0e0e0; }
+        .btn-primary { background: linear-gradient(135deg, #1a237e, #3f51b5); color: #fff; }
+        .btn-primary:hover { opacity: 0.9; }
+        .main-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+            gap: 24px;
+        }
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+        .sidebar-panel {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .field-types {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .field-type-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 8px;
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            color: #555;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+        .field-type-btn:hover {
+            border-color: #1a237e;
+            background: #f0f4ff;
+            color: #1a237e;
+        }
+        .field-type-btn svg { width: 20px; height: 20px; stroke-width: 2; }
+        .canvas-area { flex: 1; min-width: 0; }
+        .form-canvas {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            min-height: 600px;
+        }
+        .canvas-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid #eee;
+        }
+        .canvas-header textarea {
+            width: 100%;
+            border: none;
+            resize: none;
+            font-family: inherit;
+            font-size: 14px;
+            color: #666;
+            padding: 8px 0;
+            outline: none;
+        }
+        .fields-list {
+            padding: 16px 24px 24px;
+            min-height: 400px;
+        }
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px;
+            color: #999;
+            text-align: center;
+        }
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            stroke: #ccc;
+            margin-bottom: 16px;
+        }
+        .field-item {
+            background: #fafafa;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+        }
+        .field-item:hover { border-color: #1a237e; }
+        .field-item.selected {
+            border-color: #1a237e;
+            background: #f8f9ff;
+            box-shadow: 0 0 0 3px rgba(26,35,126,0.1);
+        }
+        .field-item.dragging { opacity: 0.5; }
+        .field-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .field-type-tag {
+            background: linear-gradient(135deg, #1a237e, #3f51b5);
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .field-actions {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .field-item:hover .field-actions { opacity: 1; }
+        .field-action-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        .field-action-btn:hover { background: #eee; }
+        .field-action-btn.delete:hover { background: #ffe5e5; color: #d32f2f; }
+        .field-action-btn svg { width: 16px; height: 16px; }
+        .field-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        .field-label .required { color: #d32f2f; margin-left: 2px; }
+        .field-preview {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 13px;
+            color: #999;
+        }
+        .field-preview.options {
+            background: transparent;
+            border: none;
+            padding: 4px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .preview-option {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #666;
+        }
+        .properties-panel { width: 300px; flex-shrink: 0; }
+        .props-panel {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 80px;
+        }
+        .props-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .props-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        .props-empty svg {
+            width: 40px;
+            height: 40px;
+            stroke: #ccc;
+            margin-bottom: 12px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .prop-group { margin-bottom: 16px; }
+        .prop-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .prop-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .prop-input:focus { outline: none; border-color: #1a237e; }
+        .prop-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .prop-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: #1a237e;
+        }
+        .options-editor { display: flex; flex-direction: column; gap: 8px; }
+        .option-row { display: flex; gap: 6px; }
+        .option-row input {
+            flex: 1;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        .option-row input:focus { outline: none; border-color: #1a237e; }
+        .option-remove {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #fee;
+            color: #d32f2f;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .option-remove:hover { background: #fdd; }
+        .add-option-btn {
+            padding: 8px;
+            background: #f5f5f5;
+            border: 1px dashed #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            font-family: inherit;
+        }
+        .add-option-btn:hover { background: #eee; border-color: #999; }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #333;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background: #2e7d32; }
+        .toast.error { background: #c62828; }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+        }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 450px;
+            transform: scale(0.95);
+            transition: transform 0.2s;
+        }
+        .modal-overlay.show .modal { transform: scale(1); }
+        .modal h3 { font-size: 18px; margin-bottom: 8px; }
+        .modal p { color: #666; font-size: 14px; margin-bottom: 16px; }
+        .share-url { display: flex; gap: 8px; }
+        .share-url input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #f9f9f9;
+            font-family: inherit;
+        }
+        .share-url button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #1a237e, #3f51b5);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .modal-close {
+            margin-top: 16px;
+            width: 100%;
+            padding: 12px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+        }
+        .modal-close:hover { background: #e5e5e5; }
+        @media (max-width: 1024px) {
+            .main-container { flex-direction: column; }
+            .sidebar, .properties-panel { width: 100%; }
+            .field-types { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .field-types { grid-template-columns: repeat(2, 1fr); }
+            .header { flex-direction: column; gap: 12px; padding: 12px; }
+            .main-container { padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="/home"><img src="/resources/2.png" alt="GIIS Clubs" class="logo"></a>
+            <input type="text" class="form-title-input" id="formTitle" placeholder="Untitled Form" value="<%= typeof form !== 'undefined' && form ? form.title : '' %>">
+        </div>
+        <div class="header-actions">
+            <a href="/forms" class="btn btn-secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back
+            </a>
+            <button class="btn btn-secondary" onclick="previewForm()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Preview
+            </button>
+            <button class="btn btn-primary" onclick="saveForm()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-panel">
+                <div class="sidebar-title">Add Fields</div>
+                <div class="field-types">
+                    <button class="field-type-btn" onclick="addField('text')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+                        Text
+                    </button>
+                    <button class="field-type-btn" onclick="addField('textarea')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10M7 12h10M7 17h6"/></svg>
+                        Paragraph
+                    </button>
+                    <button class="field-type-btn" onclick="addField('email')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
+                        Email
+                    </button>
+                    <button class="field-type-btn" onclick="addField('number')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/></svg>
+                        Number
+                    </button>
+                    <button class="field-type-btn" onclick="addField('phone')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                        Phone
+                    </button>
+                    <button class="field-type-btn" onclick="addField('date')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                        Date
+                    </button>
+                    <button class="field-type-btn" onclick="addField('select')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg>
+                        Dropdown
+                    </button>
+                    <button class="field-type-btn" onclick="addField('radio')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+                        Choice
+                    </button>
+                    <button class="field-type-btn" onclick="addField('checkbox')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
+                        Checkbox
+                    </button>
+                    <button class="field-type-btn" onclick="addField('rating')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        Rating
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas-area">
+            <div class="form-canvas">
+                <div class="canvas-header">
+                    <textarea id="formDescription" placeholder="Add a description for your form..." rows="2"><%= typeof form !== 'undefined' && form ? form.description : '' %></textarea>
+                </div>
+                <div class="fields-list" id="fieldsList"></div>
+            </div>
+        </div>
+
+        <div class="properties-panel">
+            <div class="props-panel">
+                <div class="props-title">Field Properties</div>
+                <div id="propsContent">
+                    <div class="props-empty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                        <p>Select a field to edit</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="shareModal">
+        <div class="modal">
+            <h3>Share Form</h3>
+            <p>Copy this link to share your form:</p>
+            <div class="share-url">
+                <input type="text" id="shareUrl" readonly>
+                <button onclick="copyShareUrl()">Copy</button>
+            </div>
+            <button class="modal-close" onclick="closeShareModal()">Close</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let fields = [];
+        let selectedIdx = null;
+        let formId = '<%= typeof form !== "undefined" && form ? form.id : "" %>';
+        const clubName = '<%= typeof clubName !== "undefined" ? clubName : "" %>';
+
+        <% if (typeof form !== 'undefined' && form && form.fields) { %>
+        try { fields = <%- JSON.stringify(form.fields) %>; } catch(e) { fields = []; }
+        <% } %>
+
+        const fieldDefaults = {
+            text: { label: 'Text Question', placeholder: 'Your answer', required: false },
+            textarea: { label: 'Paragraph Question', placeholder: 'Your detailed answer', required: false },
+            email: { label: 'Email Address', placeholder: 'email@example.com', required: false },
+            number: { label: 'Number', placeholder: '0', required: false },
+            phone: { label: 'Phone Number', placeholder: '+1234567890', required: false },
+            date: { label: 'Date', required: false },
+            select: { label: 'Dropdown Question', options: ['Option 1', 'Option 2', 'Option 3'], required: false },
+            radio: { label: 'Multiple Choice', options: ['Option 1', 'Option 2', 'Option 3'], required: false },
+            checkbox: { label: 'Checkboxes', options: ['Option 1', 'Option 2', 'Option 3'], required: false },
+            rating: { label: 'Rating', maxRating: 5, required: false }
+        };
+
+        const typeLabels = {
+            text: 'Text', textarea: 'Paragraph', email: 'Email', number: 'Number',
+            phone: 'Phone', date: 'Date', select: 'Dropdown', radio: 'Choice',
+            checkbox: 'Checkbox', rating: 'Rating'
+        };
+
+        function addField(type) {
+            const field = {
+                id: 'f_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                type: type,
+                ...JSON.parse(JSON.stringify(fieldDefaults[type]))
+            };
+            fields.push(field);
+            selectedIdx = fields.length - 1;
+            render();
+        }
+
+        function deleteField(idx) {
+            fields.splice(idx, 1);
+            if (selectedIdx === idx) selectedIdx = null;
+            else if (selectedIdx !== null && selectedIdx > idx) selectedIdx--;
+            render();
+        }
+
+        function duplicateField(idx) {
+            const copy = JSON.parse(JSON.stringify(fields[idx]));
+            copy.id = 'f_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+            fields.splice(idx + 1, 0, copy);
+            selectedIdx = idx + 1;
+            render();
+        }
+
+        function selectField(idx) {
+            selectedIdx = idx;
+            render();
+        }
+
+        function updateField(prop, value) {
+            if (selectedIdx !== null && fields[selectedIdx]) {
+                fields[selectedIdx][prop] = value;
+                renderFields();
+            }
+        }
+
+        function updateOption(optIdx, value) {
+            if (selectedIdx !== null && fields[selectedIdx] && fields[selectedIdx].options) {
+                fields[selectedIdx].options[optIdx] = value;
+                renderFields();
+            }
+        }
+
+        function addOption() {
+            if (selectedIdx !== null && fields[selectedIdx] && fields[selectedIdx].options) {
+                fields[selectedIdx].options.push('New Option');
+                renderProps();
+                renderFields();
+            }
+        }
+
+        function removeOption(optIdx) {
+            if (selectedIdx !== null && fields[selectedIdx] && fields[selectedIdx].options && fields[selectedIdx].options.length > 1) {
+                fields[selectedIdx].options.splice(optIdx, 1);
+                renderProps();
+                renderFields();
+            }
+        }
+
+        function render() {
+            renderFields();
+            renderProps();
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function renderFields() {
+            const container = document.getElementById('fieldsList');
+            if (fields.length === 0) {
+                container.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg><p>Click a field type to add it here</p></div>';
+                return;
+            }
+
+            let html = '';
+            fields.forEach((field, idx) => {
+                const isSelected = idx === selectedIdx;
+                let preview = '';
+
+                if (['select', 'radio', 'checkbox'].includes(field.type) && field.options) {
+                    preview = '<div class="field-preview options">' +
+                        field.options.slice(0, 4).map(o => '<span class="preview-option">' + escapeHtml(o) + '</span>').join('') +
+                        (field.options.length > 4 ? '<span class="preview-option">...</span>' : '') +
+                        '</div>';
+                } else if (field.type === 'rating') {
+                    preview = '<div class="field-preview">' + '★'.repeat(field.maxRating || 5) + '</div>';
+                } else {
+                    preview = '<div class="field-preview">' + escapeHtml(field.placeholder || 'Enter value...') + '</div>';
+                }
+
+                html += '<div class="field-item ' + (isSelected ? 'selected' : '') + '" onclick="selectField(' + idx + ')" draggable="true" data-idx="' + idx + '">' +
+                    '<div class="field-top-row">' +
+                    '<span class="field-type-tag">' + (typeLabels[field.type] || field.type) + '</span>' +
+                    '<div class="field-actions">' +
+                    '<button class="field-action-btn" onclick="event.stopPropagation(); duplicateField(' + idx + ')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>' +
+                    '<button class="field-action-btn delete" onclick="event.stopPropagation(); deleteField(' + idx + ')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>' +
+                    '</div></div>' +
+                    '<div class="field-label">' + escapeHtml(field.label) + (field.required ? '<span class="required">*</span>' : '') + '</div>' +
+                    preview +
+                    '</div>';
+            });
+            container.innerHTML = html;
+            setupDragDrop();
+        }
+
+        function setupDragDrop() {
+            const items = document.querySelectorAll('.field-item');
+            let dragIdx = null;
+
+            items.forEach(item => {
+                item.addEventListener('dragstart', function(e) {
+                    dragIdx = parseInt(this.dataset.idx);
+                    this.classList.add('dragging');
+                });
+                item.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                    dragIdx = null;
+                });
+                item.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                });
+                item.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    const dropIdx = parseInt(this.dataset.idx);
+                    if (dragIdx !== null && dragIdx !== dropIdx) {
+                        const moved = fields.splice(dragIdx, 1)[0];
+                        fields.splice(dropIdx, 0, moved);
+                        if (selectedIdx === dragIdx) selectedIdx = dropIdx;
+                        else if (selectedIdx !== null && selectedIdx > dragIdx && selectedIdx <= dropIdx) selectedIdx--;
+                        else if (selectedIdx !== null && selectedIdx < dragIdx && selectedIdx >= dropIdx) selectedIdx++;
+                        render();
+                    }
+                });
+            });
+        }
+
+        function renderProps() {
+            const container = document.getElementById('propsContent');
+            if (selectedIdx === null || !fields[selectedIdx]) {
+                container.innerHTML = '<div class="props-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><p>Select a field to edit</p></div>';
+                return;
+            }
+
+            const field = fields[selectedIdx];
+            let html = '';
+
+            html += '<div class="prop-group"><label class="prop-label">Question</label><input type="text" class="prop-input" value="' + escapeHtml(field.label) + '" onchange="updateField(\'label\', this.value)"></div>';
+
+            if (['text', 'textarea', 'email', 'number', 'phone'].includes(field.type)) {
+                html += '<div class="prop-group"><label class="prop-label">Placeholder</label><input type="text" class="prop-input" value="' + escapeHtml(field.placeholder || '') + '" onchange="updateField(\'placeholder\', this.value)"></div>';
+            }
+
+            if (['select', 'radio', 'checkbox'].includes(field.type) && field.options) {
+                html += '<div class="prop-group"><label class="prop-label">Options</label><div class="options-editor">';
+                field.options.forEach((opt, i) => {
+                    html += '<div class="option-row"><input type="text" value="' + escapeHtml(opt) + '" onchange="updateOption(' + i + ', this.value)"><button class="option-remove" onclick="removeOption(' + i + ')">×</button></div>';
+                });
+                html += '<button class="add-option-btn" onclick="addOption()">+ Add Option</button></div></div>';
+            }
+
+            if (field.type === 'rating') {
+                html += '<div class="prop-group"><label class="prop-label">Max Stars</label><input type="number" class="prop-input" min="1" max="10" value="' + (field.maxRating || 5) + '" onchange="updateField(\'maxRating\', parseInt(this.value))"></div>';
+            }
+
+            html += '<div class="prop-group"><label class="prop-checkbox"><input type="checkbox" ' + (field.required ? 'checked' : '') + ' onchange="updateField(\'required\', this.checked)"> Required field</label></div>';
+
+            container.innerHTML = html;
+        }
+
+        async function saveForm() {
+            const title = document.getElementById('formTitle').value.trim() || 'Untitled Form';
+            const description = document.getElementById('formDescription').value.trim();
+
+            if (fields.length === 0) {
+                showToast('Add at least one field', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch('/forms/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: formId || null, title: title, description: description, fields: fields, club: clubName })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    formId = data.formId;
+                    history.replaceState(null, '', '/forms/edit/' + formId);
+                    showToast('Form saved!', 'success');
+                } else {
+                    showToast(data.error || 'Save failed', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Save failed', 'error');
+            }
+        }
+
+        function previewForm() {
+            if (!formId) {
+                showToast('Save the form first', 'error');
+                return;
+            }
+            window.open('/forms/view/' + formId, '_blank');
+        }
+
+        function showShareModal() {
+            if (!formId) {
+                showToast('Save the form first', 'error');
+                return;
+            }
+            document.getElementById('shareUrl').value = window.location.origin + '/forms/view/' + formId;
+            document.getElementById('shareModal').classList.add('show');
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('show');
+        }
+
+        function copyShareUrl() {
+            const input = document.getElementById('shareUrl');
+            input.select();
+            document.execCommand('copy');
+            showToast('Link copied!', 'success');
+        }
+
+        function showToast(msg, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast ' + (type || '') + ' show';
+            setTimeout(function() { toast.classList.remove('show'); }, 3000);
+        }
+
+        render();
+    </script>
+</body>
+</html>

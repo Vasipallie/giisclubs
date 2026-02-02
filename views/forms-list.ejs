@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms | GIIS Clubs</title>
+    <link rel="icon" type="image/png" href="/resources/1.png">
+    <style>
+        @font-face {
+            font-family: 'Garet';
+            src: url('/fonts/GaretR.otf') format('opentype');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Garet';
+            src: url('/fonts/GaretH.otf') format('opentype');
+            font-weight: 700;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Garet', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a237e, #3f51b5);
+            color: #fff;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .header-left a {
+            display: flex;
+            align-items: center;
+        }
+        .logo { height: 40px; }
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-family: inherit;
+        }
+        .btn svg { width: 18px; height: 18px; }
+        .btn-white {
+            background: #fff;
+            color: #1a237e;
+        }
+        .btn-white:hover { background: #f0f0f0; }
+        .btn-outline {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        .forms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .form-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .form-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .form-card-header {
+            background: linear-gradient(135deg, #1a237e, #3f51b5);
+            padding: 20px;
+            color: #fff;
+        }
+        .form-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .form-card-date {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .form-card-body {
+            padding: 16px 20px;
+        }
+        .form-stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .form-stat:last-child { margin-bottom: 0; }
+        .form-stat svg {
+            width: 18px;
+            height: 18px;
+            stroke: #999;
+        }
+        .form-card-actions {
+            display: flex;
+            gap: 8px;
+            padding: 12px 20px 20px;
+        }
+        .card-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+        .card-btn-primary {
+            background: #1a237e;
+            color: #fff;
+        }
+        .card-btn-primary:hover { background: #0d1654; }
+        .card-btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .card-btn-secondary:hover { background: #e0e0e0; }
+        .card-btn-danger {
+            background: #fee;
+            color: #d32f2f;
+        }
+        .card-btn-danger:hover { background: #fdd; }
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+            background: #fff;
+            border-radius: 12px;
+        }
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            stroke: #ccc;
+            margin-bottom: 20px;
+        }
+        .empty-state h3 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            color: #666;
+            margin-bottom: 24px;
+        }
+        .empty-state .btn {
+            display: inline-flex;
+            background: linear-gradient(135deg, #1a237e, #3f51b5);
+            color: #fff;
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #333;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background: #2e7d32; }
+        .toast.error { background: #c62828; }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+        }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+        }
+        .modal h3 { margin-bottom: 12px; }
+        .modal p { color: #666; margin-bottom: 20px; }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+        .modal-cancel { background: #f0f0f0; color: #333; }
+        .modal-confirm { background: #d32f2f; color: #fff; }
+        @media (max-width: 600px) {
+            .header { flex-direction: column; gap: 12px; padding: 16px; }
+            .page-header { flex-direction: column; gap: 16px; align-items: stretch; }
+            .forms-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="/home"><img src="/resources/2.png" alt="GIIS Clubs" class="logo"></a>
+            <h1>Form Builder</h1>
+        </div>
+        <div class="header-actions">
+            <a href="/home" class="btn btn-outline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Dashboard
+            </a>
+            <a href="/forms/new" class="btn btn-white">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>
+                New Form
+            </a>
+        </div>
+    </header>
+
+    <div class="container">
+        <% if (forms && forms.length > 0) { %>
+        <div class="forms-grid">
+            <% forms.forEach(function(form) { %>
+            <div class="form-card" data-id="<%= form.id %>">
+                <div class="form-card-header">
+                    <div class="form-card-title"><%= form.title %></div>
+                    <div class="form-card-date">Created <%= new Date(form.createdAt).toLocaleDateString() %></div>
+                </div>
+                <div class="form-card-body">
+                    <div class="form-stat">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>
+                        <%= form.fields ? form.fields.length : 0 %> fields
+                    </div>
+                    <div class="form-stat">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                        <%= form.responseCount || 0 %> responses
+                    </div>
+                </div>
+                <div class="form-card-actions">
+                    <a href="/forms/edit/<%= form.id %>" class="card-btn card-btn-secondary">Edit</a>
+                    <a href="/forms/responses/<%= form.id %>" class="card-btn card-btn-primary">Responses</a>
+                    <button class="card-btn card-btn-danger" onclick="confirmDelete('<%= form.id %>', '<%= form.title %>')">Delete</button>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+        <% } else { %>
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <path d="M12 18v-6M9 15h6"/>
+            </svg>
+            <h3>No forms yet</h3>
+            <p>Create your first form to start collecting responses</p>
+            <a href="/forms/new" class="btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>
+                Create Form
+            </a>
+        </div>
+        <% } %>
+    </div>
+
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <h3>Delete Form</h3>
+            <p id="deleteMessage">Are you sure you want to delete this form? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button class="modal-confirm" onclick="deleteForm()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let deleteFormId = null;
+
+        function confirmDelete(id, title) {
+            deleteFormId = id;
+            document.getElementById('deleteMessage').textContent = 'Are you sure you want to delete "' + title + '"? This action cannot be undone.';
+            document.getElementById('deleteModal').classList.add('show');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('show');
+            deleteFormId = null;
+        }
+
+        async function deleteForm() {
+            if (!deleteFormId) return;
+            
+            try {
+                const res = await fetch('/forms/delete/' + deleteFormId, { method: 'POST' });
+                const data = await res.json();
+                
+                if (data.success) {
+                    const card = document.querySelector('[data-id="' + deleteFormId + '"]');
+                    if (card) card.remove();
+                    showToast('Form deleted', 'success');
+                    
+                    // Check if no forms left
+                    if (document.querySelectorAll('.form-card').length === 0) {
+                        location.reload();
+                    }
+                } else {
+                    showToast(data.error || 'Delete failed', 'error');
+                }
+            } catch (err) {
+                showToast('Delete failed', 'error');
+            }
+            
+            closeDeleteModal();
+        }
+
+        function showToast(msg, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast ' + (type || '') + ' show';
+            setTimeout(function() { toast.classList.remove('show'); }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responses - <%= form.title %> | GIIS Clubs</title>
+    <link rel="icon" type="image/png" href="/resources/1.png">
+    <style>
+        @font-face {
+            font-family: 'Garet';
+            src: url('/fonts/GaretR.otf') format('opentype');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Garet';
+            src: url('/fonts/GaretH.otf') format('opentype');
+            font-weight: 700;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Garet', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a237e, #3f51b5);
+            color: #fff;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .logo { height: 40px; }
+        .header-title h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .header-title p {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-family: inherit;
+        }
+        .btn svg { width: 18px; height: 18px; }
+        .btn-white { background: #fff; color: #1a237e; }
+        .btn-white:hover { background: #f0f0f0; }
+        .btn-outline {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a237e;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .responses-section {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .section-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        .responses-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        .responses-table th, .responses-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        .responses-table th {
+            background: #fafafa;
+            font-weight: 700;
+            color: #333;
+            white-space: nowrap;
+        }
+        .responses-table tr:hover {
+            background: #f9f9ff;
+        }
+        .responses-table td {
+            color: #555;
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .responses-table .date-cell {
+            white-space: nowrap;
+            color: #999;
+            font-size: 13px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            color: #999;
+        }
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            stroke: #ccc;
+            margin-bottom: 16px;
+        }
+        .empty-state h3 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .share-link {
+            display: flex;
+            gap: 8px;
+            padding: 16px 24px;
+            background: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+        .share-link input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #fff;
+            font-family: inherit;
+        }
+        .share-link button {
+            padding: 10px 20px;
+            background: #1a237e;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .share-link button:hover { background: #0d1654; }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #333;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background: #2e7d32; }
+        .array-value {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .array-tag {
+            background: #e8eaf6;
+            color: #1a237e;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        @media (max-width: 768px) {
+            .header { flex-direction: column; gap: 16px; }
+            .section-header { flex-direction: column; gap: 12px; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="/home"><img src="/resources/2.png" alt="GIIS Clubs" class="logo"></a>
+            <div class="header-title">
+                <h1><%= form.title %></h1>
+                <p>Form Responses</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="/forms" class="btn btn-outline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back
+            </a>
+            <a href="/forms/edit/<%= form.id %>" class="btn btn-outline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Edit Form
+            </a>
+            <button class="btn btn-white" onclick="exportCSV()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value"><%= responses.length %></div>
+                <div class="stat-label">Total Responses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><%= form.fields ? form.fields.length : 0 %></div>
+                <div class="stat-label">Form Fields</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><%= responses.length > 0 ? new Date(responses[responses.length - 1].submittedAt).toLocaleDateString() : '-' %></div>
+                <div class="stat-label">Last Response</div>
+            </div>
+        </div>
+
+        <div class="responses-section">
+            <div class="section-header">
+                <div class="section-title">All Responses</div>
+            </div>
+            
+            <% if (responses && responses.length > 0) { %>
+            <div class="table-wrapper">
+                <table class="responses-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <% form.fields.forEach(function(field) { %>
+                            <th><%= field.label %></th>
+                            <% }); %>
+                            <th>Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% responses.forEach(function(response, idx) { %>
+                        <tr>
+                            <td><%= idx + 1 %></td>
+                            <% form.fields.forEach(function(field) { %>
+                            <td>
+                                <% 
+                                const val = response.data['field_' + field.id];
+                                if (Array.isArray(val)) { 
+                                %>
+                                <div class="array-value">
+                                    <% val.forEach(function(v) { %>
+                                    <span class="array-tag"><%= v %></span>
+                                    <% }); %>
+                                </div>
+                                <% } else { %>
+                                <%= val || '-' %>
+                                <% } %>
+                            </td>
+                            <% }); %>
+                            <td class="date-cell"><%= new Date(response.submittedAt).toLocaleString() %></td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+            <% } else { %>
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                    <rect x="9" y="3" width="6" height="4" rx="1"/>
+                </svg>
+                <h3>No responses yet</h3>
+                <p>Share your form to start collecting responses</p>
+            </div>
+            <% } %>
+
+            <div class="share-link">
+                <input type="text" id="shareUrl" value="<%= shareUrl %>" readonly>
+                <button onclick="copyLink()">Copy Link</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const formData = <%- JSON.stringify({ fields: form.fields, responses: responses }) %>;
+
+        function copyLink() {
+            const input = document.getElementById('shareUrl');
+            input.select();
+            document.execCommand('copy');
+            showToast('Link copied!');
+        }
+
+        function exportCSV() {
+            if (formData.responses.length === 0) {
+                showToast('No responses to export');
+                return;
+            }
+
+            const headers = formData.fields.map(f => f.label);
+            headers.push('Submitted At');
+
+            const rows = formData.responses.map(r => {
+                const row = formData.fields.map(f => {
+                    const val = r.data['field_' + f.id];
+                    if (Array.isArray(val)) return val.join('; ');
+                    return val || '';
+                });
+                row.push(new Date(r.submittedAt).toLocaleString());
+                return row;
+            });
+
+            let csv = headers.map(h => '"' + h.replace(/"/g, '""') + '"').join(',') + '\n';
+            rows.forEach(row => {
+                csv += row.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'responses.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('CSV exported!');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>
