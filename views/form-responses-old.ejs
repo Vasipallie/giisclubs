@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responses - <%= form.title %> | GIIS Clubs</title>
+    <link rel="icon" type="image/png" href="/resources/1.png">
+    <% const settings = form.settings || {}; %>
+    <% const headerColor = settings.headerColor || '#1a237e'; %>
+    <% const bgStyle = settings.bgStyle || 'gradient'; %>
+    <% const fontStyle = settings.fontStyle || 'default'; %>
+    <% 
+        let bgCSS = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        if (bgStyle === 'solid') bgCSS = headerColor;
+        else if (bgStyle === 'light') bgCSS = '#f0f2f5';
+        
+        let fontFamily = "'Garet', -apple-system, BlinkMacSystemFont, sans-serif";
+        if (fontStyle === 'modern') fontFamily = "'Inter', -apple-system, sans-serif";
+        else if (fontStyle === 'classic') fontFamily = "Georgia, serif";
+        else if (fontStyle === 'mono') fontFamily = "'Courier New', monospace";
+    %>
+    <style>
+        @font-face {
+            font-family: 'Garet';
+            src: url('/fonts/GaretR.otf') format('opentype');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Garet';
+            src: url('/fonts/GaretH.otf') format('opentype');
+            font-weight: 700;
+        }
+        <% if (fontStyle === 'modern') { %>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        <% } %>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: <%= fontFamily %>;
+            background: <%= bgCSS %>;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, <%= headerColor %>, <%= headerColor %>dd);
+            color: #fff;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .logo { height: 40px; }
+        .header-title h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .header-title p {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-family: inherit;
+        }
+        .btn svg { width: 18px; height: 18px; }
+        .btn-white { background: #fff; color: <%= headerColor %>; }
+        .btn-white:hover { background: #f0f0f0; }
+        .btn-outline {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: <%= headerColor %>;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .responses-section {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .section-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        .responses-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        .responses-table th, .responses-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        .responses-table th {
+            background: #fafafa;
+            font-weight: 700;
+            color: <%= headerColor %>;
+            white-space: nowrap;
+        }
+        .responses-table tr:hover {
+            background: <%= bgStyle === 'light' ? '#f5f5f5' : '#f9f9ff' %>;
+        }
+        .responses-table td {
+            color: #555;
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .responses-table .date-cell {
+            white-space: nowrap;
+            color: #999;
+            font-size: 13px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            color: #999;
+        }
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            stroke: #ccc;
+            margin-bottom: 16px;
+        }
+        .empty-state h3 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .share-section {
+            padding: 24px;
+            background: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+        .share-section h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 16px;
+        }
+        .share-grid {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            gap: 24px;
+            align-items: start;
+        }
+        .share-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .share-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .share-row label {
+            min-width: 90px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+        }
+        .share-row input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #fff;
+            font-family: inherit;
+        }
+        .share-row button, .share-btn {
+            padding: 10px 16px;
+            background: <%= headerColor %>;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .share-row button:hover, .share-btn:hover { background: <%= headerColor %>88; }
+        .share-btn.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .share-btn.secondary:hover { background: #e0e0e0; }
+        .qr-preview {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+        .qr-preview canvas, .qr-preview img {
+            max-width: 160px;
+            max-height: 160px;
+            margin-bottom: 12px;
+        }
+        .qr-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        .qr-actions button {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+        .shortener-status {
+            font-size: 12px;
+            color: #4caf50;
+            margin-top: 4px;
+        }
+        .shortener-status.error { color: #d32f2f; }
+        @media (max-width: 768px) {
+            .share-grid { grid-template-columns: 1fr; }
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #333;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background: #2e7d32; }
+        .array-value {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .array-tag {
+            background: <%= headerColor %>22;
+            color: <%= headerColor %>;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        /* Summary stats section */
+        .summary-section {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+            padding: 20px 24px;
+        }
+        .summary-card {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .summary-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .summary-card h4 .type-badge {
+            font-size: 10px;
+            background: <%= headerColor %>22;
+            color: <%= headerColor %>;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .bar-label {
+            font-size: 12px;
+            color: #555;
+            min-width: 80px;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .bar-track {
+            flex: 1;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            background: <%= headerColor %>;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        .bar-value {
+            font-size: 12px;
+            color: #666;
+            min-width: 40px;
+            text-align: right;
+        }
+        .rating-summary {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .avg-rating {
+            font-size: 28px;
+            font-weight: 700;
+            color: <%= headerColor %>;
+        }
+        .rating-stars {
+            color: <%= headerColor %>;
+            font-size: 20px;
+        }
+        .rating-count {
+            color: #999;
+            font-size: 13px;
+        }
+        .tabs-bar {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            padding: 0 24px;
+            background: #fafafa;
+        }
+        .tab-btn {
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .tab-btn:hover { color: <%= headerColor %>; }
+        .tab-btn.active {
+            color: <%= headerColor %>;
+            border-bottom-color: <%= headerColor %>;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        @media (max-width: 768px) {
+            .header { flex-direction: column; gap: 16px; }
+            .section-header { flex-direction: column; gap: 12px; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="/home"><img src="/resources/2.png" alt="GIIS Clubs" class="logo"></a>
+            <div class="header-title">
+                <h1><%= form.title %></h1>
+                <p>Form Responses</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="/forms" class="btn btn-outline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back
+            </a>
+            <a href="/forms/edit/<%= form.id %>" class="btn btn-outline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Edit Form
+            </a>
+            <button class="btn btn-white" onclick="exportCSV()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+            </button>
+        </div>
+    </header>
+
+    <% 
+        const displayFields = (typeof fields !== 'undefined' && fields && fields.length)
+            ? fields
+            : (Array.isArray(form.fields) && form.fields.length && Array.isArray(form.fields[0]?.questions)
+                ? form.fields.flatMap(s => Array.isArray(s?.questions) ? s.questions : [])
+                : (form.fields || []));
+    %>
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value"><%= responses.length %></div>
+                <div class="stat-label">Total Responses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><%= displayFields.length %></div>
+                <div class="stat-label">Form Fields</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><%= responses.length > 0 ? new Date(responses[responses.length - 1].submittedAt).toLocaleDateString() : '-' %></div>
+                <div class="stat-label">Last Response</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgCompletionTime">-</div>
+                <div class="stat-label">Avg. Response Rate</div>
+            </div>
+        </div>
+
+        <div class="responses-section">
+            <div class="tabs-bar">
+                <button class="tab-btn active" onclick="switchTab('summary')">Summary</button>
+                <button class="tab-btn" onclick="switchTab('responses')">Individual Responses</button>
+                <button class="tab-btn" onclick="switchTab('share')">Share</button>
+            </div>
+
+            <!-- Summary Tab -->
+            <div class="tab-content active" id="tab-summary">
+                <% if (responses && responses.length > 0) { %>
+                <div class="summary-grid">
+                    <% displayFields.forEach(function(field) { 
+                        const fieldType = field.type;
+                        const isChartable = ['radio', 'select', 'checkbox', 'rating', 'linear'].includes(fieldType);
+                        if (isChartable) {
+                    %>
+                    <div class="summary-card" data-field-id="<%= field.id %>" data-field-type="<%= fieldType %>">
+                        <h4><%= field.label %> <span class="type-badge"><%= fieldType %></span></h4>
+                        <div class="chart-container" id="chart-<%= field.id %>"></div>
+                    </div>
+                    <% } }); %>
+                </div>
+                <% } else { %>
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <h3>No data to summarize</h3>
+                    <p>Collect some responses to see insights</p>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- Individual Responses Tab -->
+            <div class="tab-content" id="tab-responses">
+                <div class="section-header">
+                    <div class="section-title">All Responses (<%= responses.length %>)</div>
+                </div>
+            
+            <% if (responses && responses.length > 0) { %>
+            <div class="table-wrapper">
+                <table class="responses-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <% displayFields.forEach(function(field) { %>
+                            <th><%= field.label %></th>
+                            <% }); %>
+                            <th>Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% responses.forEach(function(response, idx) { %>
+                        <tr>
+                            <td><%= idx + 1 %></td>
+                            <% displayFields.forEach(function(field) { %>
+                            <td>
+                                <% 
+                                const val = response.data['field_' + field.id];
+                                const isFileObj = val && typeof val === 'object' && !Array.isArray(val) && val.filename;
+                                const isFileArray = Array.isArray(val) && val.length > 0 && typeof val[0] === 'object' && val[0].filename;
+                                if (isFileObj) {
+                                %>
+                                    <a href="/uploads/forms/<%= val.filename %>" target="_blank" rel="noopener"><%= val.originalName || val.filename %></a>
+                                <% } else if (isFileArray) { %>
+                                    <div class="array-value">
+                                        <% val.forEach(function(file) { %>
+                                            <span class="array-tag"><a href="/uploads/forms/<%= file.filename %>" target="_blank" rel="noopener"><%= file.originalName || file.filename %></a></span>
+                                        <% }); %>
+                                    </div>
+                                <% } else if (Array.isArray(val)) { 
+                                %>
+                                <div class="array-value">
+                                    <% val.forEach(function(v) { %>
+                                    <span class="array-tag"><%= v %></span>
+                                    <% }); %>
+                                </div>
+                                <% } else { %>
+                                <%= val || '-' %>
+                                <% } %>
+                            </td>
+                            <% }); %>
+                            <td class="date-cell"><%= new Date(response.submittedAt).toLocaleString() %></td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+            <% } else { %>
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                    <rect x="9" y="3" width="6" height="4" rx="1"/>
+                </svg>
+                <h3>No responses yet</h3>
+                <p>Share your form to start collecting responses</p>
+            </div>
+            <% } %>
+            </div>
+
+            <!-- Share Tab -->
+            <div class="tab-content" id="tab-share">
+            <div class="share-section">
+                <h3>Share Form</h3>
+                <div class="share-grid">
+                    <div class="share-links">
+                        <div class="share-row">
+                            <label>Full URL:</label>
+                            <input type="text" id="shareUrl" value="<%= shareUrl %>" readonly>
+                            <button onclick="copyLink('shareUrl')">Copy</button>
+                        </div>
+                        <div class="share-row">
+                            <label>Short URL:</label>
+                            <input type="text" id="shortUrl" value="" placeholder="Click 'Create' to generate" readonly>
+                            <button onclick="createShortUrl()" id="shortBtn">Create</button>
+                            <button onclick="copyLink('shortUrl')" class="share-btn secondary">Copy</button>
+                        </div>
+                        <div id="shortStatus" class="shortener-status" style="display:none;"></div>
+                    </div>
+                    <div class="qr-preview">
+                        <div id="qrcode"></div>
+                        <div class="qr-actions">
+                            <button onclick="downloadQR()" class="share-btn">Download QR</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        const formData = <%- JSON.stringify({ fields: displayFields, responses: responses }) %>;
+        const shareUrl = '<%= shareUrl %>';
+        const formId = '<%= form.id %>';
+
+        // Generate QR code on load
+        const qrEl = document.getElementById('qrcode');
+        const qr = new QRCode(qrEl, {
+            text: shareUrl,
+            width: 160,
+            height: 160,
+            colorDark: '#1a237e',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        function copyLink(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input.value) {
+                showToast('No URL to copy');
+                return;
+            }
+            input.select();
+            document.execCommand('copy');
+            showToast('Link copied!');
+        }
+
+        async function createShortUrl() {
+            const btn = document.getElementById('shortBtn');
+            const status = document.getElementById('shortStatus');
+            const shortInput = document.getElementById('shortUrl');
+            
+            btn.disabled = true;
+            btn.textContent = 'Creating...';
+            status.style.display = 'none';
+
+            try {
+                const customId = 'form-' + formId.substring(0, 8);
+                const res = await fetch('/idadd', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ link: shareUrl, customId: customId })
+                });
+                const result = await res.json();
+                
+                if (result.success || result.data) {
+                    const shortUrl = window.location.origin + '/s/' + (result.data?.id || customId);
+                    shortInput.value = shortUrl;
+                    status.textContent = 'Short URL created!';
+                    status.className = 'shortener-status';
+                    status.style.display = 'block';
+                    btn.textContent = 'Created ✓';
+                    
+                    // Update QR to use short URL
+                    qr.clear();
+                    qr.makeCode(shortUrl);
+                } else {
+                    // Maybe already exists, try to use it
+                    const shortUrl = window.location.origin + '/s/' + customId;
+                    shortInput.value = shortUrl;
+                    status.textContent = result.error || 'Short URL may already exist';
+                    status.className = 'shortener-status';
+                    status.style.display = 'block';
+                    btn.textContent = 'Create';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error(err);
+                status.textContent = 'Failed to create short URL';
+                status.className = 'shortener-status error';
+                status.style.display = 'block';
+                btn.textContent = 'Create';
+                btn.disabled = false;
+            }
+        }
+
+        function downloadQR() {
+            const canvas = qrEl.querySelector('canvas');
+            if (!canvas) {
+                showToast('QR code not ready');
+                return;
+            }
+            const link = document.createElement('a');
+            link.download = 'form-qr-' + formId + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast('QR downloaded!');
+        }
+
+        function copyLink(inputId) {
+            const input = document.getElementById(inputId || 'shareUrl');
+            if (!input.value) {
+                showToast('No URL to copy');
+                return;
+            }
+            input.select();
+            document.execCommand('copy');
+            showToast('Link copied!');
+        }
+
+        function exportCSV() {
+            if (formData.responses.length === 0) {
+                showToast('No responses to export');
+                return;
+            }
+
+            const headers = formData.fields.map(f => f.label);
+            headers.push('Submitted At');
+
+            const rows = formData.responses.map(r => {
+                const row = formData.fields.map(f => {
+                    const val = r.data['field_' + f.id];
+                    if (Array.isArray(val)) return val.join('; ');
+                    return val || '';
+                });
+                row.push(new Date(r.submittedAt).toLocaleString());
+                return row;
+            });
+
+            let csv = headers.map(h => '"' + h.replace(/"/g, '""') + '"').join(',') + '\n';
+            rows.forEach(row => {
+                csv += row.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'responses.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('CSV exported!');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`.tab-btn[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        // Generate summary charts
+        function generateSummaryCharts() {
+            const summaryCards = document.querySelectorAll('.summary-card');
+            const headerColor = '<%= headerColor %>';
+            
+            summaryCards.forEach(card => {
+                const fieldId = card.dataset.fieldId;
+                const fieldType = card.dataset.fieldType;
+                const field = formData.fields.find(f => f.id === fieldId);
+                if (!field) return;
+                
+                const container = card.querySelector('.chart-container');
+                const values = [];
+                
+                formData.responses.forEach(r => {
+                    const val = r.data['field_' + fieldId];
+                    if (Array.isArray(val)) {
+                        values.push(...val);
+                    } else if (val !== undefined && val !== null && val !== '') {
+                        values.push(val);
+                    }
+                });
+                
+                if (values.length === 0) {
+                    container.innerHTML = '<p style="color:#999;font-size:13px;">No responses for this question</p>';
+                    return;
+                }
+                
+                if (fieldType === 'rating' || fieldType === 'linear') {
+                    // Show average rating
+                    const numericValues = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
+                    if (numericValues.length === 0) return;
+                    
+                    const avg = (numericValues.reduce((a, b) => a + b, 0) / numericValues.length).toFixed(1);
+                    const maxRating = field.maxRating || field.scaleMax || 5;
+                    const stars = '★'.repeat(Math.round(avg)) + '☆'.repeat(maxRating - Math.round(avg));
+                    
+                    container.innerHTML = `
+                        <div class="rating-summary">
+                            <span class="avg-rating">${avg}</span>
+                            <span class="rating-stars">${stars}</span>
+                        </div>
+                        <p class="rating-count">${numericValues.length} responses</p>
+                    `;
+                } else {
+                    // Bar chart for radio/select/checkbox
+                    const counts = {};
+                    values.forEach(v => {
+                        counts[v] = (counts[v] || 0) + 1;
+                    });
+                    
+                    const options = field.options || Object.keys(counts);
+                    const maxCount = Math.max(...Object.values(counts), 1);
+                    
+                    let html = '<div class="bar-chart">';
+                    options.forEach(opt => {
+                        const count = counts[opt] || 0;
+                        const pct = (count / maxCount) * 100;
+                        const responsePct = formData.responses.length > 0 ? Math.round((count / formData.responses.length) * 100) : 0;
+                        
+                        html += `
+                            <div class="bar-row">
+                                <span class="bar-label" title="${opt}">${opt}</span>
+                                <div class="bar-track">
+                                    <div class="bar-fill" style="width: ${pct}%; background: ${headerColor};"></div>
+                                </div>
+                                <span class="bar-value">${count} (${responsePct}%)</span>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    container.innerHTML = html;
+                }
+            });
+        }
+
+        // Calculate response rate per day
+        function calculateResponseRate() {
+            if (formData.responses.length < 2) return;
+            
+            const dates = formData.responses.map(r => new Date(r.submittedAt).toDateString());
+            const uniqueDates = [...new Set(dates)];
+            const rate = (formData.responses.length / uniqueDates.length).toFixed(1);
+            
+            document.getElementById('avgCompletionTime').textContent = rate + '/day';
+        }
+
+        // Initialize
+        generateSummaryCharts();
+        calculateResponseRate();
+    </script>
+</body>
+</html>

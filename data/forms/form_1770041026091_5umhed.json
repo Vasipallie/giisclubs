@@ -1,0 +1,64 @@
+{
+  "id": "form_1770041026091_5umhed",
+  "title": "Event Registration",
+  "description": "Please fill out this form to register for the event.",
+  "fields": [
+    {
+      "id": "main",
+      "title": "",
+      "description": "",
+      "questions": [
+        {
+          "id": "q_1770041017914_cxqioz",
+          "type": "text",
+          "label": "Full Name",
+          "required": true,
+          "gotoSection": null
+        },
+        {
+          "id": "q_1770041017914_2slztp",
+          "type": "email",
+          "label": "Email Address",
+          "required": true,
+          "gotoSection": null
+        },
+        {
+          "id": "q_1770041017914_17wej7",
+          "type": "phone",
+          "label": "Phone Number",
+          "required": false,
+          "gotoSection": null
+        },
+        {
+          "id": "q_1770041017914_5nbpsm",
+          "type": "radio",
+          "label": "How did you hear about this event?",
+          "options": [
+            "Social Media",
+            "Friend/Family",
+            "Email",
+            "Website",
+            "Other"
+          ],
+          "required": false,
+          "gotoSection": null
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "headerColor": "#b71c1c",
+    "bgStyle": "gradient",
+    "fontStyle": "default",
+    "showProgress": true,
+    "collectEmail": false,
+    "limitResponses": false,
+    "allowEdit": false,
+    "showSummary": false,
+    "confirmationMsg": "Thank you for your response!",
+    "submitText": "Submit"
+  },
+  "club": "GIIS Chess Club",
+  "createdAt": "2026-02-02T14:03:46.091Z",
+  "updatedAt": "2026-02-02T14:03:46.691Z"
+}

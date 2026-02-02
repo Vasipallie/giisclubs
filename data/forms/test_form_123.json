@@ -3,11 +3,49 @@
   "title": "Test Form",
   "description": "This is a test form",
   "fields": [
-    {"id": "f1", "type": "text", "label": "Your Name", "placeholder": "Enter name", "required": true},
-    {"id": "f2", "type": "email", "label": "Email", "placeholder": "email@example.com", "required": true},
-    {"id": "f3", "type": "radio", "label": "Choose one", "options": ["Option A", "Option B", "Option C"], "required": false},
-    {"id": "f4", "type": "checkbox", "label": "Select multiple", "options": ["Check 1", "Check 2", "Check 3"], "required": false},
-    {"id": "f5", "type": "rating", "label": "Rate this", "maxRating": 5, "required": false}
+    {
+      "id": "f1",
+      "type": "text",
+      "label": "Your Name",
+      "placeholder": "Enter name",
+      "required": true
+    },
+    {
+      "id": "f2",
+      "type": "email",
+      "label": "Email",
+      "placeholder": "email@example.com",
+      "required": true
+    },
+    {
+      "id": "f3",
+      "type": "radio",
+      "label": "Choose one",
+      "options": [
+        "Option A",
+        "Option B",
+        "Option C"
+      ],
+      "required": false
+    },
+    {
+      "id": "f4",
+      "type": "checkbox",
+      "label": "Select multiple",
+      "options": [
+        "Check 1",
+        "Check 2",
+        "Check 3"
+      ],
+      "required": false
+    },
+    {
+      "id": "f5",
+      "type": "rating",
+      "label": "Rate this",
+      "maxRating": 5,
+      "required": false
+    }
   ],
   "club": "TestClub",
   "createdAt": "2024-01-01T00:00:00.000Z"

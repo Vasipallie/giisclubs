@@ -22,346 +22,557 @@
             background: #f0f2f5;
             min-height: 100vh;
         }
+
+        /* ===== NAVBAR - Matches main site ===== */
         .header {
-            background: #fff;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 12px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 50%, #e8eaf6 100%);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
+            padding: 0;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(26, 35, 126, 0.1);
         }
-        .header-left {
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="1000" height="1000" fill="url(%23grid)" /></svg>');
+            background-size: cover;
+            pointer-events: none;
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 30px;
+            position: relative;
+            z-index: 2;
+        }
+        .logo-section {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 15px;
         }
-        .logo { height: 40px; }
+        .logo { height: 50px; width: auto; }
+        .form-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
         .form-title-input {
             border: none;
             font-size: 18px;
-            font-weight: 600;
-            padding: 8px 12px;
+            font-weight: 700;
+            padding: 6px 12px;
             border-radius: 6px;
-            min-width: 200px;
+            min-width: 250px;
             background: transparent;
             font-family: inherit;
+            color: #1a237e;
         }
         .form-title-input:hover, .form-title-input:focus {
-            background: #f5f5f5;
+            background: rgba(26, 35, 126, 0.05);
             outline: none;
         }
-        .header-actions { display: flex; gap: 10px; }
+        .autosave-status {
+            font-size: 11px;
+            color: #888;
+            padding-left: 12px;
+        }
+        .autosave-status.saving { color: #ff9800; }
+        .autosave-status.saved { color: #4caf50; }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            background: rgba(26, 35, 126, 0.08);
+            color: #1a237e;
+        }
         .btn {
             padding: 10px 20px;
-            border-radius: 8px;
+            border-radius: 25px;
             font-weight: 600;
             font-size: 14px;
             cursor: pointer;
             border: none;
             display: flex;
             align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
+            gap: 8px;
+            transition: all 0.3s;
             text-decoration: none;
             font-family: inherit;
         }
         .btn svg { width: 18px; height: 18px; }
-        .btn-secondary { background: #f0f0f0; color: #333; }
-        .btn-secondary:hover { background: #e0e0e0; }
-        .btn-primary { background: linear-gradient(135deg, #1a237e, #3f51b5); color: #fff; }
-        .btn-primary:hover { opacity: 0.9; }
-        .main-container {
-            display: flex;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 24px;
-            gap: 24px;
-        }
-        .sidebar {
-            width: 280px;
-            flex-shrink: 0;
-        }
-        .sidebar-panel {
+        .btn-ghost { background: transparent; color: #333; }
+        .btn-ghost:hover { background: rgba(26, 35, 126, 0.08); color: #1a237e; }
+        .btn-secondary {
             background: #fff;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            color: #1a237e;
+            border: 1px solid rgba(26, 35, 126, 0.2);
         }
-        .sidebar-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #eee;
+        .btn-secondary:hover { background: #f8f9ff; border-color: #1a237e; }
+        .btn-primary {
+            background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
+            color: #fff;
         }
-        .field-types {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(26, 35, 126, 0.3);
         }
-        .field-type-btn {
+
+        /* ===== TOOLBAR ===== */
+        .toolbar {
+            position: fixed;
+            top: 74px;
+            left: 0; right: 0;
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 8px 24px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 6px;
-            padding: 12px 8px;
-            background: #fafafa;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
+            justify-content: center;
+            gap: 8px;
+            z-index: 999;
+        }
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0 12px;
+            border-right: 1px solid #e0e0e0;
+        }
+        .toolbar-group:last-child { border-right: none; }
+        .toolbar-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px; height: 36px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 11px;
-            font-weight: 500;
             color: #555;
             transition: all 0.15s;
-            font-family: inherit;
         }
-        .field-type-btn:hover {
-            border-color: #1a237e;
-            background: #f0f4ff;
-            color: #1a237e;
+        .toolbar-btn:hover { background: #f0f0f0; color: #1a237e; }
+        .toolbar-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .toolbar-btn svg { width: 20px; height: 20px; }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main-container {
+            display: flex;
+            max-width: 900px;
+            margin: 130px auto 40px;
+            padding: 0 24px;
+            flex-direction: column;
+            gap: 16px;
         }
-        .field-type-btn svg { width: 20px; height: 20px; stroke-width: 2; }
-        .canvas-area { flex: 1; min-width: 0; }
-        .form-canvas {
+
+        /* ===== FORM HEADER CARD ===== */
+        .form-header-card {
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            min-height: 600px;
+            border-top: 10px solid #1a237e;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 24px;
         }
-        .canvas-header {
-            padding: 24px 24px 16px;
-            border-bottom: 1px solid #eee;
-        }
-        .canvas-header textarea {
+        .form-header-card .title-input {
             width: 100%;
             border: none;
-            resize: none;
+            border-bottom: 2px solid transparent;
+            font-size: 32px;
+            font-weight: 700;
             font-family: inherit;
+            color: #333;
+            padding: 8px 0;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-header-card .title-input:focus { border-bottom-color: #1a237e; }
+        .form-header-card .title-input::placeholder { color: #bbb; }
+        .form-header-card .desc-input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid transparent;
             font-size: 14px;
+            font-family: inherit;
             color: #666;
             padding: 8px 0;
             outline: none;
+            resize: none;
+            min-height: 40px;
         }
-        .fields-list {
-            padding: 16px 24px 24px;
-            min-height: 400px;
-        }
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 80px 40px;
-            color: #999;
-            text-align: center;
-        }
-        .empty-state svg {
-            width: 64px;
-            height: 64px;
-            stroke: #ccc;
+        .form-header-card .desc-input:focus { border-bottom-color: #1a237e; }
+
+        /* ===== SECTION CARD ===== */
+        .section-card {
+            background: #fff;
+            border-radius: 12px;
+            border-left: 6px solid #673ab7;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-top: 24px;
             margin-bottom: 16px;
+            overflow: hidden;
         }
-        .field-item {
-            background: #fafafa;
-            border: 2px solid #e8e8e8;
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.15s;
-            position: relative;
-        }
-        .field-item:hover { border-color: #1a237e; }
-        .field-item.selected {
-            border-color: #1a237e;
-            background: #f8f9ff;
-            box-shadow: 0 0 0 3px rgba(26,35,126,0.1);
-        }
-        .field-item.dragging { opacity: 0.5; }
-        .field-top-row {
+        .section-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #eee;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 8px;
         }
-        .field-type-tag {
-            background: linear-gradient(135deg, #1a237e, #3f51b5);
-            color: #fff;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
+        .section-title-input {
+            border: none;
+            font-size: 22px;
+            font-weight: 700;
+            font-family: inherit;
+            color: #333;
+            outline: none;
+            flex: 1;
         }
-        .field-actions {
+        .section-desc-input {
+            width: 100%;
+            border: none;
+            font-size: 13px;
+            font-family: inherit;
+            color: #666;
+            padding: 8px 24px 16px;
+            outline: none;
+        }
+        .section-actions { display: flex; gap: 4px; }
+
+        /* ===== QUESTION CARD ===== */
+        .question-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 6px solid transparent;
+            transition: all 0.2s;
+            position: relative;
+            margin-bottom: 16px;
+        }
+        .question-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+        .question-card.selected { border-left-color: #1a237e; }
+        .question-card.dragging { opacity: 0.6; transform: rotate(2deg); }
+        .question-content { padding: 24px; }
+        .question-top-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .question-input-wrapper { flex: 1; }
+        .question-input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid transparent;
+            font-size: 16px;
+            font-family: inherit;
+            color: #333;
+            padding: 8px 0;
+            outline: none;
+        }
+        .question-input:focus { border-bottom-color: #1a237e; }
+        .question-type-select {
+            min-width: 160px;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #fff;
+            cursor: pointer;
+            outline: none;
+        }
+        .question-type-select:focus { border-color: #1a237e; }
+
+        /* ===== ANSWER PREVIEW ===== */
+        .answer-preview {
+            margin-top: 20px;
+            padding-top: 16px;
+        }
+        .text-preview {
+            border-bottom: 1px dotted #bbb;
+            padding: 8px 0;
+            color: #999;
+            font-size: 14px;
+        }
+        .text-preview.short { width: 50%; }
+        .text-preview.long { width: 100%; }
+
+        /* ===== OPTIONS ===== */
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-row { display: flex; align-items: center; gap: 12px; }
+        .option-indicator {
+            width: 20px; height: 20px;
+            border: 2px solid #bbb;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .option-indicator.checkbox { border-radius: 4px; }
+        .option-indicator.dropdown { display: none; }
+        .option-number { color: #666; font-size: 14px; min-width: 24px; }
+        .option-input {
+            flex: 1;
+            border: none;
+            border-bottom: 1px solid transparent;
+            font-size: 14px;
+            font-family: inherit;
+            padding: 6px 0;
+            outline: none;
+        }
+        .option-input:focus { border-bottom-color: #1a237e; }
+        .option-actions {
             display: flex;
             gap: 4px;
             opacity: 0;
             transition: opacity 0.15s;
         }
-        .field-item:hover .field-actions { opacity: 1; }
-        .field-action-btn {
-            width: 28px;
-            height: 28px;
+        .option-row:hover .option-actions { opacity: 1; }
+        .option-btn {
+            width: 28px; height: 28px;
             border: none;
-            background: #fff;
+            background: transparent;
             border-radius: 6px;
+            cursor: pointer;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .option-btn:hover { background: #f0f0f0; color: #333; }
+        .option-btn.delete:hover { background: #ffebee; color: #d32f2f; }
+        .option-btn svg { width: 18px; height: 18px; }
+        .add-option-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #888;
+            cursor: pointer;
+            padding: 8px 0;
+        }
+        .add-option-row:hover { color: #1a237e; }
+        .add-option-text {
+            font-size: 14px;
+            border-bottom: 1px solid transparent;
+            padding: 6px 0;
+        }
+
+        /* ===== GO TO SECTION (Branching) ===== */
+        .goto-section-wrapper {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .goto-label { font-size: 12px; color: #888; }
+        .goto-select {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: inherit;
+            background: #fafafa;
+            cursor: pointer;
+            min-width: 140px;
+        }
+
+        /* ===== LINEAR SCALE ===== */
+        .linear-scale-config {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .scale-range { display: flex; align-items: center; gap: 8px; }
+        .scale-select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .scale-label-input {
+            border: none;
+            border-bottom: 1px solid #ddd;
+            padding: 6px 0;
+            font-size: 13px;
+            font-family: inherit;
+            width: 100px;
+            outline: none;
+        }
+        .scale-preview {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            justify-content: center;
+        }
+        .scale-label { font-size: 13px; color: #666; }
+        .scale-options { display: flex; gap: 12px; }
+        .scale-option { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .scale-number { font-size: 13px; color: #333; }
+        .scale-radio { width: 18px; height: 18px; border: 2px solid #bbb; border-radius: 50%; }
+
+        /* ===== RATING STARS ===== */
+        .rating-preview { display: flex; gap: 8px; margin-top: 8px; }
+        .rating-star { font-size: 28px; color: #ddd; cursor: default; }
+
+        /* ===== DATE/TIME PREVIEW ===== */
+        .datetime-preview { display: flex; gap: 16px; align-items: center; }
+        .datetime-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            color: #999;
+            font-size: 14px;
+        }
+        .datetime-field svg { width: 20px; height: 20px; }
+
+        /* ===== FILE UPLOAD PREVIEW ===== */
+        .file-upload-preview {
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            color: #888;
+        }
+        .file-upload-preview svg {
+            width: 48px; height: 48px;
+            stroke: #bbb;
+            margin-bottom: 12px;
+        }
+        .file-config {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        .file-config label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* ===== QUESTION FOOTER ===== */
+        .question-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 12px 24px;
+            border-top: 1px solid #eee;
+            gap: 16px;
+        }
+        .footer-divider { width: 1px; height: 24px; background: #e0e0e0; }
+        .footer-action {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #666;
+            font-size: 13px;
+            font-family: inherit;
+            transition: all 0.15s;
+        }
+        .footer-action:hover { background: #f5f5f5; color: #333; }
+        .footer-action.delete:hover { background: #ffebee; color: #d32f2f; }
+        .footer-action svg { width: 20px; height: 20px; }
+        .required-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+        .toggle-switch {
+            width: 44px; height: 24px;
+            background: #ddd;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .toggle-switch.active { background: #1a237e; }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px; height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            top: 2px; left: 2px;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .toggle-switch.active::after { transform: translateX(20px); }
+
+        /* ===== ADD QUESTION FLOATING PANEL ===== */
+        .add-panel {
+            position: fixed;
+            right: calc(50% - 450px - 70px);
+            top: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+        .add-panel-btn {
+            width: 48px; height: 48px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #666;
+            transition: all 0.15s;
+            position: relative;
         }
-        .field-action-btn:hover { background: #eee; }
-        .field-action-btn.delete:hover { background: #ffe5e5; color: #d32f2f; }
-        .field-action-btn svg { width: 16px; height: 16px; }
-        .field-label {
-            font-weight: 600;
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 6px;
-        }
-        .field-label .required { color: #d32f2f; margin-left: 2px; }
-        .field-preview {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 10px 12px;
-            font-size: 13px;
-            color: #999;
-        }
-        .field-preview.options {
-            background: transparent;
-            border: none;
-            padding: 4px 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .preview-option {
-            background: #fff;
-            border: 1px solid #ddd;
+        .add-panel-btn:hover { background: #f0f0f0; color: #1a237e; }
+        .add-panel-btn svg { width: 24px; height: 24px; }
+        .add-panel-btn .tooltip {
+            position: absolute;
+            right: 58px;
+            background: #333;
+            color: #fff;
             padding: 6px 12px;
             border-radius: 6px;
             font-size: 12px;
-            color: #666;
-        }
-        .properties-panel { width: 300px; flex-shrink: 0; }
-        .props-panel {
-            background: #fff;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            position: sticky;
-            top: 80px;
-        }
-        .props-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #eee;
-        }
-        .props-empty {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-        }
-        .props-empty svg {
-            width: 40px;
-            height: 40px;
-            stroke: #ccc;
-            margin-bottom: 12px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .prop-group { margin-bottom: 16px; }
-        .prop-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #555;
-            margin-bottom: 6px;
-            display: block;
-        }
-        .prop-input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-        }
-        .prop-input:focus { outline: none; border-color: #1a237e; }
-        .prop-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .prop-checkbox input {
-            width: 18px;
-            height: 18px;
-            accent-color: #1a237e;
-        }
-        .options-editor { display: flex; flex-direction: column; gap: 8px; }
-        .option-row { display: flex; gap: 6px; }
-        .option-row input {
-            flex: 1;
-            padding: 8px 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 13px;
-            font-family: inherit;
-        }
-        .option-row input:focus { outline: none; border-color: #1a237e; }
-        .option-remove {
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: #fee;
-            color: #d32f2f;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 18px;
-        }
-        .option-remove:hover { background: #fdd; }
-        .add-option-btn {
-            padding: 8px;
-            background: #f5f5f5;
-            border: 1px dashed #ccc;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            color: #666;
-            text-align: center;
-            font-family: inherit;
-        }
-        .add-option-btn:hover { background: #eee; border-color: #999; }
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #333;
-            color: #fff;
-            padding: 14px 24px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 500;
-            z-index: 1000;
-            transform: translateY(100px);
+            white-space: nowrap;
             opacity: 0;
-            transition: all 0.3s;
+            pointer-events: none;
+            transition: opacity 0.15s;
         }
-        .toast.show { transform: translateY(0); opacity: 1; }
-        .toast.success { background: #2e7d32; }
-        .toast.error { background: #c62828; }
+        .add-panel-btn:hover .tooltip { opacity: 1; }
+
+        /* ===== QUICK START MODAL ===== */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -369,7 +580,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 2000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.2s;
@@ -378,435 +589,1022 @@
         .modal {
             background: #fff;
             border-radius: 16px;
-            padding: 24px;
             width: 90%;
-            max-width: 450px;
-            transform: scale(0.95);
+            max-width: 600px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: scale(0.95) translateY(20px);
             transition: transform 0.2s;
         }
-        .modal-overlay.show .modal { transform: scale(1); }
-        .modal h3 { font-size: 18px; margin-bottom: 8px; }
-        .modal p { color: #666; font-size: 14px; margin-bottom: 16px; }
-        .share-url { display: flex; gap: 8px; }
-        .share-url input {
+        .modal-overlay.show .modal { transform: scale(1) translateY(0); }
+        .modal-header { padding: 24px; border-bottom: 1px solid #eee; }
+        .modal-header h2 { font-size: 24px; color: #333; margin-bottom: 4px; }
+        .modal-header p { color: #888; font-size: 14px; }
+        .modal-body { padding: 24px; overflow-y: auto; max-height: 60vh; }
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+        }
+        .template-card {
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .template-card:hover { border-color: #1a237e; background: #f8f9ff; }
+        .template-card.selected { border-color: #1a237e; background: #e8eaf6; }
+        .template-icon {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #1a237e, #3f51b5);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+        }
+        .template-icon svg { width: 24px; height: 24px; stroke: #fff; }
+        .template-name { font-weight: 600; color: #333; font-size: 14px; }
+        .quick-start-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            margin-top: 20px;
+            outline: none;
+        }
+        .quick-start-input:focus { border-color: #1a237e; }
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 3000;
+            opacity: 0;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.success { background: #2e7d32; }
+        .toast.error { background: #c62828; }
+        .toast svg { width: 20px; height: 20px; }
+
+        /* ===== SHARE MODAL ===== */
+        .share-modal .modal { max-width: 500px; }
+
+        /* ===== SETTINGS MODAL ===== */
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            background: #fafafa;
+        }
+        .settings-tab {
             flex: 1;
+            padding: 14px 16px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .settings-tab:hover { background: #f0f0f0; }
+        .settings-tab.active {
+            color: #1a237e;
+            border-bottom: 2px solid #1a237e;
+            background: #fff;
+        }
+        .settings-content { padding: 24px; }
+        .settings-panel { display: none; }
+        .settings-panel.active { display: block; }
+        .setting-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .setting-group:last-child { border-bottom: none; }
+        .setting-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        .setting-select, .setting-input {
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 180px;
+            font-family: inherit;
+        }
+        .setting-textarea {
+            width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 14px;
-            background: #f9f9f9;
             font-family: inherit;
+            min-height: 80px;
+            resize: vertical;
         }
-        .share-url button {
+        .color-picker-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.15s;
+        }
+        .color-option:hover { transform: scale(1.1); }
+        .color-option.selected { border-color: #333; }
+        .toggle-container {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+        }
+        .toggle-container input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #ccc;
+            border-radius: 26px;
+            transition: 0.3s;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .toggle-container input:checked + .toggle-slider { background: #1a237e; }
+        .toggle-container input:checked + .toggle-slider:before { transform: translateX(22px); }
+        .share-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        .share-tab {
             padding: 12px 20px;
-            background: linear-gradient(135deg, #1a237e, #3f51b5);
-            color: #fff;
             border: none;
-            border-radius: 8px;
+            background: transparent;
+            font-size: 14px;
             font-weight: 600;
+            color: #888;
             cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
             font-family: inherit;
         }
-        .modal-close {
-            margin-top: 16px;
-            width: 100%;
-            padding: 12px;
+        .share-tab.active { color: #1a237e; border-bottom-color: #1a237e; }
+        .share-url-wrapper { display: flex; gap: 8px; }
+        .share-url-input {
+            flex: 1;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #f9f9f9;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state { text-align: center; padding: 60px 40px; color: #888; }
+        .empty-state svg { width: 80px; height: 80px; stroke: #ddd; margin-bottom: 20px; }
+        .empty-state h3 { font-size: 18px; color: #666; margin-bottom: 8px; }
+        .empty-state p { font-size: 14px; margin-bottom: 20px; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            .add-panel {
+                position: fixed;
+                right: 20px;
+                top: auto;
+                bottom: 20px;
+                flex-direction: row;
+            }
+            .add-panel-btn .tooltip {
+                right: auto;
+                bottom: 58px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; gap: 12px; padding: 12px 16px; }
+            .toolbar { top: 110px; padding: 8px 12px; overflow-x: auto; }
+            .main-container { margin-top: 170px; padding: 0 12px; }
+            .question-top-row { flex-direction: column; }
+            .question-type-select { width: 100%; }
+            .add-panel { right: 10px; bottom: 10px; }
+        }
+
+        /* ===== KEYBOARD SHORTCUTS HELP ===== */
+        .shortcuts-help {
+            position: fixed;
+            bottom: 20px; left: 20px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 6px 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            font-size: 12px;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .shortcuts-help kbd {
             background: #f0f0f0;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: inherit;
-        }
-        .modal-close:hover { background: #e5e5e5; }
-        @media (max-width: 1024px) {
-            .main-container { flex-direction: column; }
-            .sidebar, .properties-panel { width: 100%; }
-            .field-types { grid-template-columns: repeat(4, 1fr); }
-        }
-        @media (max-width: 600px) {
-            .field-types { grid-template-columns: repeat(2, 1fr); }
-            .header { flex-direction: column; gap: 12px; padding: 12px; }
-            .main-container { padding: 12px; }
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #555;
         }
     </style>
 </head>
 <body>
+    <!-- NAVBAR -->
     <header class="header">
-        <div class="header-left">
-            <a href="/home"><img src="/resources/2.png" alt="GIIS Clubs" class="logo"></a>
-            <input type="text" class="form-title-input" id="formTitle" placeholder="Untitled Form" value="<%= typeof form !== 'undefined' && form ? form.title : '' %>">
-        </div>
-        <div class="header-actions">
-            <a href="/forms" class="btn btn-secondary">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back
-            </a>
-            <button class="btn btn-secondary" onclick="previewForm()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                Preview
-            </button>
-            <button class="btn btn-primary" onclick="saveForm()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                Save
-            </button>
-        </div>
+        <nav class="nav-container">
+            <div class="logo-section">
+                <a href="/home"><img src="/resources/2.png" alt="GIIS Clubs" class="logo"></a>
+                <div class="form-title-wrapper">
+                    <input type="text" class="form-title-input" id="formTitleNav" placeholder="Untitled form" value="<%= typeof form !== 'undefined' && form ? form.title : '' %>">
+                    <span class="autosave-status" id="autosaveStatus">All changes saved</span>
+                </div>
+            </div>
+            <div class="nav-actions">
+                <a href="/forms" class="nav-link">My Forms</a>
+                <button class="btn btn-ghost" onclick="showSettingsModal()" title="Settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                    Settings
+                </button>
+                <button class="btn btn-ghost" onclick="previewForm()" title="Preview">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Preview
+                </button>
+                <button class="btn btn-secondary" onclick="showShareModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                    Share
+                </button>
+                <button class="btn btn-primary" onclick="saveForm()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Save
+                </button>
+            </div>
+        </nav>
     </header>
 
-    <div class="main-container">
-        <div class="sidebar">
-            <div class="sidebar-panel">
-                <div class="sidebar-title">Add Fields</div>
-                <div class="field-types">
-                    <button class="field-type-btn" onclick="addField('text')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
-                        Text
-                    </button>
-                    <button class="field-type-btn" onclick="addField('textarea')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10M7 12h10M7 17h6"/></svg>
-                        Paragraph
-                    </button>
-                    <button class="field-type-btn" onclick="addField('email')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
-                        Email
-                    </button>
-                    <button class="field-type-btn" onclick="addField('number')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/></svg>
-                        Number
-                    </button>
-                    <button class="field-type-btn" onclick="addField('phone')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-                        Phone
-                    </button>
-                    <button class="field-type-btn" onclick="addField('date')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                        Date
-                    </button>
-                    <button class="field-type-btn" onclick="addField('select')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg>
-                        Dropdown
-                    </button>
-                    <button class="field-type-btn" onclick="addField('radio')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
-                        Choice
-                    </button>
-                    <button class="field-type-btn" onclick="addField('checkbox')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
-                        Checkbox
-                    </button>
-                    <button class="field-type-btn" onclick="addField('rating')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        Rating
-                    </button>
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <div class="toolbar-group">
+            <button class="toolbar-btn" onclick="undo()" title="Undo (Ctrl+Z)" id="undoBtn" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6.36 2.64L3 13"/></svg>
+            </button>
+            <button class="toolbar-btn" onclick="redo()" title="Redo (Ctrl+Y)" id="redoBtn" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 019-9 9 9 0 016.36 2.64L21 13"/></svg>
+            </button>
+        </div>
+        <div class="toolbar-group">
+            <button class="toolbar-btn" onclick="addQuestion('text')" title="Add question">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </button>
+            <button class="toolbar-btn" onclick="addSection()" title="Add section">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+            </button>
+        </div>
+        <div class="toolbar-group">
+            <button class="toolbar-btn" onclick="showSettings()" title="Form settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-container" id="mainContainer">
+        <div class="form-header-card">
+            <input type="text" class="title-input" id="formTitle" placeholder="Untitled form" value="<%= typeof form !== 'undefined' && form ? form.title : '' %>">
+            <textarea class="desc-input" id="formDescription" placeholder="Form description (optional)"><%= typeof form !== 'undefined' && form ? form.description : '' %></textarea>
+        </div>
+        <div id="questionsContainer"></div>
+    </div>
+
+    <!-- FLOATING ADD PANEL -->
+    <div class="add-panel" id="addPanel">
+        <button class="add-panel-btn" onclick="addQuestion('text')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            <span class="tooltip">Add question</span>
+        </button>
+        <button class="add-panel-btn" onclick="addSection()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+            <span class="tooltip">Add section</span>
+        </button>
+        <button class="add-panel-btn" onclick="importQuestions()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span class="tooltip">Import questions</span>
+        </button>
+    </div>
+
+    <!-- QUICK START MODAL -->
+    <div class="modal-overlay" id="quickStartModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>✨ Create a new form</h2>
+                <p>Start from scratch or use a template</p>
+            </div>
+            <div class="modal-body">
+                <div class="template-grid">
+                    <div class="template-card selected" data-template="blank">
+                        <div class="template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
+                        <div class="template-name">Blank Form</div>
+                    </div>
+                    <div class="template-card" data-template="event">
+                        <div class="template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                        <div class="template-name">Event Registration</div>
+                    </div>
+                    <div class="template-card" data-template="feedback">
+                        <div class="template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+                        <div class="template-name">Feedback</div>
+                    </div>
+                    <div class="template-card" data-template="survey">
+                        <div class="template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+                        <div class="template-name">Survey</div>
+                    </div>
+                    <div class="template-card" data-template="quiz">
+                        <div class="template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                        <div class="template-name">Quiz</div>
+                    </div>
+                    <div class="template-card" data-template="contact">
+                        <div class="template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                        <div class="template-name">Contact Info</div>
+                    </div>
                 </div>
+                <input type="text" class="quick-start-input" id="quickStartTitle" placeholder="Enter form title...">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeQuickStart()">Cancel</button>
+                <button class="btn btn-primary" onclick="startForm()">Create Form</button>
             </div>
         </div>
+    </div>
 
-        <div class="canvas-area">
-            <div class="form-canvas">
-                <div class="canvas-header">
-                    <textarea id="formDescription" placeholder="Add a description for your form..." rows="2"><%= typeof form !== 'undefined' && form ? form.description : '' %></textarea>
+    <!-- SHARE MODAL -->
+    <div class="modal-overlay share-modal" id="shareModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Share form</h2>
+                <p>Get responses by sharing your form</p>
+            </div>
+            <div class="modal-body">
+                <div class="share-tabs">
+                    <button class="share-tab active">Link</button>
+                    <button class="share-tab">QR Code</button>
+                    <button class="share-tab">Embed</button>
                 </div>
-                <div class="fields-list" id="fieldsList"></div>
+                <div class="share-url-wrapper">
+                    <input type="text" class="share-url-input" id="shareUrl" readonly>
+                    <button class="btn btn-primary" onclick="copyShareUrl()">Copy</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeShareModal()">Done</button>
             </div>
         </div>
+    </div>
 
-        <div class="properties-panel">
-            <div class="props-panel">
-                <div class="props-title">Field Properties</div>
-                <div id="propsContent">
-                    <div class="props-empty">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-                        <p>Select a field to edit</p>
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay settings-modal" id="settingsModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>⚙️ Form Settings</h2>
+                <p>Customize how your form looks and behaves</p>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <div class="settings-tabs">
+                    <button class="settings-tab active" data-tab="appearance">Appearance</button>
+                    <button class="settings-tab" data-tab="behavior">Behavior</button>
+                    <button class="settings-tab" data-tab="messages">Messages</button>
+                </div>
+                <div class="settings-content">
+                    <!-- Appearance Tab -->
+                    <div class="settings-panel active" id="tab-appearance">
+                        <div class="setting-group">
+                            <label class="setting-label">Header Color</label>
+                            <div class="color-picker-row">
+                                <div class="color-option selected" data-color="#1a237e" style="background: #1a237e;"></div>
+                                <div class="color-option" data-color="#b71c1c" style="background: #b71c1c;"></div>
+                                <div class="color-option" data-color="#1b5e20" style="background: #1b5e20;"></div>
+                                <div class="color-option" data-color="#e65100" style="background: #e65100;"></div>
+                                <div class="color-option" data-color="#4a148c" style="background: #4a148c;"></div>
+                                <div class="color-option" data-color="#006064" style="background: #006064;"></div>
+                                <input type="color" id="customColor" value="#1a237e" style="width:32px;height:32px;border:none;cursor:pointer;">
+                            </div>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Background Style</label>
+                            <select class="setting-select" id="bgStyle">
+                                <option value="gradient">Gradient (default)</option>
+                                <option value="solid">Solid color</option>
+                                <option value="light">Light/Minimal</option>
+                            </select>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Font Style</label>
+                            <select class="setting-select" id="fontStyle">
+                                <option value="default">Garet (default)</option>
+                                <option value="modern">Inter</option>
+                                <option value="classic">Georgia</option>
+                                <option value="mono">Monospace</option>
+                            </select>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Show Progress Bar</label>
+                            <label class="toggle-container"><input type="checkbox" id="showProgress" checked><span class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+                    <!-- Behavior Tab -->
+                    <div class="settings-panel" id="tab-behavior">
+                        <div class="setting-group">
+                            <label class="setting-label">Collect Email Addresses</label>
+                            <label class="toggle-container"><input type="checkbox" id="collectEmail"><span class="toggle-slider"></span></label>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Limit to 1 Response</label>
+                            <label class="toggle-container"><input type="checkbox" id="limitResponses"><span class="toggle-slider"></span></label>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Allow Response Editing</label>
+                            <label class="toggle-container"><input type="checkbox" id="allowEdit"><span class="toggle-slider"></span></label>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Show Summary After Submit</label>
+                            <label class="toggle-container"><input type="checkbox" id="showSummary"><span class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+                    <!-- Messages Tab -->
+                    <div class="settings-panel" id="tab-messages">
+                        <div class="setting-group">
+                            <label class="setting-label">Confirmation Message</label>
+                            <textarea class="setting-textarea" id="confirmationMsg" placeholder="Thank you for your response!"></textarea>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Submit Button Text</label>
+                            <input type="text" class="setting-input" id="submitText" placeholder="Submit" value="Submit">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="shareModal">
-        <div class="modal">
-            <h3>Share Form</h3>
-            <p>Copy this link to share your form:</p>
-            <div class="share-url">
-                <input type="text" id="shareUrl" readonly>
-                <button onclick="copyShareUrl()">Copy</button>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeSettingsModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
             </div>
-            <button class="modal-close" onclick="closeShareModal()">Close</button>
         </div>
     </div>
 
+    <!-- TOAST -->
     <div class="toast" id="toast"></div>
 
+    <!-- KEYBOARD SHORTCUTS HINT -->
+    <div class="shortcuts-help">
+        <kbd>Ctrl</kbd>+<kbd>S</kbd> Save &nbsp;|&nbsp; <kbd>Ctrl</kbd>+<kbd>Enter</kbd> Add question
+    </div>
+
     <script>
-        let fields = [];
-        let selectedIdx = null;
         let formId = '<%= typeof form !== "undefined" && form ? form.id : "" %>';
         const clubName = '<%= typeof clubName !== "undefined" ? clubName : "" %>';
+        let sections = [{ id: 'main', title: '', description: '', questions: [] }];
+        let selectedId = null;
+        let history = [];
+        let historyIndex = -1;
+        let autosaveTimer = null;
+        let isNewForm = !formId;
 
         <% if (typeof form !== 'undefined' && form && form.fields) { %>
-        try { fields = <%- JSON.stringify(form.fields) %>; } catch(e) { fields = []; }
+        try {
+            const existingFields = <%- JSON.stringify(form.fields) %>;
+            if (existingFields.length > 0 && existingFields[0].questions) {
+                sections = existingFields;
+            } else {
+                sections = [{ id: 'main', title: '', description: '', questions: existingFields.map(f => ({ ...f, gotoSection: null })) }];
+            }
+        } catch(e) { console.error('Error loading form:', e); }
         <% } %>
 
-        const fieldDefaults = {
-            text: { label: 'Text Question', placeholder: 'Your answer', required: false },
-            textarea: { label: 'Paragraph Question', placeholder: 'Your detailed answer', required: false },
-            email: { label: 'Email Address', placeholder: 'email@example.com', required: false },
-            number: { label: 'Number', placeholder: '0', required: false },
-            phone: { label: 'Phone Number', placeholder: '+1234567890', required: false },
-            date: { label: 'Date', required: false },
-            select: { label: 'Dropdown Question', options: ['Option 1', 'Option 2', 'Option 3'], required: false },
-            radio: { label: 'Multiple Choice', options: ['Option 1', 'Option 2', 'Option 3'], required: false },
-            checkbox: { label: 'Checkboxes', options: ['Option 1', 'Option 2', 'Option 3'], required: false },
-            rating: { label: 'Rating', maxRating: 5, required: false }
+        const questionTypes = {
+            text: { label: 'Short answer', defaultLabel: 'Question' },
+            textarea: { label: 'Paragraph', defaultLabel: 'Question' },
+            radio: { label: 'Multiple choice', defaultLabel: 'Question', hasOptions: true, canBranch: true },
+            checkbox: { label: 'Checkboxes', defaultLabel: 'Question', hasOptions: true },
+            select: { label: 'Dropdown', defaultLabel: 'Question', hasOptions: true, canBranch: true },
+            linear: { label: 'Linear scale', defaultLabel: 'Question' },
+            rating: { label: 'Rating', defaultLabel: 'Rating' },
+            date: { label: 'Date', defaultLabel: 'Date' },
+            time: { label: 'Time', defaultLabel: 'Time' },
+            email: { label: 'Email', defaultLabel: 'Email' },
+            phone: { label: 'Phone', defaultLabel: 'Phone number' },
+            number: { label: 'Number', defaultLabel: 'Number' },
+            file: { label: 'File upload', defaultLabel: 'File upload' }
         };
 
-        const typeLabels = {
-            text: 'Text', textarea: 'Paragraph', email: 'Email', number: 'Number',
-            phone: 'Phone', date: 'Date', select: 'Dropdown', radio: 'Choice',
-            checkbox: 'Checkbox', rating: 'Rating'
+        const templates = {
+            blank: { title: 'Untitled form', description: '', questions: [] },
+            event: { title: 'Event Registration', description: 'Please fill out this form to register for the event.', questions: [
+                { type: 'text', label: 'Full Name', required: true },
+                { type: 'email', label: 'Email Address', required: true },
+                { type: 'phone', label: 'Phone Number', required: false },
+                { type: 'radio', label: 'How did you hear about this event?', options: ['Social Media', 'Friend/Family', 'Email', 'Website', 'Other'], required: false }
+            ]},
+            feedback: { title: 'Feedback Form', description: 'We value your feedback!', questions: [
+                { type: 'rating', label: 'Overall satisfaction', maxRating: 5, required: true },
+                { type: 'radio', label: 'Would you recommend us?', options: ['Definitely', 'Probably', 'Not sure', 'Probably not', 'Definitely not'], required: true },
+                { type: 'textarea', label: 'What did you like most?', required: false },
+                { type: 'textarea', label: 'What could we improve?', required: false }
+            ]},
+            survey: { title: 'Survey', description: 'Please take a moment to complete this survey.', questions: [
+                { type: 'radio', label: 'How often do you use our service?', options: ['Daily', 'Weekly', 'Monthly', 'Rarely', 'First time'], required: true },
+                { type: 'linear', label: 'How satisfied are you?', scaleMin: 1, scaleMax: 5, labelMin: 'Not at all', labelMax: 'Extremely', required: true }
+            ]},
+            quiz: { title: 'Quiz', description: 'Test your knowledge!', questions: [
+                { type: 'radio', label: 'Question 1', options: ['Option A', 'Option B', 'Option C', 'Option D'], required: true },
+                { type: 'radio', label: 'Question 2', options: ['Option A', 'Option B', 'Option C', 'Option D'], required: true }
+            ]},
+            contact: { title: 'Contact Information', description: 'Please provide your contact details.', questions: [
+                { type: 'text', label: 'Full Name', required: true },
+                { type: 'email', label: 'Email Address', required: true },
+                { type: 'phone', label: 'Phone Number', required: false },
+                { type: 'textarea', label: 'Message', required: false }
+            ]}
         };
 
-        function addField(type) {
-            const field = {
-                id: 'f_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                type: type,
-                ...JSON.parse(JSON.stringify(fieldDefaults[type]))
-            };
-            fields.push(field);
-            selectedIdx = fields.length - 1;
+        document.addEventListener('DOMContentLoaded', function() {
+            if (isNewForm && sections[0].questions.length === 0) showQuickStart();
+            else render();
+            setupKeyboardShortcuts();
+            syncTitles();
+        });
+
+        function showQuickStart() {
+            document.getElementById('quickStartModal').classList.add('show');
+            setTimeout(() => document.getElementById('quickStartTitle').focus(), 300);
+        }
+
+        function closeQuickStart() {
+            document.getElementById('quickStartModal').classList.remove('show');
+            if (sections[0].questions.length === 0) addQuestion('text');
             render();
         }
 
-        function deleteField(idx) {
-            fields.splice(idx, 1);
-            if (selectedIdx === idx) selectedIdx = null;
-            else if (selectedIdx !== null && selectedIdx > idx) selectedIdx--;
-            render();
+        function startForm() {
+            const title = document.getElementById('quickStartTitle').value.trim();
+            const selectedTemplate = document.querySelector('.template-card.selected');
+            const templateName = selectedTemplate ? selectedTemplate.dataset.template : 'blank';
+            const template = templates[templateName];
+            document.getElementById('formTitle').value = title || template.title;
+            document.getElementById('formTitleNav').value = title || template.title;
+            document.getElementById('formDescription').value = template.description;
+            if (template.questions.length > 0) {
+                sections[0].questions = template.questions.map(q => ({ id: generateId(), ...q, options: q.options ? [...q.options] : undefined, gotoSection: null }));
+            } else addQuestion('text');
+            closeQuickStart();
+            saveHistory();
         }
 
-        function duplicateField(idx) {
-            const copy = JSON.parse(JSON.stringify(fields[idx]));
-            copy.id = 'f_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-            fields.splice(idx + 1, 0, copy);
-            selectedIdx = idx + 1;
-            render();
-        }
-
-        function selectField(idx) {
-            selectedIdx = idx;
-            render();
-        }
-
-        function updateField(prop, value) {
-            if (selectedIdx !== null && fields[selectedIdx]) {
-                fields[selectedIdx][prop] = value;
-                renderFields();
-            }
-        }
-
-        function updateOption(optIdx, value) {
-            if (selectedIdx !== null && fields[selectedIdx] && fields[selectedIdx].options) {
-                fields[selectedIdx].options[optIdx] = value;
-                renderFields();
-            }
-        }
-
-        function addOption() {
-            if (selectedIdx !== null && fields[selectedIdx] && fields[selectedIdx].options) {
-                fields[selectedIdx].options.push('New Option');
-                renderProps();
-                renderFields();
-            }
-        }
-
-        function removeOption(optIdx) {
-            if (selectedIdx !== null && fields[selectedIdx] && fields[selectedIdx].options && fields[selectedIdx].options.length > 1) {
-                fields[selectedIdx].options.splice(optIdx, 1);
-                renderProps();
-                renderFields();
-            }
-        }
+        document.querySelectorAll('.template-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                const templateName = this.dataset.template;
+                if (templateName !== 'blank') document.getElementById('quickStartTitle').value = templates[templateName].title;
+            });
+        });
 
         function render() {
-            renderFields();
-            renderProps();
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
-
-        function renderFields() {
-            const container = document.getElementById('fieldsList');
-            if (fields.length === 0) {
-                container.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg><p>Click a field type to add it here</p></div>';
-                return;
-            }
-
+            const container = document.getElementById('questionsContainer');
             let html = '';
-            fields.forEach((field, idx) => {
-                const isSelected = idx === selectedIdx;
-                let preview = '';
-
-                if (['select', 'radio', 'checkbox'].includes(field.type) && field.options) {
-                    preview = '<div class="field-preview options">' +
-                        field.options.slice(0, 4).map(o => '<span class="preview-option">' + escapeHtml(o) + '</span>').join('') +
-                        (field.options.length > 4 ? '<span class="preview-option">...</span>' : '') +
-                        '</div>';
-                } else if (field.type === 'rating') {
-                    preview = '<div class="field-preview">' + '★'.repeat(field.maxRating || 5) + '</div>';
-                } else {
-                    preview = '<div class="field-preview">' + escapeHtml(field.placeholder || 'Enter value...') + '</div>';
-                }
-
-                html += '<div class="field-item ' + (isSelected ? 'selected' : '') + '" onclick="selectField(' + idx + ')" draggable="true" data-idx="' + idx + '">' +
-                    '<div class="field-top-row">' +
-                    '<span class="field-type-tag">' + (typeLabels[field.type] || field.type) + '</span>' +
-                    '<div class="field-actions">' +
-                    '<button class="field-action-btn" onclick="event.stopPropagation(); duplicateField(' + idx + ')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>' +
-                    '<button class="field-action-btn delete" onclick="event.stopPropagation(); deleteField(' + idx + ')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>' +
-                    '</div></div>' +
-                    '<div class="field-label">' + escapeHtml(field.label) + (field.required ? '<span class="required">*</span>' : '') + '</div>' +
-                    preview +
-                    '</div>';
+            sections.forEach((section, sectionIndex) => {
+                if (sectionIndex > 0 || section.title) html += renderSection(section, sectionIndex);
+                section.questions.forEach((question, qIndex) => { html += renderQuestion(question, sectionIndex, qIndex); });
             });
+            if (sections[0].questions.length === 0 && sections.length === 1) {
+                html += '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><h3>Your form is empty</h3><p>Click the + button to add your first question</p><button class="btn btn-primary" onclick="addQuestion(\'text\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add question</button></div>';
+            }
             container.innerHTML = html;
             setupDragDrop();
+            updateUndoRedo();
+        }
+
+        function renderSection(section, sectionIndex) {
+            return '<div class="section-card" data-section="'+sectionIndex+'"><div class="section-header"><input type="text" class="section-title-input" value="'+escapeHtml(section.title)+'" placeholder="Section '+(sectionIndex+1)+'" onchange="updateSection('+sectionIndex+', \'title\', this.value)"><div class="section-actions"><button class="toolbar-btn" onclick="duplicateSection('+sectionIndex+')" title="Duplicate section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><button class="toolbar-btn" onclick="deleteSection('+sectionIndex+')" title="Delete section"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></div></div><input type="text" class="section-desc-input" value="'+escapeHtml(section.description || '')+'" placeholder="Section description (optional)" onchange="updateSection('+sectionIndex+', \'description\', this.value)"></div>';
+        }
+
+        function renderQuestion(question, sectionIndex, qIndex) {
+            const isSelected = selectedId === question.id;
+            return '<div class="question-card '+(isSelected ? 'selected' : '')+'" data-id="'+question.id+'" data-section="'+sectionIndex+'" data-index="'+qIndex+'" draggable="true" onclick="selectQuestion(\''+question.id+'\')"><div class="question-content"><div class="question-top-row"><div class="question-input-wrapper"><input type="text" class="question-input" value="'+escapeHtml(question.label)+'" placeholder="Question" onchange="updateQuestion(\''+question.id+'\', \'label\', this.value)" onclick="event.stopPropagation()"></div><select class="question-type-select" onchange="changeQuestionType(\''+question.id+'\', this.value)" onclick="event.stopPropagation()">'+Object.entries(questionTypes).map(([key, val]) => '<option value="'+key+'" '+(question.type === key ? 'selected' : '')+'>'+val.label+'</option>').join('')+'</select></div><div class="answer-preview">'+renderAnswerPreview(question, sectionIndex)+'</div></div><div class="question-footer"><button class="footer-action" onclick="event.stopPropagation(); duplicateQuestion(\''+question.id+'\')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><button class="footer-action delete" onclick="event.stopPropagation(); deleteQuestion(\''+question.id+'\')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button><div class="footer-divider"></div><div class="required-toggle">Required<div class="toggle-switch '+(question.required ? 'active' : '')+'" onclick="event.stopPropagation(); toggleRequired(\''+question.id+'\')"></div></div></div></div>';
+        }
+
+        function renderAnswerPreview(question, sectionIndex) {
+            switch (question.type) {
+                case 'text': return '<div class="text-preview short">'+(question.placeholder || 'Short answer text')+'</div>';
+                case 'textarea': return '<div class="text-preview long">'+(question.placeholder || 'Long answer text')+'</div>';
+                case 'radio': case 'checkbox': case 'select': return renderOptionsPreview(question, sectionIndex);
+                case 'linear': return renderLinearScale(question);
+                case 'rating': return renderRating(question);
+                case 'date': return '<div class="datetime-preview"><div class="datetime-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Month, day, year</div></div>';
+                case 'time': return '<div class="datetime-preview"><div class="datetime-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Time</div></div>';
+                case 'file': return renderFileUpload(question);
+                default: return '<div class="text-preview short">'+(question.placeholder || 'Your answer')+'</div>';
+            }
+        }
+
+        function renderOptionsPreview(question, sectionIndex) {
+            const options = question.options || ['Option 1'];
+            const indicatorClass = question.type === 'checkbox' ? 'checkbox' : (question.type === 'select' ? 'dropdown' : '');
+            const canBranch = questionTypes[question.type]?.canBranch && sections.length > 1;
+            let html = '<div class="options-list">';
+            options.forEach((opt, i) => {
+                html += '<div class="option-row">'+(question.type === 'select' ? '<span class="option-number">'+(i+1)+'.</span>' : '<div class="option-indicator '+indicatorClass+'"></div>')+'<input type="text" class="option-input" value="'+escapeHtml(opt)+'" placeholder="Option '+(i+1)+'" onchange="updateOption(\''+question.id+'\', '+i+', this.value)" onclick="event.stopPropagation()">'+(canBranch ? '<div class="goto-section-wrapper"><span class="goto-label">Go to:</span><select class="goto-select" onchange="setOptionGoto(\''+question.id+'\', '+i+', this.value)" onclick="event.stopPropagation()"><option value="">Continue</option>'+sections.map((s, si) => '<option value="'+si+'" '+((question.gotoSections && question.gotoSections[i] === si) ? 'selected' : '')+'>Section '+(si+1)+(s.title ? ': '+s.title.substring(0,15) : '')+'</option>').join('')+'<option value="submit">Submit form</option></select></div>' : '')+'<div class="option-actions"><button class="option-btn delete" onclick="event.stopPropagation(); removeOption(\''+question.id+'\', '+i+')" title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div></div>';
+            });
+            html += '<div class="add-option-row" onclick="event.stopPropagation(); addOption(\''+question.id+'\')">'+(question.type === 'select' ? '<span class="option-number">'+(options.length+1)+'.</span>' : '<div class="option-indicator '+indicatorClass+'" style="opacity:0.5"></div>')+'<span class="add-option-text">Add option</span></div></div>';
+            return html;
+        }
+
+        function renderLinearScale(question) {
+            const min = question.scaleMin || 1, max = question.scaleMax || 5;
+            const labelMin = question.labelMin || '', labelMax = question.labelMax || '';
+            return '<div class="linear-scale-config"><div class="scale-range"><select class="scale-select" onchange="updateQuestion(\''+question.id+'\', \'scaleMin\', parseInt(this.value))" onclick="event.stopPropagation()">'+ [0,1].map(n => '<option value="'+n+'" '+(min===n?'selected':'')+'>'+n+'</option>').join('')+'</select><span>to</span><select class="scale-select" onchange="updateQuestion(\''+question.id+'\', \'scaleMax\', parseInt(this.value))" onclick="event.stopPropagation()">'+[2,3,4,5,6,7,8,9,10].map(n => '<option value="'+n+'" '+(max===n?'selected':'')+'>'+n+'</option>').join('')+'</select></div><input type="text" class="scale-label-input" value="'+escapeHtml(labelMin)+'" placeholder="Label (optional)" onchange="updateQuestion(\''+question.id+'\', \'labelMin\', this.value)" onclick="event.stopPropagation()"><input type="text" class="scale-label-input" value="'+escapeHtml(labelMax)+'" placeholder="Label (optional)" onchange="updateQuestion(\''+question.id+'\', \'labelMax\', this.value)" onclick="event.stopPropagation()"></div><div class="scale-preview">'+(labelMin?'<span class="scale-label">'+escapeHtml(labelMin)+'</span>':'')+'<div class="scale-options">'+Array.from({length:max-min+1},(_,i)=>'<div class="scale-option"><span class="scale-number">'+(min+i)+'</span><div class="scale-radio"></div></div>').join('')+'</div>'+(labelMax?'<span class="scale-label">'+escapeHtml(labelMax)+'</span>':'')+'</div>';
+        }
+
+        function renderRating(question) {
+            const maxRating = question.maxRating || 5;
+            return '<div class="linear-scale-config"><div class="scale-range"><span>Stars:</span><select class="scale-select" onchange="updateQuestion(\''+question.id+'\', \'maxRating\', parseInt(this.value))" onclick="event.stopPropagation()">'+[3,4,5,6,7,8,9,10].map(n => '<option value="'+n+'" '+(maxRating===n?'selected':'')+'>'+n+'</option>').join('')+'</select></div></div><div class="rating-preview">'+Array.from({length:maxRating},()=>'<span class="rating-star">★</span>').join('')+'</div>';
+        }
+
+        function renderFileUpload(question) {
+            return '<div class="file-upload-preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div>Click to upload or drag and drop</div></div><div class="file-config"><label><input type="checkbox" '+(question.allowMultiple?'checked':'')+' onchange="updateQuestion(\''+question.id+'\', \'allowMultiple\', this.checked)" onclick="event.stopPropagation()"> Allow multiple files</label><label>Max size: <select onchange="updateQuestion(\''+question.id+'\', \'maxSize\', this.value)" onclick="event.stopPropagation()"><option value="1" '+(question.maxSize==='1'?'selected':'')+'>1 MB</option><option value="5" '+(!question.maxSize||question.maxSize==='5'?'selected':'')+'>5 MB</option><option value="10" '+(question.maxSize==='10'?'selected':'')+'>10 MB</option></select></label></div>';
+        }
+
+        function generateId() { return 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6); }
+
+        function addQuestion(type) {
+            const typeConfig = questionTypes[type] || questionTypes.text;
+            const question = { id: generateId(), type: type, label: typeConfig.defaultLabel, required: false, placeholder: '', gotoSection: null };
+            if (typeConfig.hasOptions) { question.options = ['Option 1']; question.gotoSections = [null]; }
+            if (type === 'linear') { question.scaleMin = 1; question.scaleMax = 5; question.labelMin = ''; question.labelMax = ''; }
+            if (type === 'rating') { question.maxRating = 5; }
+            sections[sections.length - 1].questions.push(question);
+            selectedId = question.id;
+            saveHistory(); render(); triggerAutosave();
+        }
+
+        function addSection() {
+            sections.push({ id: 'section_' + Date.now(), title: 'Section ' + (sections.length + 1), description: '', questions: [] });
+            saveHistory(); render(); triggerAutosave();
+        }
+
+        function selectQuestion(id) { selectedId = id; render(); }
+
+        function updateQuestion(id, prop, value) {
+            for (let section of sections) {
+                const question = section.questions.find(q => q.id === id);
+                if (question) { question[prop] = value; break; }
+            }
+            saveHistory(); render(); triggerAutosave();
+        }
+
+        function changeQuestionType(id, newType) {
+            for (let section of sections) {
+                const question = section.questions.find(q => q.id === id);
+                if (question) {
+                    question.type = newType;
+                    if (questionTypes[newType]?.hasOptions && !question.options) { question.options = ['Option 1']; question.gotoSections = [null]; }
+                    if (newType === 'linear' && question.scaleMin === undefined) { question.scaleMin = 1; question.scaleMax = 5; }
+                    if (newType === 'rating' && !question.maxRating) { question.maxRating = 5; }
+                    break;
+                }
+            }
+            saveHistory(); render(); triggerAutosave();
+        }
+
+        function toggleRequired(id) {
+            for (let section of sections) {
+                const question = section.questions.find(q => q.id === id);
+                if (question) { question.required = !question.required; break; }
+            }
+            saveHistory(); render(); triggerAutosave();
+        }
+
+        function duplicateQuestion(id) {
+            for (let section of sections) {
+                const idx = section.questions.findIndex(q => q.id === id);
+                if (idx !== -1) {
+                    const copy = JSON.parse(JSON.stringify(section.questions[idx]));
+                    copy.id = generateId();
+                    section.questions.splice(idx + 1, 0, copy);
+                    selectedId = copy.id;
+                    break;
+                }
+            }
+            saveHistory(); render(); triggerAutosave();
+        }
+
+        function deleteQuestion(id) {
+            for (let section of sections) {
+                const idx = section.questions.findIndex(q => q.id === id);
+                if (idx !== -1) {
+                    section.questions.splice(idx, 1);
+                    if (selectedId === id) selectedId = null;
+                    break;
+                }
+            }
+            saveHistory(); render(); triggerAutosave();
+        }
+
+        function addOption(id) {
+            for (let section of sections) {
+                const question = section.questions.find(q => q.id === id);
+                if (question && question.options) {
+                    question.options.push('Option ' + (question.options.length + 1));
+                    if (question.gotoSections) question.gotoSections.push(null);
+                    break;
+                }
+            }
+            saveHistory(); render(); triggerAutosave();
+        }
+
+        function updateOption(id, optIndex, value) {
+            for (let section of sections) {
+                const question = section.questions.find(q => q.id === id);
+                if (question && question.options) { question.options[optIndex] = value; break; }
+            }
+            triggerAutosave();
+        }
+
+        function removeOption(id, optIndex) {
+            for (let section of sections) {
+                const question = section.questions.find(q => q.id === id);
+                if (question && question.options && question.options.length > 1) {
+                    question.options.splice(optIndex, 1);
+                    if (question.gotoSections) question.gotoSections.splice(optIndex, 1);
+                    break;
+                }
+            }
+            saveHistory(); render(); triggerAutosave();
+        }
+
+        function setOptionGoto(id, optIndex, value) {
+            for (let section of sections) {
+                const question = section.questions.find(q => q.id === id);
+                if (question) {
+                    if (!question.gotoSections) question.gotoSections = question.options.map(() => null);
+                    question.gotoSections[optIndex] = value === '' ? null : value;
+                    break;
+                }
+            }
+            saveHistory(); triggerAutosave();
+        }
+
+        function updateSection(sectionIndex, prop, value) { sections[sectionIndex][prop] = value; saveHistory(); triggerAutosave(); }
+
+        function deleteSection(sectionIndex) {
+            if (sections.length > 1) { sections.splice(sectionIndex, 1); saveHistory(); render(); triggerAutosave(); }
+        }
+
+        function duplicateSection(sectionIndex) {
+            const copy = JSON.parse(JSON.stringify(sections[sectionIndex]));
+            copy.id = 'section_' + Date.now();
+            copy.questions.forEach(q => q.id = generateId());
+            sections.splice(sectionIndex + 1, 0, copy);
+            saveHistory(); render(); triggerAutosave();
         }
 
         function setupDragDrop() {
-            const items = document.querySelectorAll('.field-item');
-            let dragIdx = null;
-
-            items.forEach(item => {
-                item.addEventListener('dragstart', function(e) {
-                    dragIdx = parseInt(this.dataset.idx);
-                    this.classList.add('dragging');
-                });
-                item.addEventListener('dragend', function() {
-                    this.classList.remove('dragging');
-                    dragIdx = null;
-                });
-                item.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                });
-                item.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    const dropIdx = parseInt(this.dataset.idx);
-                    if (dragIdx !== null && dragIdx !== dropIdx) {
-                        const moved = fields.splice(dragIdx, 1)[0];
-                        fields.splice(dropIdx, 0, moved);
-                        if (selectedIdx === dragIdx) selectedIdx = dropIdx;
-                        else if (selectedIdx !== null && selectedIdx > dragIdx && selectedIdx <= dropIdx) selectedIdx--;
-                        else if (selectedIdx !== null && selectedIdx < dragIdx && selectedIdx >= dropIdx) selectedIdx++;
-                        render();
-                    }
-                });
+            const cards = document.querySelectorAll('.question-card');
+            let draggedId = null;
+            cards.forEach(card => {
+                card.addEventListener('dragstart', function(e) { draggedId = this.dataset.id; this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+                card.addEventListener('dragend', function() { this.classList.remove('dragging'); draggedId = null; });
+                card.addEventListener('dragover', function(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+                card.addEventListener('drop', function(e) { e.preventDefault(); const dropId = this.dataset.id; if (draggedId && draggedId !== dropId) moveQuestion(draggedId, dropId); });
             });
         }
 
-        function renderProps() {
-            const container = document.getElementById('propsContent');
-            if (selectedIdx === null || !fields[selectedIdx]) {
-                container.innerHTML = '<div class="props-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><p>Select a field to edit</p></div>';
-                return;
-            }
-
-            const field = fields[selectedIdx];
-            let html = '';
-
-            html += '<div class="prop-group"><label class="prop-label">Question</label><input type="text" class="prop-input" value="' + escapeHtml(field.label) + '" onchange="updateField(\'label\', this.value)"></div>';
-
-            if (['text', 'textarea', 'email', 'number', 'phone'].includes(field.type)) {
-                html += '<div class="prop-group"><label class="prop-label">Placeholder</label><input type="text" class="prop-input" value="' + escapeHtml(field.placeholder || '') + '" onchange="updateField(\'placeholder\', this.value)"></div>';
-            }
-
-            if (['select', 'radio', 'checkbox'].includes(field.type) && field.options) {
-                html += '<div class="prop-group"><label class="prop-label">Options</label><div class="options-editor">';
-                field.options.forEach((opt, i) => {
-                    html += '<div class="option-row"><input type="text" value="' + escapeHtml(opt) + '" onchange="updateOption(' + i + ', this.value)"><button class="option-remove" onclick="removeOption(' + i + ')">×</button></div>';
+        function moveQuestion(fromId, toId) {
+            let fromQ = null, fromSection = null, fromIdx = null;
+            let toSection = null, toIdx = null;
+            sections.forEach((section, si) => {
+                section.questions.forEach((q, qi) => {
+                    if (q.id === fromId) { fromQ = q; fromSection = si; fromIdx = qi; }
+                    if (q.id === toId) { toSection = si; toIdx = qi; }
                 });
-                html += '<button class="add-option-btn" onclick="addOption()">+ Add Option</button></div></div>';
+            });
+            if (fromQ && fromSection !== null && toSection !== null) {
+                sections[fromSection].questions.splice(fromIdx, 1);
+                sections[toSection].questions.splice(toIdx, 0, fromQ);
+                saveHistory(); render(); triggerAutosave();
             }
-
-            if (field.type === 'rating') {
-                html += '<div class="prop-group"><label class="prop-label">Max Stars</label><input type="number" class="prop-input" min="1" max="10" value="' + (field.maxRating || 5) + '" onchange="updateField(\'maxRating\', parseInt(this.value))"></div>';
-            }
-
-            html += '<div class="prop-group"><label class="prop-checkbox"><input type="checkbox" ' + (field.required ? 'checked' : '') + ' onchange="updateField(\'required\', this.checked)"> Required field</label></div>';
-
-            container.innerHTML = html;
         }
 
-        async function saveForm() {
-            const title = document.getElementById('formTitle').value.trim() || 'Untitled Form';
+        function saveHistory() {
+            history = history.slice(0, historyIndex + 1);
+            history.push(JSON.stringify(sections));
+            historyIndex = history.length - 1;
+            if (history.length > 50) { history.shift(); historyIndex--; }
+            updateUndoRedo();
+        }
+
+        function undo() { if (historyIndex > 0) { historyIndex--; sections = JSON.parse(history[historyIndex]); render(); triggerAutosave(); } }
+        function redo() { if (historyIndex < history.length - 1) { historyIndex++; sections = JSON.parse(history[historyIndex]); render(); triggerAutosave(); } }
+        function updateUndoRedo() { document.getElementById('undoBtn').disabled = historyIndex <= 0; document.getElementById('redoBtn').disabled = historyIndex >= history.length - 1; }
+
+        function triggerAutosave() {
+            const status = document.getElementById('autosaveStatus');
+            status.textContent = 'Saving...';
+            status.className = 'autosave-status saving';
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(async () => {
+                try { await saveFormData(true); status.textContent = 'All changes saved'; status.className = 'autosave-status saved'; }
+                catch (e) { status.textContent = 'Save failed'; status.className = 'autosave-status error'; }
+            }, 2000);
+        }
+
+        async function saveForm() { await saveFormData(false); }
+
+        async function saveFormData(silent = false) {
+            const title = document.getElementById('formTitle').value.trim() || 'Untitled form';
             const description = document.getElementById('formDescription').value.trim();
-
-            if (fields.length === 0) {
-                showToast('Add at least one field', 'error');
-                return;
-            }
-
-            try {
-                const res = await fetch('/forms/save', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: formId || null, title: title, description: description, fields: fields, club: clubName })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    formId = data.formId;
-                    history.replaceState(null, '', '/forms/edit/' + formId);
-                    showToast('Form saved!', 'success');
-                } else {
-                    showToast(data.error || 'Save failed', 'error');
-                }
-            } catch (err) {
-                console.error(err);
-                showToast('Save failed', 'error');
-            }
+            const allQuestions = sections.flatMap(s => s.questions);
+            if (allQuestions.length === 0) { if (!silent) showToast('Add at least one question', 'error'); throw new Error('No questions'); }
+            const res = await fetch('/forms/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: formId || null, title: title, description: description, fields: sections, club: clubName, settings: formSettings }) });
+            const data = await res.json();
+            if (data.success) { formId = data.formId; isNewForm = false; history.replaceState(null, '', '/forms/edit/' + formId); if (!silent) showToast('Form saved!', 'success'); }
+            else { if (!silent) showToast(data.error || 'Save failed', 'error'); throw new Error(data.error); }
         }
 
-        function previewForm() {
-            if (!formId) {
-                showToast('Save the form first', 'error');
-                return;
-            }
-            window.open('/forms/view/' + formId, '_blank');
-        }
+        function previewForm() { if (!formId) { showToast('Save the form first', 'error'); return; } window.open('/forms/view/' + formId, '_blank'); }
 
         function showShareModal() {
-            if (!formId) {
-                showToast('Save the form first', 'error');
-                return;
-            }
+            if (!formId) { showToast('Save the form first', 'error'); return; }
             document.getElementById('shareUrl').value = window.location.origin + '/forms/view/' + formId;
             document.getElementById('shareModal').classList.add('show');
         }
 
-        function closeShareModal() {
-            document.getElementById('shareModal').classList.remove('show');
-        }
+        function closeShareModal() { document.getElementById('shareModal').classList.remove('show'); }
 
-        function copyShareUrl() {
-            const input = document.getElementById('shareUrl');
-            input.select();
-            document.execCommand('copy');
-            showToast('Link copied!', 'success');
-        }
+        function copyShareUrl() { const input = document.getElementById('shareUrl'); input.select(); document.execCommand('copy'); showToast('Link copied!', 'success'); }
+
+        function escapeHtml(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 
         function showToast(msg, type) {
             const toast = document.getElementById('toast');
-            toast.textContent = msg;
+            toast.innerHTML = (type === 'success' ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' : type === 'error' ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' : '') + msg;
             toast.className = 'toast ' + (type || '') + ' show';
-            setTimeout(function() { toast.classList.remove('show'); }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        render();
+        function syncTitles() {
+            const mainTitle = document.getElementById('formTitle');
+            const navTitle = document.getElementById('formTitleNav');
+            mainTitle.addEventListener('input', () => navTitle.value = mainTitle.value);
+            navTitle.addEventListener('input', () => mainTitle.value = navTitle.value);
+        }
+
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key.toLowerCase()) {
+                        case 's': e.preventDefault(); saveForm(); break;
+                        case 'z': if (e.shiftKey) { e.preventDefault(); redo(); } else { e.preventDefault(); undo(); } break;
+                        case 'y': e.preventDefault(); redo(); break;
+                        case 'enter': e.preventDefault(); addQuestion('text'); break;
+                        case 'p': e.preventDefault(); previewForm(); break;
+                    }
+                }
+            });
+        }
+
+        function showSettings() { showToast('Settings coming soon!', ''); }
+        function importQuestions() { showToast('Import coming soon!', ''); }
+
+        // Form settings
+        let formSettings = {
+            headerColor: '#1a237e',
+            bgStyle: 'gradient',
+            fontStyle: 'default',
+            showProgress: true,
+            collectEmail: false,
+            limitResponses: false,
+            allowEdit: false,
+            showSummary: false,
+            confirmationMsg: 'Thank you for your response!',
+            submitText: 'Submit'
+        };
+
+        <% if (typeof form !== 'undefined' && form && form.settings) { %>
+        // Load existing form settings
+        try {
+            const existingSettings = <%- JSON.stringify(form.settings) %>;
+            formSettings = { ...formSettings, ...existingSettings };
+        } catch(e) { console.error('Error loading form settings:', e); }
+        <% } %>
+
+        function showSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            // Load current settings into form
+            document.querySelectorAll('.color-option').forEach(opt => {
+                opt.classList.toggle('selected', opt.dataset.color === formSettings.headerColor);
+            });
+            document.getElementById('customColor').value = formSettings.headerColor;
+            document.getElementById('bgStyle').value = formSettings.bgStyle;
+            document.getElementById('fontStyle').value = formSettings.fontStyle;
+            document.getElementById('showProgress').checked = formSettings.showProgress;
+            document.getElementById('collectEmail').checked = formSettings.collectEmail;
+            document.getElementById('limitResponses').checked = formSettings.limitResponses;
+            document.getElementById('allowEdit').checked = formSettings.allowEdit;
+            document.getElementById('showSummary').checked = formSettings.showSummary;
+            document.getElementById('confirmationMsg').value = formSettings.confirmationMsg;
+            document.getElementById('submitText').value = formSettings.submitText;
+            modal.classList.add('show');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('show');
+        }
+
+        function saveSettings() {
+            const selectedColor = document.querySelector('.color-option.selected');
+            formSettings.headerColor = selectedColor ? selectedColor.dataset.color : document.getElementById('customColor').value;
+            formSettings.bgStyle = document.getElementById('bgStyle').value;
+            formSettings.fontStyle = document.getElementById('fontStyle').value;
+            formSettings.showProgress = document.getElementById('showProgress').checked;
+            formSettings.collectEmail = document.getElementById('collectEmail').checked;
+            formSettings.limitResponses = document.getElementById('limitResponses').checked;
+            formSettings.allowEdit = document.getElementById('allowEdit').checked;
+            formSettings.showSummary = document.getElementById('showSummary').checked;
+            formSettings.confirmationMsg = document.getElementById('confirmationMsg').value;
+            formSettings.submitText = document.getElementById('submitText').value;
+            closeSettingsModal();
+            showToast('Settings saved!', 'success');
+            triggerAutosave();
+        }
+
+        // Settings tabs
+        document.querySelectorAll('.settings-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Color picker
+        document.querySelectorAll('.color-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        document.getElementById('customColor').addEventListener('input', function() {
+            document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+        });
+
+        saveHistory();
     </script>
 </body>
 </html>

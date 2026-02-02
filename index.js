@@ -847,12 +847,69 @@ app.route('/linktree/:club').get(async (req, res) => {
 // Ensure forms directory exists
 const formsDir = path.join(__dirname, 'data', 'forms');
 const responsesDir = path.join(__dirname, 'data', 'responses');
+const uploadsDir = path.join(__dirname, 'data', 'uploads', 'forms');
 
 if (!fs.existsSync(formsDir)) {
     fs.mkdirSync(formsDir, { recursive: true });
 }
 if (!fs.existsSync(responsesDir)) {
     fs.mkdirSync(responsesDir, { recursive: true });
+}
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+app.use('/uploads/forms', express.static(uploadsDir));
+
+const formFileStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadsDir);
+    },
+    filename: function (req, file, cb) {
+        const unique = Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+        const safeName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+        cb(null, unique + '_' + safeName);
+    }
+});
+
+const uploadFormFiles = multer({
+    storage: formFileStorage,
+    limits: { fileSize: 10 * 1024 * 1024 }
+});
+
+function normalizeFormFields(fields) {
+    const safeFields = Array.isArray(fields) ? fields : [];
+    const looksSectioned = safeFields.length > 0 && typeof safeFields[0] === 'object' && Array.isArray(safeFields[0]?.questions);
+
+    const sections = looksSectioned
+        ? safeFields.map((s, sIdx) => ({
+            id: s?.id ?? `section_${sIdx}`,
+            title: typeof s?.title === 'string' ? s.title : '',
+            description: typeof s?.description === 'string' ? s.description : '',
+            questions: Array.isArray(s?.questions) ? s.questions : []
+        }))
+        : [{ id: 'main', title: '', description: '', questions: safeFields }];
+
+    const flatFields = sections
+        .flatMap(s => Array.isArray(s.questions) ? s.questions : [])
+        .map((q, idx) => ({
+            id: q?.id ?? `q_${idx + 1}`,
+            type: typeof q?.type === 'string' ? q.type : 'text',
+            label: typeof q?.label === 'string' && q.label.trim() ? q.label : `Question ${idx + 1}`,
+            required: !!q?.required,
+            placeholder: typeof q?.placeholder === 'string' ? q.placeholder : '',
+            options: Array.isArray(q?.options) ? q.options : undefined,
+            maxRating: q?.maxRating,
+            scaleMin: q?.scaleMin,
+            scaleMax: q?.scaleMax,
+            labelMin: q?.labelMin,
+            labelMax: q?.labelMax,
+            allowMultiple: q?.allowMultiple,
+            maxSize: q?.maxSize,
+            gotoSections: Array.isArray(q?.gotoSections) ? q.gotoSections : undefined
+        }));
+
+    return { sections, flatFields, looksSectioned };
 }
 
 // Helper function to read forms for a club
@@ -996,7 +1053,7 @@ app.post('/forms/save', async (req, res) => {
         return res.status(403).json({ error: 'No club associated' });
     }
     
-    const { id, title, description, fields } = req.body;
+    const { id, title, description, fields, settings } = req.body;
     
     if (!title || !fields || fields.length === 0) {
         return res.status(400).json({ error: 'Title and fields are required' });
@@ -1020,6 +1077,7 @@ app.post('/forms/save', async (req, res) => {
         title,
         description,
         fields,
+        settings: settings || {},
         club: club.name,
         createdAt: id ? undefined : new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -1096,13 +1154,43 @@ app.route('/forms/view/:formId').get(async (req, res) => {
     }
     
     const form = JSON.parse(fs.readFileSync(formPath, 'utf8'));
-    res.render('form-view', { form });
+    const normalized = normalizeFormFields(form.fields);
+    res.render('form-view', { form, sections: normalized.sections });
 });
 
 // Submit Form Response (Public)
-app.post('/forms/submit/:formId', async (req, res) => {
+app.post('/forms/submit/:formId', uploadFormFiles.any(), async (req, res) => {
     const { formId } = req.params;
-    const data = req.body; // Data comes directly, not wrapped in 'response'
+    const data = {};
+    const isMultipart = req.is('multipart/form-data');
+
+    if (isMultipart) {
+        Object.entries(req.body || {}).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                data[key] = value;
+            } else {
+                data[key] = value;
+            }
+        });
+
+        (req.files || []).forEach(file => {
+            const entry = {
+                filename: file.filename,
+                originalName: file.originalname,
+                size: file.size,
+                mimeType: file.mimetype
+            };
+            if (!data[file.fieldname]) {
+                data[file.fieldname] = entry;
+            } else if (Array.isArray(data[file.fieldname])) {
+                data[file.fieldname].push(entry);
+            } else {
+                data[file.fieldname] = [data[file.fieldname], entry];
+            }
+        });
+    } else {
+        Object.assign(data, req.body || {});
+    }
     
     const formPath = path.join(formsDir, `${formId}.json`);
     
@@ -1172,8 +1260,9 @@ app.route('/forms/responses/:formId').get(async (req, res) => {
     }
     
     const shareUrl = `${req.protocol}://${req.get('host')}/forms/view/${formId}`;
+    const normalized = normalizeFormFields(form.fields);
     
-    res.render('form-responses', { form, responses, shareUrl });
+    res.render('form-responses', { form, responses, shareUrl, fields: normalized.flatFields });
 });
 
 // Delete Individual Response

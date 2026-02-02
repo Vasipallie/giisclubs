@@ -3,364 +3,973 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responses - <%= form.title %> | GIIS Clubs</title>
+    <title><%= form.title %> - Responses</title>
     <link rel="icon" type="image/png" href="/resources/1.png">
+    <% const settings = form.settings || {}; %>
+    <% const headerColor = settings.headerColor || '#5f35f5'; %>
     <style>
-        @font-face {
-            font-family: 'Garet';
-            src: url('/fonts/GaretR.otf') format('opentype');
-            font-weight: 400;
-        }
-        @font-face {
-            font-family: 'Garet';
-            src: url('/fonts/GaretH.otf') format('opentype');
-            font-weight: 700;
-        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Garet', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
+            color: #2c3e50;
         }
-        .header {
-            background: linear-gradient(135deg, #1a237e, #3f51b5);
-            color: #fff;
-            padding: 20px 24px;
+
+        .wrapper {
+            min-height: 100vh;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
         }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, <%= headerColor %> 0%, <%= headerColor %>dd 100%);
+            color: white;
+            padding: 32px 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
         .header-left {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
+            flex: 1;
         }
-        .logo { height: 40px; }
-        .header-title h1 {
-            font-size: 20px;
-            font-weight: 700;
+
+        .logo { height: 45px; opacity: 0.95; }
+
+        .header-text h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 4px;
         }
-        .header-title p {
-            font-size: 13px;
-            opacity: 0.8;
+
+        .header-text p {
+            font-size: 14px;
+            opacity: 0.9;
         }
+
         .header-actions {
             display: flex;
-            gap: 10px;
+            gap: 12px;
         }
+
         .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
+            padding: 10px 18px;
+            border-radius: 6px;
             border: none;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
             text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-light {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-light:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid rgba(0,0,0,0.08);
+            background: white;
+            padding: 0;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 16px 20px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
             font-family: inherit;
         }
-        .btn svg { width: 18px; height: 18px; }
-        .btn-white { background: #fff; color: #1a237e; }
-        .btn-white:hover { background: #f0f0f0; }
-        .btn-outline {
-            background: transparent;
-            color: #fff;
-            border: 2px solid rgba(255,255,255,0.5);
+
+        .tab-btn:hover {
+            color: <%= headerColor %>;
+            background: rgba(<%= headerColor %>,0.03);
         }
-        .btn-outline:hover { background: rgba(255,255,255,0.1); }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 24px;
+
+        .tab-btn.active {
+            color: <%= headerColor %>;
+            border-bottom-color: <%= headerColor %>;
         }
-        .stats-grid {
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Cards Grid */
+        .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
         }
-        .stat-card {
-            background: #fff;
+
+        .card {
+            background: white;
             border-radius: 12px;
-            padding: 20px;
-            text-align: center;
+            padding: 24px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.06);
         }
-        .stat-value {
-            font-size: 32px;
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+        }
+
+        .card-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .card-value {
+            font-size: 36px;
             font-weight: 700;
-            color: #1a237e;
+            color: <%= headerColor %>;
+            line-height: 1;
+            margin-bottom: 8px;
         }
-        .stat-label {
-            color: #666;
-            font-size: 14px;
-            margin-top: 4px;
+
+        .card-desc {
+            font-size: 13px;
+            color: #888;
         }
-        .responses-section {
-            background: #fff;
+
+        /* Section Container */
+        .section {
+            background: white;
             border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            padding: 32px;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Summary Grid */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .question-card {
+            border-left: 4px solid <%= headerColor %>;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 16px;
+            padding-bottom: 16px;
+            background: rgba(<%= headerColor %>,0.02);
+            border-radius: 8px;
+        }
+
+        .question-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .question-type {
+            display: inline-block;
+            background: <%= headerColor %>;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .chart {
+            margin-top: 16px;
+        }
+
+        .bar {
+            margin-bottom: 14px;
+        }
+
+        .bar-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .bar-label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .bar-count {
+            color: #666;
+        }
+
+        .bar-track {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
             overflow: hidden;
         }
-        .section-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid #eee;
+
+        .bar-fill {
+            height: 100%;
+            background: <%= headerColor %>;
+            border-radius: 3px;
+        }
+
+        .rating-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .rating-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: <%= headerColor %>;
+        }
+
+        .rating-stars {
+            font-size: 20px;
+            color: <%= headerColor %>;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .table thead {
+            background: #f5f7fa;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .table th {
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            white-space: nowrap;
+        }
+
+        .table td {
+            padding: 14px;
+            border-bottom: 1px solid #e8e8e8;
+            color: #555;
+        }
+
+        .table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .response-date {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .response-link {
+            color: <%= headerColor %>;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .response-link:hover {
+            text-decoration: underline;
+        }
+
+        .tag {
+            display: inline-block;
+            background: <%= headerColor %>20;
+            color: <%= headerColor %>;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .search-box {
+            padding: 12px 16px;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 100%;
+            max-width: 300px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: <%= headerColor %>;
+            box-shadow: 0 0 0 3px <%= headerColor %>20;
+        }
+
+        /* Share Section */
+        .share-grid {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .share-links {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .share-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .share-row label {
+            min-width: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .share-row input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: monospace;
+            background: #f9f9f9;
+            transition: all 0.3s;
+        }
+
+        .share-row input:focus {
+            outline: none;
+            border-color: <%= headerColor %>;
+            background: white;
+            box-shadow: 0 0 0 3px <%= headerColor %>20;
+        }
+
+        .share-row button {
+            padding: 10px 16px;
+            background: <%= headerColor %>;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .share-row button:hover {
+            background: <%= headerColor %>dd;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .qr-box {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        #qrcode {
+            margin-bottom: 12px;
+        }
+
+        #qrcode canvas, #qrcode img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .qr-download {
+            width: 100%;
+            padding: 8px;
+            background: <%= headerColor %>;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .qr-download:hover {
+            background: <%= headerColor %>dd;
+            transform: translateY(-1px);
+        }
+
+        /* Empty State */
+        .empty {
+            text-align: center;
+            padding: 60px 40px;
+            color: #888;
+        }
+
+        .empty h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .empty p {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #e0e0e0;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #333;
-        }
-        .table-wrapper {
-            overflow-x: auto;
-        }
-        .responses-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-        .responses-table th, .responses-table td {
-            padding: 14px 16px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
-        }
-        .responses-table th {
-            background: #fafafa;
-            font-weight: 700;
-            color: #333;
-            white-space: nowrap;
-        }
-        .responses-table tr:hover {
-            background: #f9f9ff;
-        }
-        .responses-table td {
-            color: #555;
-            max-width: 250px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .responses-table .date-cell {
-            white-space: nowrap;
-            color: #999;
-            font-size: 13px;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 60px 40px;
-            color: #999;
-        }
-        .empty-state svg {
-            width: 64px;
-            height: 64px;
-            stroke: #ccc;
-            margin-bottom: 16px;
-        }
-        .empty-state h3 {
-            color: #333;
-            margin-bottom: 8px;
-        }
-        .share-link {
-            display: flex;
-            gap: 8px;
-            padding: 16px 24px;
-            background: #f9f9f9;
-            border-top: 1px solid #eee;
-        }
-        .share-link input {
-            flex: 1;
-            padding: 10px 14px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            background: #fff;
-            font-family: inherit;
-        }
-        .share-link button {
-            padding: 10px 20px;
-            background: #1a237e;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
+
+        .modal-header h2 {
+            font-size: 20px;
             font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
+            color: #2c3e50;
         }
-        .share-link button:hover { background: #0d1654; }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #333;
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .field-group {
+            margin-bottom: 20px;
+        }
+
+        .field-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .field-value {
+            font-size: 14px;
+            color: #2c3e50;
+            padding: 10px 14px;
+            background: #f5f7fa;
+            border-radius: 6px;
+            word-break: break-word;
+        }
+
         .toast {
             position: fixed;
             bottom: 24px;
             right: 24px;
-            background: #333;
-            color: #fff;
-            padding: 14px 24px;
-            border-radius: 10px;
+            background: #2c3e50;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 6px;
             font-size: 14px;
-            font-weight: 500;
-            z-index: 1000;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s;
+            z-index: 999;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-        .toast.show { transform: translateY(0); opacity: 1; }
-        .toast.success { background: #2e7d32; }
-        .array-value {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
+
+        @keyframes slideIn {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
-        .array-tag {
-            background: #e8eaf6;
-            color: #1a237e;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
+
         @media (max-width: 768px) {
-            .header { flex-direction: column; gap: 16px; }
-            .section-header { flex-direction: column; gap: 12px; align-items: stretch; }
+            header { padding: 24px 20px; }
+            .header-content { flex-direction: column; text-align: center; }
+            .header-left { flex-direction: column; }
+            .main { padding: 20px; }
+            .cards { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: 1fr; }
+            .share-grid { grid-template-columns: 1fr; }
+            .table { font-size: 12px; }
+            .table th, .table td { padding: 10px; }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-left">
-            <a href="/home"><img src="/resources/2.png" alt="GIIS Clubs" class="logo"></a>
-            <div class="header-title">
-                <h1><%= form.title %></h1>
-                <p>Form Responses</p>
+    <div class="wrapper">
+        <header>
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="/home"><img src="/resources/2.png" alt="Logo" class="logo"></a>
+                    <div class="header-text">
+                        <h1><%= form.title %></h1>
+                        <p><%= form.description || 'Form Responses' %></p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <a href="/forms" class="btn btn-light">← Back</a>
+                    <a href="/forms/edit/<%= form.id %>" class="btn btn-light">✎ Edit Form</a>
+                    <button class="btn btn-light" onclick="exportCSV()">⬇ Export CSV</button>
+                </div>
             </div>
-        </div>
-        <div class="header-actions">
-            <a href="/forms" class="btn btn-outline">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back
-            </a>
-            <a href="/forms/edit/<%= form.id %>" class="btn btn-outline">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                Edit Form
-            </a>
-            <button class="btn btn-white" onclick="exportCSV()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Export CSV
-            </button>
-        </div>
-    </header>
+        </header>
 
-    <div class="container">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value"><%= responses.length %></div>
-                <div class="stat-label">Total Responses</div>
+        <div class="main">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('overview', event)">Overview</button>
+                <button class="tab-btn" onclick="switchTab('responses', event)">All Responses</button>
+                <button class="tab-btn" onclick="switchTab('share', event)">Share & Export</button>
             </div>
-            <div class="stat-card">
-                <div class="stat-value"><%= form.fields ? form.fields.length : 0 %></div>
-                <div class="stat-label">Form Fields</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value"><%= responses.length > 0 ? new Date(responses[responses.length - 1].submittedAt).toLocaleDateString() : '-' %></div>
-                <div class="stat-label">Last Response</div>
-            </div>
-        </div>
 
-        <div class="responses-section">
-            <div class="section-header">
-                <div class="section-title">All Responses</div>
+            <!-- Overview Tab -->
+            <div class="tab-content active" id="tab-overview">
+        <% const displayFields = (typeof fields !== 'undefined' && fields && fields.length)
+            ? fields
+            : (Array.isArray(form.fields) && form.fields.length && Array.isArray(form.fields[0]?.questions)
+                ? form.fields.flatMap(s => Array.isArray(s?.questions) ? s.questions : [])
+                : (form.fields || []));
+    %>
+            <div class="cards">
+                <div class="card">
+                    <div class="card-label">Total Responses</div>
+                    <div class="card-value"><%= responses.length %></div>
+                    <div class="card-desc">Responses received</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Form Fields</div>
+                    <div class="card-value"><%= displayFields.length %></div>
+                    <div class="card-desc">Questions in form</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Completion Rate</div>
+                    <div class="card-value"><%= responses.length > 0 ? '100%' : '0%' %></div>
+                    <div class="card-desc">All responses valid</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Last Response</div>
+                    <div class="card-value" style="font-size: 18px;"><%= responses.length > 0 ? new Date(responses[responses.length - 1].submittedAt).toLocaleDateString('en-US', {month: 'short', day: 'numeric'}) : '-' %></div>
+                    <div class="card-desc">Latest submission</div>
+                </div>
             </div>
-            
-            <% if (responses && responses.length > 0) { %>
-            <div class="table-wrapper">
-                <table class="responses-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <% form.fields.forEach(function(field) { %>
-                            <th><%= field.label %></th>
-                            <% }); %>
-                            <th>Submitted</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% responses.forEach(function(response, idx) { %>
-                        <tr>
-                            <td><%= idx + 1 %></td>
-                            <% form.fields.forEach(function(field) { %>
-                            <td>
-                                <% 
-                                const val = response.data['field_' + field.id];
-                                if (Array.isArray(val)) { 
-                                %>
-                                <div class="array-value">
-                                    <% val.forEach(function(v) { %>
-                                    <span class="array-tag"><%= v %></span>
-                                    <% }); %>
-                                </div>
-                                <% } else { %>
-                                <%= val || '-' %>
-                                <% } %>
-                            </td>
-                            <% }); %>
-                            <td class="date-cell"><%= new Date(response.submittedAt).toLocaleString() %></td>
-                        </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
+
+            <% if (responses.length > 0) { %>
+            <div class="section">
+                <div class="section-title">📊 Response Summary</div>
+                <div class="summary-grid">
+                    <% displayFields.forEach(function(field) { 
+                        const isChartable = ['radio', 'select', 'checkbox', 'rating', 'linear'].includes(field.type);
+                        if (isChartable) {
+                    %>
+                    <div class="question-card">
+                        <div class="question-title">
+                            <%= field.label %>
+                            <span class="question-type"><%= field.type %></span>
+                        </div>
+                        <div class="chart" id="chart-<%= field.id %>"></div>
+                    </div>
+                    <% } }); %>
+                </div>
             </div>
             <% } else { %>
-            <div class="empty-state">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
-                    <rect x="9" y="3" width="6" height="4" rx="1"/>
-                </svg>
-                <h3>No responses yet</h3>
-                <p>Share your form to start collecting responses</p>
+            <div class="section">
+                <div class="empty">
+                    <h3>No responses yet</h3>
+                    <p>Share your form link to start collecting responses</p>
+                </div>
             </div>
             <% } %>
+        </div>
 
-            <div class="share-link">
-                <input type="text" id="shareUrl" value="<%= shareUrl %>" readonly>
-                <button onclick="copyLink()">Copy Link</button>
+        <!-- Responses Tab -->
+        <div class="tab-content" id="tab-responses">
+            <div class="section">
+                <div style="margin-bottom: 20px;">
+                    <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search responses...">
+                </div>
+
+                <% if (responses.length > 0) { %>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Submitted</th>
+                                <% displayFields.forEach(field => { %>
+                                <th><%= field.label %></th>
+                                <% }); %>
+                                <th style="width: 80px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responseTableBody">
+                            <% responses.forEach((response, idx) => { %>
+                            <tr class="response-row" data-index="<%= idx %>">
+                                <td><%= idx + 1 %></td>
+                                <td>
+                                    <%= new Date(response.submittedAt).toLocaleDateString() %>
+                                    <div class="response-date"><%= new Date(response.submittedAt).toLocaleTimeString() %></div>
+                                </td>
+                                <% displayFields.forEach(field => { %>
+                                <td>
+                                    <% 
+                                        const val = response.data['field_' + field.id];
+                                        const isFile = val && typeof val === 'object' && !Array.isArray(val) && val.filename;
+                                        const isFileArr = Array.isArray(val) && val[0] && typeof val[0] === 'object' && val[0].filename;
+                                        if (isFile) {
+                                    %>
+                                        <a href="/uploads/forms/<%= val.filename %>" target="_blank" class="response-link">📎 <%= val.originalName %></a>
+                                    <% } else if (isFileArr) { %>
+                                        <% val.forEach(f => { %>
+                                            <a href="/uploads/forms/<%= f.filename %>" target="_blank" class="response-link" style="display: block;">📎 <%= f.originalName %></a>
+                                        <% }); %>
+                                    <% } else if (Array.isArray(val)) { %>
+                                        <% val.forEach(v => { %>
+                                            <span class="tag"><%= v %></span>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <%= val || '—' %>
+                                    <% } %>
+                                </td>
+                                <% }); %>
+                                <td>
+                                    <button class="btn btn-light" style="padding: 6px 12px; font-size: 12px;" onclick="viewResponse(<%= idx %>)">View</button>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } else { %>
+                <div class="empty">
+                    <h3>No responses yet</h3>
+                    <p>Responses will appear here when users submit your form</p>
+                </div>
+                <% } %>
             </div>
+        </div>
+
+        <!-- Share Tab -->
+        <div class="tab-content" id="tab-share">
+            <div class="section">
+                <div class="section-title">📤 Share Your Form</div>
+                <div class="share-grid">
+                    <div class="share-links">
+                        <div class="share-row">
+                            <label>Form URL</label>
+                            <input type="text" id="shareUrl" value="<%= shareUrl %>" readonly>
+                            <button onclick="copyLink('shareUrl')">Copy</button>
+                        </div>
+                        <div class="share-row">
+                            <label>Short URL</label>
+                            <input type="text" id="shortUrl" placeholder="Create..." readonly>
+                            <button onclick="createShortUrl()" id="shortBtn">Create</button>
+                        </div>
+                        <div id="shortStatus" style="font-size: 12px; color: #666; margin-top: 8px;"></div>
+                    </div>
+                    <div class="qr-box">
+                        <div id="qrcode"></div>
+                        <button class="qr-download" onclick="downloadQR()">Download QR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Response Detail Modal -->
+    <div class="modal" id="responseModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Response Details</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
-        const formData = <%- JSON.stringify({ fields: form.fields, responses: responses }) %>;
+        const formData = <%- JSON.stringify({ fields: displayFields, responses: responses }) %>;
+        const shareUrl = '<%= shareUrl %>';
+        const formId = '<%= form.id %>';
+        const headerColor = '<%= headerColor %>';
 
-        function copyLink() {
-            const input = document.getElementById('shareUrl');
-            input.select();
-            document.execCommand('copy');
-            showToast('Link copied!');
+        // QR Code
+        const qrEl = document.getElementById('qrcode');
+        const qr = new QRCode(qrEl, {
+            text: shareUrl,
+            width: 160,
+            height: 160,
+            colorDark: headerColor,
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        // Tab switching
+        function switchTab(tab, e) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            e.target.classList.add('active');
+            
+            if (tab === 'overview') {
+                setTimeout(generateCharts, 100);
+            }
         }
 
-        function exportCSV() {
-            if (formData.responses.length === 0) {
-                showToast('No responses to export');
-                return;
-            }
+        // Generate charts
+        function generateCharts() {
+            formData.fields.forEach(field => {
+                if (!['radio', 'select', 'checkbox', 'rating', 'linear'].includes(field.type)) return;
+                
+                const container = document.getElementById('chart-' + field.id);
+                if (!container) return;
 
-            const headers = formData.fields.map(f => f.label);
-            headers.push('Submitted At');
-
-            const rows = formData.responses.map(r => {
-                const row = formData.fields.map(f => {
-                    const val = r.data['field_' + f.id];
-                    if (Array.isArray(val)) return val.join('; ');
-                    return val || '';
+                const values = [];
+                formData.responses.forEach(r => {
+                    const val = r.data['field_' + field.id];
+                    if (Array.isArray(val)) values.push(...val);
+                    else if (val) values.push(val);
                 });
-                row.push(new Date(r.submittedAt).toLocaleString());
-                return row;
+
+                if (values.length === 0) {
+                    container.innerHTML = '<p style="color: #999; font-size: 12px;">No data</p>';
+                    return;
+                }
+
+                if (field.type === 'rating' || field.type === 'linear') {
+                    const nums = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
+                    if (nums.length === 0) return;
+                    const avg = (nums.reduce((a, b) => a + b) / nums.length).toFixed(1);
+                    const max = field.maxRating || field.scaleMax || 5;
+                    const stars = '★'.repeat(Math.round(avg)) + '☆'.repeat(max - Math.round(avg));
+                    container.innerHTML = `<div class="rating-box"><div class="rating-number">${avg}</div><div class="rating-stars">${stars}</div></div>`;
+                } else {
+                    const counts = {};
+                    values.forEach(v => counts[v] = (counts[v] || 0) + 1);
+                    const options = field.options || Object.keys(counts);
+                    const max = Math.max(...Object.values(counts), 1);
+                    
+                    let html = '';
+                    options.forEach(opt => {
+                        const cnt = counts[opt] || 0;
+                        const pct = (cnt / max) * 100;
+                        html += `<div class="bar"><div class="bar-header"><span class="bar-label">${opt}</span><span class="bar-count">${cnt}</span></div><div class="bar-track"><div class="bar-fill" style="width: ${pct}%"></div></div></div>`;
+                    });
+                    container.innerHTML = html;
+                }
             });
+        }
+
+        // View response
+        function viewResponse(idx) {
+            const response = formData.responses[idx];
+            let html = `<p style="color: #999; font-size: 12px; margin-bottom: 16px;">Submitted ${new Date(response.submittedAt).toLocaleString()}</p>`;
+            formData.fields.forEach(field => {
+                const val = response.data['field_' + field.id];
+                const display = Array.isArray(val) ? val.join(', ') : (val || '—');
+                html += `<div class="field-group"><div class="field-label">${field.label}</div><div class="field-value">${display}</div></div>`;
+            });
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('responseModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('responseModal').classList.remove('show');
+        }
+
+        // Copy link
+        function copyLink(id) {
+            const input = document.getElementById(id);
+            input.select();
+            document.execCommand('copy');
+            showToast('✓ Copied to clipboard');
+        }
+
+        // Create short URL
+        async function createShortUrl() {
+            const btn = document.getElementById('shortBtn');
+            const status = document.getElementById('shortStatus');
+            btn.disabled = true;
+            btn.textContent = 'Creating...';
+            
+            try {
+                const customId = 'form-' + formId.substring(0, 8);
+                const res = await fetch('/idadd', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ link: shareUrl, customId })
+                });
+                const result = await res.json();
+                
+                if (result.success || result.data) {
+                    const url = window.location.origin + '/s/' + (result.data?.id || customId);
+                    document.getElementById('shortUrl').value = url;
+                    status.textContent = '✓ Created';
+                    btn.textContent = 'Done';
+                    
+                    qrEl.innerHTML = '';
+                    new QRCode(qrEl, {
+                        text: url,
+                        width: 160,
+                        height: 160,
+                        colorDark: headerColor,
+                        colorLight: '#ffffff',
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                }
+            } catch (e) {
+                status.textContent = '✗ Failed';
+                btn.disabled = false;
+                btn.textContent = 'Create';
+            }
+        }
+
+        // Download QR
+        function downloadQR() {
+            const canvas = qrEl.querySelector('canvas');
+            if (!canvas) return;
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL();
+            link.download = 'form-qr.png';
+            link.click();
+            showToast('✓ Downloaded');
+        }
+
+        // Search
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll('.response-row').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+            });
+        });
+
+        // Export CSV
+        function exportCSV() {
+            const headers = ['#', 'Submitted', ...formData.fields.map(f => f.label)];
+            const rows = formData.responses.map((r, i) => [
+                i + 1,
+                new Date(r.submittedAt).toLocaleString(),
+                ...formData.fields.map(f => {
+                    const v = r.data['field_' + f.id];
+                    return Array.isArray(v) ? v.join('; ') : (v || '');
+                })
+            ]);
 
             let csv = headers.map(h => '"' + h.replace(/"/g, '""') + '"').join(',') + '\n';
             rows.forEach(row => {
@@ -368,21 +977,25 @@
             });
 
             const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'responses.csv';
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('CSV exported!');
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '<%= form.title %>.csv';
+            link.click();
+            showToast('✓ Exported');
         }
 
+        // Toast
         function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            setTimeout(() => toast.textContent = '', 3000);
         }
+
+        // Initialize
+        window.addEventListener('load', generateCharts);
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
     </script>
 </body>
 </html>
