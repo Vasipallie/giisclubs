@@ -4,102 +4,249 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GIIS Clubs. | Link Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @font-face {
-            font-family: 'Garet';
-            src: url('fonts/GaretR.otf') format('opentype');
-            font-weight: 400;
-            font-style: normal;
-        }
-
-        @font-face {
-            font-family: 'Garet';
-            src: url('fonts/GaretH.otf') format('opentype');
-            font-weight: 700;
-            font-style: normal;
-        }
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+            --border: #e2e8f0;
+            --sidebar-width: 260px;
+        }
+
         body {
-            font-family: 'Garet', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: #f5f7fb;
             color: #111827;
         }
 
-        .topbar {
-            background: #ffffff;
-            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
-            position: sticky;
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
             top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
             z-index: 1000;
         }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 24px;
-            gap: 16px;
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .logo-section {
+        .sidebar-logo {
+            height: 48px;
+            width: auto;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-soft);
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .sidebar-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .club-info {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .logo {
-            height: 52px;
-            width: auto;
-        }
-
-        .nav-links {
+        .club-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             display: flex;
             align-items: center;
-            gap: 28px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: #1f2937;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .nav-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .cta-button {
-            background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
+            justify-content: center;
             color: white;
-            padding: 10px 20px;
-            border-radius: 999px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 13px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            font-weight: 700;
+            font-size: 16px;
         }
 
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(26, 35, 126, 0.25);
+        .club-avatar-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .club-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .club-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--ink);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .club-status {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 10px 0;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .logout-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .content-area {
+            padding: 32px;
+            max-width: 1200px;
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1001;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-toggle svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--ink);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-toggle {
+                display: flex;
+            }
+
+            .content-area {
+                padding: 24px 16px;
+                padding-top: 72px;
+            }
         }
 
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 32px 24px 80px;
+            padding: 0;
         }
 
         .header {
@@ -379,7 +526,7 @@
             border: 1px solid #fecaca;
         }
 
-        .linktree-link {
+        .linklist-link {
             text-align: center;
             padding: 12px 18px;
             background: #1a237e;
@@ -392,7 +539,7 @@
             transition: all 0.2s;
         }
 
-        .linktree-link:hover {
+        .linklist-link:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 24px rgba(26, 35, 126, 0.25);
         }
@@ -446,34 +593,140 @@
     </style>
 </head>
 <body>
-    <header class="topbar">
-        <div class="nav-container">
-            <a href="/home" class="logo-section">
-                <img src="resources/2.png" alt="GIIS Clubs" class="logo">
-            </a>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="/home">Dashboard</a></li>
-                    <li><a href="/linklist-manager">Linktree Manager</a></li>
-                    <li><a href="/shorten">Shorten Links</a></li>
-                    <li><a href="/qrcode">QR Generator</a></li>
-                </ul>
-            </nav>
-            <div class="nav-actions">
-                <a href="/home" class="cta-button">Back to Dashboard</a>
-            </div>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <% if (clubLogo) { %>
+                <img src="<%= clubLogo %>" alt="Club Logo" class="sidebar-logo">
+            <% } else { %>
+                <img src="resources/2.png" alt="GIIS Clubs" class="sidebar-logo">
+            <% } %>
         </div>
-    </header>
 
-    <div class="container">
-        <div class="header">
-            <div>
-                <h1>Link Manager</h1>
-                <div class="header-subtitle">Manage your club's linktree</div>
+        <nav class="sidebar-nav">
+            <!-- Main Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <a href="/home" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    Dashboard
+                </a>
             </div>
+
+            <!-- Events Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">Events</div>
+                <a href="/add-event" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Create Event
+                </a>
+                <a href="/events" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                        <line x1="9" y1="9" x2="15" y2="9"></line>
+                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                    </svg>
+                    All Club Events
+                </a>
+                <a href="/manage-events" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Manage My Events
+                </a>
+            </div>
+
+            <!-- Tools Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">Tools</div>
+                <a href="/shorten" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    Link Shortener
+                </a>
+                <a href="/qrcode" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="4" height="4"></rect>
+                    </svg>
+                    QR Generator
+                </a>
+                <a href="/linklist-manager" class="nav-link active">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    Linklist Manager
+                </a>
+            </div>
+
+            <% if (isAdmin) { %>
+            <!-- Admin Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">Admin</div>
+                <a href="/admin-dashboard" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                    Admin Dashboard
+                </a>
+            </div>
+            <% } %>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+            <div class="club-info">
+                <% if (clubLogo) { %>
+                    <img src="<%= clubLogo %>" alt="<%= clubName %>" class="club-avatar-img">
+                <% } else { %>
+                    <div class="club-avatar"><%= (clubName || 'C').charAt(0).toUpperCase() %></div>
+                <% } %>
+                <div class="club-details">
+                    <div class="club-name"><%= clubName || 'Club' %></div>
+                    <div class="club-status">Member</div>
+                </div>
+            </div>
+            <form action="/logout" method="post" style="width: 100%;">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Mobile Toggle -->
+    <button class="mobile-toggle" id="mobile-toggle">
+        <svg viewBox="0 0 24 24">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <main class="main-content">
+        <div class="content-area">
+            <div class="container">
+                <div class="header">
+                    <div>
+                        <h1>Link Manager</h1>
+                        <div class="header-subtitle">Manage your club's linklist</div>
+                    </div>
             <div class="header-buttons">
                 <a href="/home" class="btn btn-secondary">← Back</a>
-                <a href="/linktree/<%= clubName %>" class="btn btn-primary" target="_blank">View Linktree</a>
+                <a href="/linklist/<%= clubName %>" class="btn btn-primary" target="_blank">View Linklist</a>
             </div>
         </div>
 
@@ -579,7 +832,7 @@
 
         async function loadLinks() {
             try {
-                const response = await fetch(`/linklist/${clubName}`);
+                const response = await fetch(`/api/linklist/${clubName}`);
                 const data = await response.json();
 
                 if (!response.ok) {
@@ -689,13 +942,15 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to save order');
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to save order');
                 }
 
                 showMessage('Order saved!', 'success');
+                loadLinks();
             } catch (error) {
                 console.error('Error:', error);
-                showMessage('Failed to save order', 'error');
+                showMessage('Failed to save order: ' + error.message, 'error');
                 loadLinks();
             }
         }
@@ -792,6 +1047,34 @@
             };
             return text.replace(/[&<>"']/g, m => map[m]);
         }
+
+        // Mobile sidebar toggle
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('open');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        });
+
+        // Close sidebar when a link is clicked
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                }
+            });
+        });
     </script>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

@@ -3,391 +3,874 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIIS Clubs. | Manage Club</title>
+    <title>Manage Club | GIIS Clubs</title>
     <link rel="icon" type="image/png" href="resources/1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @font-face {
-            font-family: 'Garet';
-            src: url('fonts/GaretR.otf') format('opentype');
-            font-weight: 400;
-            font-style: normal;
-        }
-
-        @font-face {
-            font-family: 'Garet';
-            src: url('fonts/GaretH.otf') format('opentype');
-            font-weight: 700;
-            font-style: normal;
-        }
-
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --error: #ef4444;
+            --error-bg: #fee2e2;
+            --sidebar-width: 260px;
+        }
+        
         body {
-            font-family: 'Garet', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(180deg, #f5f7fa 0%, #eef2f7 100%);
-            color: #1f2937;
+            font-family: 'Poppins', sans-serif;
+            background: var(--surface-soft);
             min-height: 100vh;
+            color: var(--ink);
         }
 
-        .header {
-            background: #ffffff;
-            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
-            position: sticky;
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
             top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
             z-index: 1000;
         }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 24px;
-            gap: 16px;
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo {
-            height: 52px;
+        .sidebar-logo {
+            height: 48px;
             width: auto;
         }
 
-        .nav-links {
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+        }
+
+        .nav-link {
             display: flex;
             align-items: center;
-            gap: 28px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: #1f2937;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .nav-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .cta-button {
-            background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 999px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 13px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(26, 35, 126, 0.25);
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 36px 24px 80px;
-        }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 24px;
+            padding: 12px 24px;
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-soft);
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .sidebar-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .club-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .club-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .club-avatar-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .club-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .club-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--ink);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .club-status {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 10px 0;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .logout-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .content-area {
+            padding: 32px;
+            max-width: 1200px;
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1001;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-toggle svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--ink);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-toggle {
+                display: flex;
+            }
+
+            .content-area {
+                padding: 24px 16px;
+                padding-top: 72px;
+            }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 32px;
         }
 
         .page-title {
             font-size: 28px;
-            color: #111827;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 8px;
         }
 
         .page-subtitle {
-            color: #6b7280;
             font-size: 15px;
-            margin-top: 4px;
+            color: var(--muted);
         }
 
-        .panel {
-            background: #ffffff;
-            border-radius: 18px;
-            padding: 26px;
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
-            border: 1px solid rgba(15, 23, 42, 0.06);
-        }
-
-        .panel-header {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 22px;
-        }
-
-        .panel-header h2 {
-            font-size: 20px;
-            color: #111827;
-        }
-
-        .panel-header p {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .section-block {
-            border: 1px solid #eef2f7;
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 18px;
-            background: #fafbff;
-        }
-
-        .section-heading {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            margin-bottom: 14px;
-        }
-
-        .section-heading h3 {
-            font-size: 16px;
-            color: #111827;
-        }
-
-        .section-heading span {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 16px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            color: #111827;
-            font-size: 13px;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            padding: 12px 14px;
+        /* Alert Messages */
+        .alert {
+            padding: 14px 18px;
             border-radius: 12px;
-            border: 1px solid #e5e7eb;
+            margin-bottom: 24px;
             font-size: 14px;
-            font-family: inherit;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            background: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .form-group input[type="file"] {
-            padding: 10px;
-            border-style: dashed;
-            background: #ffffff;
-            cursor: pointer;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #3f51b5;
-            box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
-        }
-
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .helper-text {
-            color: #6b7280;
-            font-size: 12px;
-        }
-
-        .message {
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            font-size: 13px;
-        }
-
-        .message.success {
-            background: #d1fae5;
+        .alert-success {
+            background: var(--success-bg);
             color: #065f46;
             border: 1px solid #a7f3d0;
         }
 
-        .message.error {
-            background: #fee2e2;
+        .alert-error {
+            background: var(--error-bg);
             color: #991b1b;
             border: 1px solid #fecaca;
         }
 
-        .actions {
+        .alert svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
             display: flex;
-            justify-content: flex-end;
-            margin-top: 10px;
+            align-items: center;
+            gap: 14px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #1a237e 0%, #3f51b5 100%);
-            color: #fff;
-            padding: 12px 26px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: rgba(37, 99, 235, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--primary);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .card-header-text h2 {
+            font-size: 17px;
             font-weight: 600;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            color: var(--ink);
+            margin-bottom: 2px;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 12px 24px rgba(26, 35, 126, 0.25);
+        .card-header-text p {
+            font-size: 13px;
+            color: var(--muted);
         }
 
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 8px;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--ink);
+            background: var(--surface);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
             }
+        }
 
-            .page-header {
+        .form-group {
+            margin-bottom: 20px;
+            min-width: 0;
+        }
+        .upload-area {
+            display: block;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            background: var(--surface-soft);
+            overflow: visible;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.02);
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 10px;
+            background: rgba(37, 99, 235, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--primary);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .upload-text {
+            font-size: 13px;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+
+        .upload-text span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .upload-hint {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .upload-preview {
+            margin-top: 12px;
+            display: none;
+        }
+
+        .upload-preview img {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .upload-preview.active {
+            display: block;
+        }
+
+        /* Current Image Preview */
+        .current-preview {
+            margin-bottom: 12px;
+            padding: 12px;
+            background: var(--surface-soft);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .current-preview img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .current-preview-text {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .current-preview-text strong {
+            display: block;
+            color: var(--ink);
+            margin-bottom: 2px;
+        }
+
+        /* Submit Button */
+        .submit-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: var(--surface-soft);
+            border-top: 1px solid var(--border);
+        }
+
+        .submit-hint {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .submit-section {
                 flex-direction: column;
-                align-items: flex-start;
+                gap: 12px;
             }
-        }
-        /* Disable hover animations */
-        *, *::before, *::after {
-            transition: none !important;
-            animation: none !important;
-        }
 
-        *:hover {
-            transform: none !important;
-            box-shadow: none !important;
-            filter: none !important;
+            .btn-submit {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="nav-container">
-            <a href="/home" class="logo-section">
-                <img src="resources/2.png" alt="GIIS Clubs" class="logo">
-            </a>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="/home">Dashboard</a></li>
-                    <li><a href="/linklist-manager">Linktree Manager</a></li>
-                    <li><a href="/shorten">Shorten Links</a></li>
-                    <li><a href="/qrcode">QR Generator</a></li>
-                </ul>
-            </nav>
-            <div class="nav-actions">
-                <a href="/home" class="cta-button">Back to Dashboard</a>
-            </div>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <% if (clubLogo) { %>
+                <img src="<%= clubLogo %>" alt="Club Logo" class="sidebar-logo">
+            <% } else { %>
+                <img src="resources/2.png" alt="GIIS Clubs" class="sidebar-logo">
+            <% } %>
         </div>
-    </header>
 
-    <main class="container">
-        <div class="page-header">
-            <div>
-                <h1 class="page-title">Manage Club Profile</h1>
-                <p class="page-subtitle">Update the information shown on Explore Clubs and your Linktree.</p>
+        <nav class="sidebar-nav">
+            <!-- Main Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <a href="/home" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    Dashboard
+                </a>
             </div>
+
+            <!-- Events Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">Events</div>
+                <a href="/add-event" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Create Event
+                </a>
+                <a href="/events" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                        <line x1="9" y1="9" x2="15" y2="9"></line>
+                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                    </svg>
+                    All Club Events
+                </a>
+                <a href="/manage-events" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Manage My Events
+                </a>
+            </div>
+
+            <!-- Tools Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">Tools</div>
+                <a href="/shorten" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    Link Shortener
+                </a>
+                <a href="/qrcode" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="4" height="4"></rect>
+                    </svg>
+                    QR Generator
+                </a>
+                <a href="/linklist-manager" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    Linklist Manager
+                </a>
+            </div>
+
+            <% if (isAdmin) { %>
+            <!-- Admin Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">Admin</div>
+                <a href="/admin-dashboard" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                    Admin Dashboard
+                </a>
+            </div>
+            <% } %>
+
+            <!-- Settings Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <a href="/manage-club" class="nav-link active">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    Club Settings
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+            <div class="club-info">
+                <% if (clubLogo) { %>
+                    <img src="<%= clubLogo %>" alt="<%= clubName %>" class="club-avatar-img">
+                <% } else { %>
+                    <div class="club-avatar"><%= (clubName || 'C').charAt(0).toUpperCase() %></div>
+                <% } %>
+                <div class="club-details">
+                    <div class="club-name"><%= clubName || 'Club' %></div>
+                    <div class="club-status">Member</div>
+                </div>
+            </div>
+            <form action="/logout" method="post" style="width: 100%;">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Mobile Toggle -->
+    <button class="mobile-toggle" id="mobile-toggle">
+        <svg viewBox="0 0 24 24">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <main class="main-content">
+        <div class="content-area">
+            <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Manage Club Profile</h1>
+            <p class="page-subtitle">Update your club's information displayed on Explore and Linklist pages</p>
         </div>
 
         <% if (success) { %>
-            <div class="message success"><%= success %></div>
+            <div class="alert alert-success">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <%= success %>
+            </div>
         <% } %>
         <% if (error) { %>
-            <div class="message error"><%= error %></div>
+            <div class="alert alert-error">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <%= error %>
+            </div>
         <% } %>
 
-        <div class="panel">
-            <div class="panel-header">
-                <h2>Club Profile Settings</h2>
-                <p>Keep your club profile fresh across Explore and Linktree.</p>
+        <form action="/manage-club" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="current_club" value="<%= club?.name || '' %>">
+
+            <!-- Club Description Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <div class="card-header-text">
+                        <h2>Club Description</h2>
+                        <p>Tell visitors what your club is about</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label" for="description">Description</label>
+                        <textarea class="form-textarea" id="description" name="description" placeholder="Share what makes your club unique, your activities, mission, and what members can expect..." required><%= club?.description || '' %></textarea>
+                        <p class="form-hint">This appears on your Explore card and Linklist profile</p>
+                    </div>
+                </div>
             </div>
-            <form action="/manage-club" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="current_club" value="<%= club?.name || '' %>">
 
-                <div class="section-block">
-                    <div class="section-heading">
-                        <h3>Basics</h3>
-                        <span>Name and description used across the site.</span>
+            <!-- Explore Link Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                     </div>
-                    <div class="form-grid">
+                    <div class="card-header-text">
+                        <h2>Explore Page Link</h2>
+                        <p>Add a button to your Explore card</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-row">
                         <div class="form-group">
-                            <label for="description">Club Description</label>
-                            <textarea id="description" name="description" placeholder="Describe your club..." required><%= club?.description || '' %></textarea>
+                            <label class="form-label" for="link_text">Button Text</label>
+                            <input class="form-input" type="text" id="link_text" name="link_text" value="<%= club?.link_text || '' %>" placeholder="e.g., Visit Instagram, Join Discord">
+                            <p class="form-hint">Keep it short and actionable</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="link">Button URL</label>
+                            <input class="form-input" type="url" id="link" name="link" value="<%= club?.link || '' %>" placeholder="https://...">
+                            <p class="form-hint">Where should the button link to?</p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="section-block">
-                    <div class="section-heading">
-                        <h3>Explore Link</h3>
-                        <span>This is the button shown on your Explore card.</span>
+            <!-- Branding Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                     </div>
-                    <div class="form-grid">
+                    <div class="card-header-text">
+                        <h2>Club Images</h2>
+                        <p>Upload your club banner and logo</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-row">
                         <div class="form-group">
-                            <label for="link_text">Explore Link Text</label>
-                            <input type="text" id="link_text" name="link_text" value="<%= club?.link_text || '' %>" placeholder="e.g., Visit Instagram">
+                            <label class="form-label">Club Banner</label>
+                            <% if (club?.banner) { %>
+                                <div class="current-preview">
+                                    <img src="<%= club.banner %>" alt="Current banner">
+                                    <div class="current-preview-text">
+                                        <strong>Current Banner</strong>
+                                        Upload a new image to replace
+                                    </div>
+                                </div>
+                            <% } %>
+                            <label class="upload-area" for="banner_upload">
+                                <input type="file" id="banner_upload" name="banner_upload" accept="image/*" onchange="previewImage(this, 'banner-preview')">
+                                <div class="upload-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                </div>
+                                <p class="upload-text"><span>Click to upload</span> or drag and drop</p>
+                                <p class="upload-hint">PNG, JPG up to 5MB - Displays on Explore cards</p>
+                            </label>
+                            <div class="upload-preview" id="banner-preview"></div>
                         </div>
                         <div class="form-group">
-                            <label for="link">Explore Link URL</label>
-                            <input type="url" id="link" name="link" value="<%= club?.link || '' %>" placeholder="https://example.com">
+                            <label class="form-label">Profile Logo</label>
+                            <% if (club?.logo) { %>
+                                <div class="current-preview">
+                                    <img src="<%= club.logo %>" alt="Current logo">
+                                    <div class="current-preview-text">
+                                        <strong>Current Logo</strong>
+                                        Upload a new image to replace
+                                    </div>
+                                </div>
+                            <% } %>
+                            <label class="upload-area" for="logo_p_upload">
+                                <input type="file" id="logo_p_upload" name="logo_p_upload" accept="image/*" onchange="previewImage(this, 'logo-preview')">
+                                <div class="upload-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                </div>
+                                <p class="upload-text"><span>Click to upload</span> or drag and drop</p>
+                                <p class="upload-hint">PNG, JPG up to 5MB - Displays on Linklist & sidebar</p>
+                            </label>
+                            <div class="upload-preview" id="logo-preview"></div>
                         </div>
                     </div>
                 </div>
-
-                <div class="section-block">
-                    <div class="section-heading">
-                        <h3>Branding Assets</h3>
-                        <span>Upload images to update your club branding.</span>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="banner_upload">Club Banner</label>
-                            <input type="file" id="banner_upload" name="banner_upload" accept="image/*">
-                            <span class="helper-text">Banner for Explore cards. Uploaded as club.ext</span>
-                        </div>
-                        <div class="form-group">
-                            <label for="logo_p_upload">Profile Logo</label>
-                            <input type="file" id="logo_p_upload" name="logo_p_upload" accept="image/*">
-                            <span class="helper-text">Profile avatar for Linktree. Uploaded as club-p.ext</span>
-                        </div>
-                    </div>
+                <div class="submit-section">
+                    <p class="submit-hint">Changes will be visible immediately after saving</p>
+                    <button type="submit" class="btn-submit">Save Changes</button>
                 </div>
+            </div>
+        </form>
+    </main>
 
-                <div class="actions">
-                    <button type="submit" class="btn-primary">Save Changes</button>
-                </div>
-            </form>
+    <script>
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview">';
+                    preview.classList.add('active');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Mobile sidebar toggle
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('open');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        });
+
+        // Close sidebar when a link is clicked
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                }
+            });
+        });
+    </script>
+            </div>
         </div>
     </main>
 </body>

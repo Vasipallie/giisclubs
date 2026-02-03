@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIIS Clubs | Dashboard</title>
+    <title>Club Events | GIIS Clubs</title>
     <link rel="icon" type="image/png" href="resources/1.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        
         * {
             margin: 0;
             padding: 0;
@@ -157,105 +156,32 @@
             color: var(--muted);
         }
 
+        .logout-btn {
+            width: 100%;
+            padding: 10px 0;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .logout-btn:hover {
+            background: var(--primary-dark);
+        }
+
         /* Main Content */
         .main-content {
             margin-left: var(--sidebar-width);
             min-height: 100vh;
         }
 
-        .page-header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 24px 32px;
-        }
-
-        .page-header-content {
-            max-width: 1200px;
-        }
-
-        .page-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--ink);
-            margin-bottom: 4px;
-        }
-
-        .page-subtitle {
-            font-size: 14px;
-            color: var(--muted);
-        }
-
         .content-area {
             padding: 32px;
             max-width: 1200px;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--ink);
-            margin-bottom: 16px;
-        }
-
-        /* Cards Grid */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
-        }
-
-        .card-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            background: rgba(37, 99, 235, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-
-        .card-icon svg {
-            width: 22px;
-            height: 22px;
-            stroke: var(--primary);
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .card-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--ink);
-            margin-bottom: 8px;
-        }
-
-        .card-description {
-            font-size: 14px;
-            color: var(--muted);
-            line-height: 1.5;
-        }
-
-        .card-action {
-            margin-top: 16px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--primary);
         }
 
         /* Mobile Toggle */
@@ -313,37 +239,62 @@
                 display: flex;
             }
 
-            .page-header {
+            .content-area {
                 padding: 24px 16px;
                 padding-top: 72px;
             }
-
-            .content-area {
-                padding: 24px 16px;
-            }
-
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
         }
-    </style>
-    <style>
-        /* Logout Button Styles */
-        .logout-btn {
-            width: 100%;
-            padding: 10px 0;
-            background: var(--primary);
-            color: #fff;
-            border: none;
-            border-radius: 6px;
+
+        /* Events Page Styles */
+        .events-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .event-bar {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 24px;
+            padding: 24px;
+            gap: 32px;
+            transition: box-shadow 0.2s;
+        }
+        .event-bar:hover {
+            box-shadow: 0 4px 24px rgba(37,99,235,0.10);
+        }
+        .club-logo {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            object-fit: cover;
+            background: #e2e8f0;
+        }
+        .event-details {
+            flex: 1;
+        }
+        .event-club-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 6px;
+        }
+        .event-desc {
             font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: background 0.2s;
+            color: #334155;
+            margin-bottom: 8px;
         }
-        .logout-btn:hover {
-            background: var(--primary-dark);
+        .event-date {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .no-events {
+            text-align: center;
+            color: #64748b;
+            font-size: 18px;
+            margin-top: 60px;
         }
     </style>
 </head>
@@ -367,7 +318,7 @@
         <nav class="sidebar-nav">
             <div class="nav-section">
                 <div class="nav-section-title">Main</div>
-                <a href="/home" class="nav-link active">
+                <a href="/home" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                     Dashboard
                 </a>
@@ -375,7 +326,7 @@
 
             <div class="nav-section">
                 <div class="nav-section-title">Events</div>
-                <a href="/events" class="nav-link">
+                <a href="/events" class="nav-link active">
                     <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     All Club Events
                 </a>
@@ -436,68 +387,38 @@
                 <button type="submit" class="logout-btn">Logout</button>
             </form>
         </div>
-        
     </aside>
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="page-header">
-            <div class="page-header-content">
-                <h1 class="page-title">Welcome back<%= clubName ? ', ' + clubName : '' %>!</h1>
-                <p class="page-subtitle">Manage your club's digital presence from one place</p>
-            </div>
-
-            </div>
-        </div>
-
         <div class="content-area">
-            <h2 class="section-title">Quick Actions</h2>
-            <div class="cards-grid">
-                <a href="/shorten" class="card">
-                    <div class="card-icon">
-                        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <div class="events-container">
+        <h1 style="text-align:center; margin-bottom:32px; font-size:2rem; color:#2563eb;">Upcoming Club Events</h1>
+        <% if (events && events.length > 0) { %>
+            <% events.forEach(event => { %>
+                <% 
+                    const eventDate = new Date(event.date);
+                    const day = String(eventDate.getDate()).padStart(2, '0');
+                    const month = String(eventDate.getMonth() + 1).padStart(2, '0');
+                    const year = eventDate.getFullYear();
+                    const formattedDate = `${day}/${month}/${year}`;
+                %>
+                <div class="event-bar">
+                    <img src="<%= event.clubLogo %>" alt="<%= event.clubName %> Logo" class="club-logo">
+                    <div class="event-details">
+                        <div class="event-club-name"><%= event.clubName %></div>
+                        <div class="event-desc"><%= event.event_name %></div>
+                        <% if (event.description && event.description !== event.event_name) { %>
+                            <div style="font-size: 0.85rem; color: #666; margin-top: 4px;"><%= event.description %></div>
+                        <% } %>
+                        <div class="event-date">Date: <%= formattedDate %></div>
                     </div>
-                    <h3 class="card-title">URL Shortener</h3>
-                    <p class="card-description">Create and manage shortened links for your club's social media, events, and communications.</p>
-                    <div class="card-action">Manage Links</div>
-                </a>
-
-                <a href="/qrgen" class="card">
-                    <div class="card-icon">
-                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                    </div>
-                    <h3 class="card-title">QR Generator</h3>
-                    <p class="card-description">Generate professional QR codes for events, membership drives, and quick access to resources.</p>
-                    <div class="card-action">Generate QR Codes</div>
-                </a>
-
-                <a href="/linklist-manager" class="card">
-                    <div class="card-icon">
-                        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                    </div>
-                    <h3 class="card-title">Linklist Manager</h3>
-                    <p class="card-description">Create and manage a centralized hub for all your club's important links and resources.</p>
-                    <div class="card-action">Manage Linklist</div>
-                </a>
-
-                <a href="/manage-club" class="card">
-                    <div class="card-icon">
-                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                    </div>
-                    <h3 class="card-title">Manage Club</h3>
-                    <p class="card-description">Edit your club profile, update descriptions, and manage your branding assets.</p>
-                    <div class="card-action">Manage Profile</div>
-                </a>
-
-                <a href="/explore" class="card">
-                    <div class="card-icon">
-                        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    </div>
-                    <h3 class="card-title">Explore Clubs</h3>
-                    <p class="card-description">Browse other registered clubs and organizations to discover collaboration opportunities.</p>
-                    <div class="card-action">Explore Now</div>
-                </a>
-            </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="no-events">No events found. Check back soon!</div>
+        <% } %>
+    </div>
         </div>
     </main>
 

@@ -5,20 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up | GIIS Clubs</title>
     <link rel="icon" type="image/png" href="resources/1.png">
-    <style>
-        @font-face {
-            font-family: 'Garet';
-            src: url('fonts/GaretR.otf') format('opentype');
-            font-weight: 400;
-            font-style: normal;
-        }
 
-        @font-face {
-            font-family: 'Garet';
-            src: url('fonts/GaretH.otf') format('opentype');
-            font-weight: 700;
-            font-style: normal;
-        }
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
 
         * {
             margin: 0;
@@ -27,7 +16,7 @@
         }
 
         body {
-            font-family: 'Garet', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -234,6 +223,11 @@
                     <input type="password" id="password" name="password" placeholder="Create a strong password" required>
                 </div>
 
+                <div class="form-group" style="flex-direction: row; align-items: center; gap: 12px;">
+                    <input type="checkbox" id="isAdmin" name="isAdmin" style="width: auto; margin: 0;">
+                    <label for="isAdmin" style="margin: 0; cursor: pointer;">This is an admin account (won't appear on Explore page)</label>
+                </div>
+
                 <div class="password-requirements">
                     <strong>Password must contain:</strong>
                     <ul style="margin-top: 6px;">
@@ -267,6 +261,7 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
+            const isAdmin = document.getElementById('isAdmin').checked;
 
             // Validate club fields
             if (!clubName) {
@@ -309,7 +304,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ email, password, clubName, description })
+                    body: JSON.stringify({ email, password, clubName, description, isAdmin })
                 });
 
                 const data = await response.json();

@@ -1,3 +1,4 @@
+
 //inits
 import express from 'express';
 import { createClient } from '@supabase/supabase-js';
@@ -37,6 +38,46 @@ app.use(bodyParser.json());
 // Multer configuration for image uploads (memory storage for serverless)
 const imageStorage = multer.memoryStorage();
 
+// Middleware to check if user is admin
+async function isAdmin(req, res, next) {
+    const token = req.cookies.token;
+    
+    if (!token) {
+        return res.status(401).redirect('/login');
+    }
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+        return res.status(401).redirect('/login');
+    }
+    
+    // Check if user has admin role (you can add an 'is_admin' field to clubs table)
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name, is_admin')
+        .eq('id', user.id)
+        .single();
+    
+    if (!club || !club.is_admin) {
+        return res.status(403).send('Access denied. Admin privileges required.');
+    }
+    
+    req.user = user;
+    req.club = club;
+    next();
+}
+
+// Admin Dashboard Route
+app.get('/admin-dashboard', isAdmin, (req, res) => {
+    const club = req.club;
+    res.render('admin-dashboard', { 
+        clubName: club?.name || 'Admin', 
+        clubLogo: club?.logo || '',
+        isAdmin: true 
+    });
+});
+
 const uploadImages = multer({
     storage: imageStorage,
     limits: { fileSize: 5 * 1024 * 1024 },
@@ -50,12 +91,23 @@ const uploadImages = multer({
 
 //routes
 app.route('/').get(async (req, res) => {
-    res.render('index');
+    const token = req.cookies.token;
+    let isLoggedIn = false;
+    if (token) {
+        const { data: { user } } = await supabase.auth.getUser(token);
+        isLoggedIn = !!user;
+    }
+    res.render('index', { isLoggedIn });
 });
 
 app.route('/login').get(async (req, res) => {
     res.render('login');
 })
+// Logout route
+app.post('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.redirect('/login');
+});
 
 app.route('/signup').get(async (req, res) => {
     res.render('signup', { error: null, success: null });
@@ -63,7 +115,7 @@ app.route('/signup').get(async (req, res) => {
 
 app.post('/signup', async (req, res) => {
     try {
-        const { email, password, clubName, description } = req.body;
+        const { email, password, clubName, description, isAdmin } = req.body;
 
         // Validate input
         if (!email || !password) {
@@ -120,7 +172,8 @@ app.post('/signup', async (req, res) => {
             .insert({
                 id: authData.user.id,
                 name: clubName,
-                description: description
+                description: description,
+                is_admin: false
             });
 
         if (clubError) {
@@ -136,6 +189,273 @@ app.post('/signup', async (req, res) => {
     } catch (error) {
         console.error('Error creating account:', error);
         res.status(500).json({ error: error.message });
+    }
+});
+// Add Event page (club dashboard)
+app.route('/add-event').get(async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) return res.redirect('/login');
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) return res.redirect('/login');
+    // Get club info including name, logo, and admin status
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name, logo, is_admin')
+        .eq('id', user.id)
+        .single();
+    if (!club?.name) return res.render('404');
+    res.render('add-event', { message: null, error: null, clubName: club.name, clubLogo: club.logo || '', isAdmin: club.is_admin || false });
+});
+
+app.post('/add-event', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) return res.redirect('/login');
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) return res.redirect('/login');
+    // Get club info including name, logo, and admin status
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name, logo, is_admin')
+        .eq('id', user.id)
+        .single();
+    if (!club?.name) return res.render('404');
+    const { event_name, description, date, target_grades, proposal_link } = req.body;
+    if (!event_name || !description || !date || !target_grades || !proposal_link) {
+        return res.render('add-event', { message: null, error: 'Please fill all fields including event name and proposal link.', clubName: club.name, clubLogo: club.logo || '', isAdmin: club.is_admin || false });
+    }
+    // Validate Google Docs link
+    if (!proposal_link.includes('docs.google.com')) {
+        return res.render('add-event', { message: null, error: 'Proposal must be a Google Docs link.', clubName: club.name, clubLogo: club.logo || '', isAdmin: club.is_admin || false });
+    }
+    // Insert event with approved set to false by default
+    const { error: eventError } = await supabase
+        .from('events')
+        .insert({ 
+            club: club.name, 
+            club_id: user.id,
+            event_name,
+            description, 
+            date, 
+            target_grades,
+            proposal_link,
+            approved: false,
+            budget_submitted: false,
+            receipts_submitted: false
+        });
+    if (eventError) {
+        console.error('Event insertion error:', eventError);
+        return res.render('add-event', { message: null, error: 'Error adding event.', clubName: club.name, clubLogo: club.logo || '', isAdmin: club.is_admin || false });
+    }
+    res.render('add-event', { message: 'Event submitted for approval! Check back after admin approval to submit budget and receipts.', error: null, clubName: club.name, clubLogo: club.logo || '', isAdmin: club.is_admin || false });
+});
+
+// Manage Events page route
+app.route('/manage-events').get(async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.redirect('/login');
+        }
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        if (error || !user) {
+            return res.redirect('/login');
+        }
+        
+        // Get club info including name, logo, and admin status
+        const { data: club } = await supabase
+            .from('clubs')
+            .select('name, logo, is_admin')
+            .eq('id', user.id)
+            .single();
+        
+        const isAdmin = club?.is_admin || false;
+        const clubName = club?.name || '';
+        const clubLogo = club?.logo || '';
+        
+        // Fetch only this club's events
+        const { data: events, error: eventsError } = await supabase
+            .from('events')
+            .select('id, club, event_name, description, date, approved, target_grades, proposal_link, budget_submitted, receipts_submitted, club_id')
+            .eq('club_id', user.id)
+            .order('date', { ascending: false });
+        
+        if (eventsError) {
+            console.error('Error fetching events:', eventsError);
+            return res.render('manage-events', { events: [], message: null, error: 'Failed to load events.', isAdmin, clubName, clubLogo });
+        }
+        
+        res.render('manage-events', { events: events || [], message: null, error: null, isAdmin, clubName, clubLogo });
+    } catch (error) {
+        console.error('Error:', error);
+        res.render('manage-events', { events: [], message: null, error: 'An error occurred.', isAdmin: false, clubName: '', clubLogo: '' });
+    }
+});
+
+// Get club's events API
+app.get('/api/my-events', async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+        const { data: { user } } = await supabase.auth.getUser(token);
+        if (!user) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+        
+        // Fetch only this club's events
+        const { data: events, error } = await supabase
+            .from('events')
+            .select('id, club, event_name, description, date, approved, target_grades, proposal_link, budget_submitted, receipts_submitted, club_id')
+            .eq('club_id', user.id)
+            .order('date', { ascending: false });
+        
+        if (error) {
+            console.error('Error fetching events:', error);
+            return res.status(500).json({ error: 'Failed to fetch events' });
+        }
+        
+        res.json(events || []);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Multer configuration for file uploads
+const fileStorage = multer.memoryStorage();
+const fileUpload = multer({
+    storage: fileStorage,
+    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
+    fileFilter: (req, file, cb) => {
+        const allowedMimes = ['application/pdf', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (allowedMimes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only PDF, Excel, and Word documents are allowed.'));
+        }
+    }
+});
+
+// Submit budget files
+app.post('/events/:id/budget', fileUpload.single('file'), async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const { data: { user } } = await supabase.auth.getUser(token);
+        if (!user) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const { id } = req.params;
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file provided' });
+        }
+
+        // Verify event belongs to user
+        const { data: event, error: eventError } = await supabase
+            .from('events')
+            .select('club_id')
+            .eq('id', id)
+            .single();
+
+        if (eventError || !event || event.club_id !== user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
+        // Upload file to Supabase Storage
+        const fileName = `budgets/${user.id}/${id}/${Date.now()}-${req.file.originalname}`;
+        const { error: uploadError } = await supabase.storage
+            .from('event-files')
+            .upload(fileName, req.file.buffer, {
+                contentType: req.file.mimetype
+            });
+
+        if (uploadError) {
+            console.error('Upload error:', uploadError);
+            return res.status(500).json({ error: 'Failed to upload file' });
+        }
+
+        // Update event to mark budget as submitted
+        const { error: updateError } = await supabase
+            .from('events')
+            .update({ budget_submitted: true })
+            .eq('id', id);
+
+        if (updateError) {
+            console.error('Update error:', updateError);
+            return res.status(500).json({ error: 'Failed to update event' });
+        }
+
+        res.json({ success: true, message: 'Budget submitted successfully!' });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: error.message || 'Server error' });
+    }
+});
+
+// Submit receipt files
+app.post('/events/:id/receipts', fileUpload.array('files', 10), async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const { data: { user } } = await supabase.auth.getUser(token);
+        if (!user) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const { id } = req.params;
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: 'No files provided' });
+        }
+
+        // Verify event belongs to user
+        const { data: event, error: eventError } = await supabase
+            .from('events')
+            .select('club_id')
+            .eq('id', id)
+            .single();
+
+        if (eventError || !event || event.club_id !== user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
+        // Upload all files to Supabase Storage
+        for (const file of req.files) {
+            const fileName = `receipts/${user.id}/${id}/${Date.now()}-${file.originalname}`;
+            const { error: uploadError } = await supabase.storage
+                .from('event-files')
+                .upload(fileName, file.buffer, {
+                    contentType: file.mimetype
+                });
+
+            if (uploadError) {
+                console.error('Upload error:', uploadError);
+                return res.status(500).json({ error: 'Failed to upload file' });
+            }
+        }
+
+        // Update event to mark receipts as submitted
+        const { error: updateError } = await supabase
+            .from('events')
+            .update({ receipts_submitted: true })
+            .eq('id', id);
+
+        if (updateError) {
+            console.error('Update error:', updateError);
+            return res.status(500).json({ error: 'Failed to update event' });
+        }
+
+        res.json({ success: true, message: 'Receipts submitted successfully!' });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: error.message || 'Server error' });
     }
 });
 
@@ -170,30 +490,96 @@ app.route('/home').get(async (req, res) => {
     }
     const { data: club } = await supabase
         .from('clubs')
-        .select('name, logo')
+        .select('name, logo, is_admin')
         .eq('id', user.id)
         .single();
 
-    res.render('chome', { user, clubName: club?.name || '', clubLogo: club?.logo || '' });
+    res.render('chome', { user, clubName: club?.name || '', clubLogo: club?.logo || '', isAdmin: club?.is_admin || false });
 });
+// Events page route
+app.route('/events').get(async (req, res) => {
+    // Check if user is authenticated to show sidebar info
+    const token = req.cookies.token;
+    let userClubName = '';
+    let userClubLogo = '';
+    let isAdmin = false;
+    
+    if (token) {
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        if (!error && user) {
+            const { data: club } = await supabase
+                .from('clubs')
+                .select('name, logo, is_admin')
+                .eq('id', user.id)
+                .single();
+            if (club) {
+                userClubName = club.name || '';
+                userClubLogo = club.logo || '';
+                isAdmin = club.is_admin || false;
+            }
+        }
+    }
+    
+    // Fetch only approved events from Supabase
+    const { data: eventsRaw, error: eventsError } = await supabase
+        .from('events')
+        .select('id, club, event_name, description, date')
+        .eq('approved', true);
+
+    let events = [];
+    if (eventsRaw && eventsRaw.length > 0) {
+        // Get club info for each event
+        for (const event of eventsRaw) {
+            let clubLogo = '';
+            let clubName = event.club;
+            // Try to get club logo and name from clubs table
+            const { data: clubData } = await supabase
+                .from('clubs')
+                .select('name, logo')
+                .eq('name', event.club)
+                .single();
+            if (clubData) {
+                clubLogo = clubData.logo || '';
+                clubName = clubData.name || event.club;
+            }
+            events.push({
+                clubName,
+                clubLogo,
+                event_name: event.event_name || event.description,
+                description: event.description,
+                date: event.date
+            });
+        }
+    }
+    res.render('events', { events, clubName: userClubName, clubLogo: userClubLogo, isAdmin });
+});
+
 
 app.route('/explore').get(async (req, res) => {
     try {
-        // Get all clubs from the database
+        const token = req.cookies.token;
+        let isLoggedIn = false;
+        if (token) {
+            const { data: { user } } = await supabase.auth.getUser(token);
+            isLoggedIn = !!user;
+        }
+        
+        // Get all clubs from the database (exclude admin accounts)
         const { data: clubs, error } = await supabase
             .from('clubs')
             .select('*')
+            .eq('is_admin', false)
             .order('name', { ascending: true });
         
         if (error) {
             console.error('Error fetching clubs:', error);
-            return res.render('explore', { clubs: [] });
+            return res.render('explore', { clubs: [], isLoggedIn });
         }
         
-        res.render('explore', { clubs: clubs || [] });
+        res.render('explore', { clubs: clubs || [], isLoggedIn });
     } catch (error) {
         console.error('Error in explore route:', error);
-        res.render('explore', { clubs: [] });
+        res.render('explore', { clubs: [], isLoggedIn: false });
     }
 });
 
@@ -211,7 +597,7 @@ app.route('/shorten').get(async (req, res) => {
     // Get user's club from clubs table
     const { data: club } = await supabase
         .from('clubs')
-        .select('name')
+        .select('*')
         .eq('id', user.id)
         .single();
     
@@ -219,17 +605,104 @@ app.route('/shorten').get(async (req, res) => {
         return res.render('404');
     }
     
+    // Check if user is admin
+    const { data: adminData } = await supabase
+        .from('admin')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+    const isAdmin = !!adminData;
+    
     // Get all links for this club
     const { data: links } = await supabase
         .from('shortcuts')
         .select('*')
         .eq('club', club.name);
     
-    res.render('shorten', { user, club: club.name, links: links || [] });
+    res.render('shorten', { 
+        user, 
+        club: club.name, 
+        clubName: club.name,
+        clubLogo: club.logo || null,
+        isAdmin,
+        links: links || [] 
+    });
 });
 
 app.route('/qrcode').get(async (req, res) => {
-    res.render('qrgen');
+    const token = req.cookies.token;
+    if (!token) {
+        return res.redirect('/login');
+    }
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.redirect('/login');
+    }
+    
+    // Get user's club from clubs table
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+    
+    if (!club?.name) {
+        return res.render('404');
+    }
+    
+    // Check if user is admin
+    const { data: adminData } = await supabase
+        .from('admin')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+    const isAdmin = !!adminData;
+    
+    res.render('qrgen-new', { 
+        user, 
+        clubName: club.name,
+        clubLogo: club.logo || null,
+        isAdmin
+    });
+});
+
+app.route('/qrgen').get(async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.redirect('/login');
+    }
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.redirect('/login');
+    }
+    
+    // Get user's club from clubs table
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+    
+    if (!club?.name) {
+        return res.render('404');
+    }
+    
+    // Check if user is admin
+    const { data: adminData } = await supabase
+        .from('admin')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+    const isAdmin = !!adminData;
+    
+    res.render('qrgen-new', { 
+        user, 
+        clubName: club.name,
+        clubLogo: club.logo || null,
+        isAdmin
+    });
 });
 
 app.route('/manage-club').get(async (req, res) => {
@@ -251,10 +724,25 @@ app.route('/manage-club').get(async (req, res) => {
         .single();
 
     if (!club) {
-        return res.render('manage-club', { error: 'Club not found', success: null, club: {} });
+        return res.render('manage-club', { error: 'Club not found', success: null, club: {}, clubName: '', clubLogo: null, isAdmin: false });
     }
 
-    res.render('manage-club', { club: club || {}, success: req.query.success || null, error: null });
+    // Check if user is admin
+    const { data: adminData } = await supabase
+        .from('admin')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+    const isAdmin = !!adminData;
+
+    res.render('manage-club', { 
+        club: club || {}, 
+        success: req.query.success || null, 
+        error: null,
+        clubName: club.name,
+        clubLogo: club.logo || null,
+        isAdmin
+    });
 });
 
 app.post('/manage-club', async (req, res, next) => {
@@ -527,7 +1015,13 @@ app.delete('/delete/:id', async (req, res) => {
     res.json({ success: true });
 });
 app.route('/club-index').get(async (req, res) => {
-    res.render('club-index');
+    const token = req.cookies.token;
+    let isLoggedIn = false;
+    if (token) {
+        const { data: { user } } = await supabase.auth.getUser(token);
+        isLoggedIn = !!user;
+    }
+    res.render('club-index', { isLoggedIn });
 });
 
 // Linklist Manager Dashboard - Get the manager page
@@ -544,7 +1038,7 @@ app.route('/linklist-manager').get(async (req, res) => {
     // Get user's club from clubs table
     const { data: club } = await supabase
         .from('clubs')
-        .select('name')
+        .select('*')
         .eq('id', user.id)
         .single();
     
@@ -552,11 +1046,26 @@ app.route('/linklist-manager').get(async (req, res) => {
         return res.status(403).render('404');
     }
     
-    res.render('linklist-manager', { user, clubName: club.name });
+    // Check if user is admin
+    const { data: adminData } = await supabase
+        .from('admin')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+    const isAdmin = !!adminData;
+    
+    res.render('linklist-manager', { 
+        user, 
+        clubName: club.name,
+        clubLogo: club.logo || null,
+        isAdmin
+    });
 });
 
 // Get links for a club (API endpoint) - now sorted by order
-app.route('/linklist/:club').get(async (req, res) => {
+
+// API: Get links as JSON for manager
+app.get('/api/linklist/:club', async (req, res) => {
     const { club } = req.params;
     
     try {
@@ -564,8 +1073,7 @@ app.route('/linklist/:club').get(async (req, res) => {
             .from('linklist')
             .select('*')
             .eq('club', club)
-            .order('order', { ascending: true })
-            .order('created_at', { ascending: false });
+            .order('order', { ascending: true });
         
         if (error) {
             return res.status(500).json({ error: 'Failed to fetch links' });
@@ -573,7 +1081,7 @@ app.route('/linklist/:club').get(async (req, res) => {
         
         res.json({ links: links || [] });
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error fetching links:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -796,8 +1304,8 @@ app.put('/linklist/reorder', async (req, res) => {
     }
 });
 
-// Public linktree view - displays all links for a club
-app.route('/linktree/:club').get(async (req, res) => {
+// Public linklist view - displays all links for a club
+app.route('/linklist/:club').get(async (req, res) => {
     const { club } = req.params;
     
     try {
@@ -833,10 +1341,374 @@ app.route('/linktree/:club').get(async (req, res) => {
             }
         }
         
-        res.render('linktree', { clubName: club, links: links || [], logoPath });
+        res.render('linklist', { clubName: club, links: links || [], logoPath });
     } catch (error) {
         console.error('Error:', error);
         res.render('404');
+    }
+});
+
+// Admin Dashboard Routes
+// Create a new user (admin only)
+app.post('/admin/create-user', isAdmin, async (req, res) => {
+    const { clubname, email, password } = req.body;
+    
+    if (!clubname || !email || !password) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+    
+    try {
+        // Create user in Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+            email,
+            password,
+            email_confirm: true
+        });
+        
+        if (authError) {
+            return res.status(400).json({ error: authError.message || 'Failed to create account' });
+        }
+        
+        // Create club entry with user's UUID
+        const { data: clubData, error: clubError } = await supabase
+            .from('clubs')
+            .insert({
+                id: authData.user.id,
+                name: clubname,
+                is_admin: false
+            })
+            .select()
+            .single();
+        
+        if (clubError) {
+            return res.status(400).json({ error: 'Failed to create club. Please try again.' });
+        }
+        
+        res.json({ 
+            success: true,
+            message: 'User created successfully',
+            user: clubData
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Issue an alert (admin only)
+app.post('/admin/issue-alert', isAdmin, async (req, res) => {
+    const { title, message, severity } = req.body;
+    
+    if (!title || !message) {
+        return res.status(400).json({ error: 'Title and message are required' });
+    }
+    
+    try {
+        const { data, error } = await supabase
+            .from('alerts')
+            .insert([{
+                title,
+                message,
+                severity: severity || 'info',
+                created_at: new Date().toISOString()
+            }])
+            .select()
+            .single();
+        
+        if (error) {
+            return res.status(500).json({ error: 'Failed to create alert' });
+        }
+        
+        res.json({ 
+            success: true,
+            message: 'Alert sent successfully',
+            alert: data
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Get all users (admin only)
+app.get('/admin/users', isAdmin, async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('clubs')
+            .select('id, name, description, is_admin')
+            .order('name', { ascending: true });
+        
+        if (error) {
+            console.error('Error fetching users:', error);
+            return res.status(500).json({ error: 'Failed to fetch users', details: error.message });
+        }
+        
+        console.log('Fetched users:', data);
+        res.json(data || []);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error', details: error.message });
+    }
+});
+
+// Reset user password (admin only)
+app.put('/admin/users/:id/reset-password', isAdmin, async (req, res) => {
+    const { id } = req.params;
+    const { newPassword } = req.body;
+    
+    if (!newPassword || newPassword.length < 8) {
+        return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+    }
+    
+    try {
+        // Update password in Supabase Auth
+        const { data, error } = await supabase.auth.admin.updateUserById(id, {
+            password: newPassword
+        });
+        
+        if (error) {
+            console.error('Password reset error:', error);
+            return res.status(500).json({ error: 'Failed to reset password', details: error.message });
+        }
+        
+        res.json({ 
+            success: true,
+            message: 'Password reset successfully'
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error', details: error.message });
+    }
+});
+
+// Delete user (admin only)
+app.delete('/admin/users/:id', isAdmin, async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+        // Delete from clubs table
+        const { error: clubError } = await supabase
+            .from('clubs')
+            .delete()
+            .eq('id', id);
+        
+        if (clubError) {
+            return res.status(500).json({ error: 'Failed to delete user from database' });
+        }
+        
+        // Delete from auth (optional - Supabase may handle cascade)
+        try {
+            await supabase.auth.admin.deleteUser(id);
+        } catch (authError) {
+            console.error('Auth deletion error:', authError);
+        }
+        
+        res.json({ 
+            success: true,
+            message: 'User deleted successfully'
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Update user (admin only)
+app.put('/admin/users/:id', isAdmin, async (req, res) => {
+    const { id } = req.params;
+    const { name, description } = req.body;
+    
+    try {
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (description) updateData.description = description;
+        
+        // Update club info
+        const { data, error: clubError } = await supabase
+            .from('clubs')
+            .update(updateData)
+            .eq('id', id)
+            .select()
+            .single();
+        
+        if (clubError) {
+            return res.status(500).json({ error: 'Failed to update user' });
+        }
+        
+        res.json({ 
+            success: true,
+            message: 'User updated successfully',
+            user: data
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Get all events with document links (admin only)
+app.get('/admin/events/documents', isAdmin, async (req, res) => {
+    try {
+        const { data: events, error } = await supabase
+            .from('events')
+            .select('id, club, club_id, event_name, description, date, approved, target_grades, proposal_link, budget_submitted, receipts_submitted')
+            .order('date', { ascending: false });
+        
+        if (error) {
+            console.error('Error fetching events:', error);
+            return res.status(500).json({ error: 'Failed to fetch events', details: error.message });
+        }
+        
+        // For each event, fetch the file URLs from storage
+        const eventsWithFiles = await Promise.all(events.map(async (event) => {
+            const budgetFiles = [];
+            const receiptFiles = [];
+            
+            // Get budget files
+            if (event.budget_submitted) {
+                const { data: budgetList } = await supabase.storage
+                    .from('event-files')
+                    .list(`budgets/${event.club_id}/${event.id}`);
+                
+                if (budgetList && budgetList.length > 0) {
+                    for (const file of budgetList) {
+                        const { data: urlData } = supabase.storage
+                            .from('event-files')
+                            .getPublicUrl(`budgets/${event.club_id}/${event.id}/${file.name}`);
+                        
+                        budgetFiles.push({
+                            name: file.name,
+                            url: urlData.publicUrl
+                        });
+                    }
+                }
+            }
+            
+            // Get receipt files
+            if (event.receipts_submitted) {
+                const { data: receiptList } = await supabase.storage
+                    .from('event-files')
+                    .list(`receipts/${event.club_id}/${event.id}`);
+                
+                if (receiptList && receiptList.length > 0) {
+                    for (const file of receiptList) {
+                        const { data: urlData } = supabase.storage
+                            .from('event-files')
+                            .getPublicUrl(`receipts/${event.club_id}/${event.id}/${file.name}`);
+                        
+                        receiptFiles.push({
+                            name: file.name,
+                            url: urlData.publicUrl
+                        });
+                    }
+                }
+            }
+            
+            return {
+                ...event,
+                budget_files: budgetFiles,
+                receipt_files: receiptFiles
+            };
+        }));
+        
+        res.json(eventsWithFiles || []);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error', details: error.message });
+    }
+});
+
+// Get all events (admin only)
+app.get('/admin/events', isAdmin, async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('events')
+            .select('id, club, event_name, description, date, approved, target_grades, proposal_link, budget_submitted, receipts_submitted')
+            .order('date', { ascending: false });
+        
+        if (error) {
+            console.error('Error fetching events:', error);
+            return res.status(500).json({ error: 'Failed to fetch events', details: error.message });
+        }
+        
+        console.log('Fetched events:', data);
+        res.json(data || []);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error', details: error.message });
+    }
+});
+
+// Approve event (admin only)
+app.put('/admin/events/:id/approve', isAdmin, async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+        const { data, error } = await supabase
+            .from('events')
+            .update({ approved: true })
+            .eq('id', id)
+            .select()
+            .single();
+        
+        if (error) {
+            console.error('Error approving event:', error);
+            return res.status(500).json({ error: 'Failed to approve event', details: error.message });
+        }
+        
+        res.json({ 
+            success: true,
+            message: 'Event approved successfully',
+            event: data
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error', details: error.message });
+    }
+});
+
+// Delete event (admin only)
+app.delete('/admin/events/:id', isAdmin, async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+        const { error } = await supabase
+            .from('events')
+            .delete()
+            .eq('id', id);
+        
+        if (error) {
+            console.error('Error deleting event:', error);
+            return res.status(500).json({ error: 'Failed to delete event', details: error.message });
+        }
+        
+        res.json({ 
+            success: true,
+            message: 'Event deleted successfully'
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error', details: error.message });
+    }
+});
+
+// Get all alerts (admin only)
+app.get('/admin/alerts', isAdmin, async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('alerts')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(50);
+        
+        if (error) {
+            return res.status(500).json({ error: 'Failed to fetch alerts' });
+        }
+        
+        res.json(data || []);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json([]);
     }
 });
 

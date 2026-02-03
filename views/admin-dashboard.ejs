@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - GIIS Clubs</title>
+    <link rel="icon" type="image/png" href="resources/1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+            --border: #e2e8f0;
+            --sidebar-width: 260px;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--ink);
+            background-color: var(--surface-soft);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-logo {
+            height: 48px;
+            width: auto;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-soft);
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border);
+            padding: 16px 24px;
+        }
+
+        .club-info {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .club-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .club-avatar-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .club-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .club-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--ink);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .club-status {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 24px 32px;
+        }
+
+        .page-header-content {
+            max-width: 1400px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .content-area {
+            padding: 32px;
+            max-width: 1400px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 20px;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+        }
+
+        .card-header {
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--ink);
+            font-size: 13px;
+        }
+
+        input, textarea, select {
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--surface);
+            color: var(--ink);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+        }
+
+        .result-message {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .result-message.success {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+            display: block;
+        }
+
+        .result-message.error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            display: block;
+        }
+
+        .password-requirements {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .password-requirements li {
+            margin-left: 16px;
+            margin-bottom: 4px;
+        }
+
+        .password-requirements strong {
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .submit-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .data-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .data-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .data-item {
+            padding: 16px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .data-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .data-item-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--ink);
+        }
+
+        .data-item-meta {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .data-item-content {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .data-item strong {
+            color: var(--ink);
+        }
+
+        .empty-state, .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 10px 0;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .logout-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Mobile */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1001;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+        }
+
+        .mobile-toggle svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--ink);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-toggle {
+                display: flex;
+            }
+
+            .page-header {
+                padding: 24px 16px;
+                padding-top: 72px;
+            }
+
+            .content-area {
+                padding: 24px 16px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Toggle -->
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="/">
+                <img src="resources/2.png" alt="GIIS Clubs" class="sidebar-logo">
+            </a>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <a href="/home" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Dashboard
+                </a>
+                <a href="/admin-dashboard" class="nav-link active">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                    Admin Dashboard
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Admin</div>
+                <a href="#create-user" class="nav-link" onclick="showSection('create-user')">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Create User
+                </a>
+                <a href="#view-users" class="nav-link" onclick="showSection('view-users')">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    View Users
+                </a>
+                <a href="#approve-events" class="nav-link" onclick="showSection('approve-events')">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    Approve Events
+                </a>
+                <a href="#manage-events" class="nav-link" onclick="showSection('manage-events')">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Manage Events
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <a href="/manage-club" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    Club Settings
+                </a>
+                <a href="#account-settings" class="nav-link" onclick="showSection('account-settings')">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Account Settings
+                </a>
+                <a href="#notifications" class="nav-link" onclick="showSection('notifications')">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    Notifications
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="club-info">
+                <% if (clubLogo) { %>
+                    <img src="<%= clubLogo %>" alt="Club Logo" class="club-avatar-img">
+                <% } else { %>
+                    <div class="club-avatar"><%= clubName ? clubName.charAt(0).toUpperCase() : 'A' %></div>
+                <% } %>
+                <div class="club-details">
+                    <div class="club-name"><%= clubName || 'Admin' %></div>
+                    <div class="club-status">@ PG SMART CAMPUS</div>
+                </div>
+            </div>
+            <form action="/logout" method="POST" style="margin-top: 18px;">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <div class="page-header-content">
+                <h1 class="page-title">Admin Dashboard</h1>
+                <p class="page-subtitle">Manage users, alerts, and system data</p>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <!-- Create User Section -->
+            <div id="create-user-section" class="content-section">
+                <h2 class="section-title">Create New User</h2>
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">User Details</h3>
+                            <p class="card-subtitle">Create a new club account with credentials</p>
+                        </div>
+                        <form id="signupForm">
+                            <div class="form-group">
+                                <label for="clubName">Club Name *</label>
+                                <input type="text" id="clubName" name="clubName" placeholder="Enter your club name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">Club Description *</label>
+                                <textarea id="description" name="description" placeholder="Describe your club..." required style="padding: 12px 14px; border-radius: 12px; border: 1px solid #e5e7eb; font-size: 14px; font-family: inherit; min-height: 100px; resize: vertical;"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password *</label>
+                                <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                            </div>
+
+                            <div class="password-requirements">
+                                <strong>Password must contain:</strong>
+                                <ul style="margin-top: 6px;">
+                                    <li>At least 8 characters</li>
+                                    <li>At least one uppercase letter</li>
+                                    <li>At least one number</li>
+                                </ul>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password *</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter your password" required>
+                            </div>
+
+                            <button type="submit" class="submit-button">Create Account</button>
+                            <div class="loading" id="loading">Creating your account...</div>
+                        </form>
+                        <div id="create-user-result" class="result-message"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Users Section -->
+            <div id="view-users-section" class="content-section" style="display: none;">
+                <h2 class="section-title">All Users</h2>
+                <div class="data-section">
+                    <div id="users-list" class="data-list">
+                        <div class="loading">Loading users...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Approve Events Section -->
+            <div id="approve-events-section" class="content-section" style="display: none;">
+                <h2 class="section-title">Pending Events</h2>
+                <div class="data-section">
+                    <div id="events-list" class="data-list">
+                        <div class="loading">Loading events...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage Events Section -->
+            <div id="manage-events-section" class="content-section" style="display: none;">
+                <h2 class="section-title">All Events & Documents</h2>
+                <div class="data-section">
+                    <div id="manage-events-list" class="data-list">
+                        <div class="loading">Loading events...</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.querySelector('.sidebar-overlay').classList.toggle('open');
+        }
+
+        function formatDateDDMMYYYY(dateString) {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId + '-section').style.display = 'block';
+            
+            // Add active class to clicked link
+            event.currentTarget.classList.add('active');
+        }
+
+        // Create User Form Handler
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const clubName = document.getElementById('clubName').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validate club fields
+            if (!clubName) {
+                showError('Club name is required');
+                return;
+            }
+
+            if (!description) {
+                showError('Club description is required');
+                return;
+            }
+
+            // Validate password requirements
+            if (password.length < 8) {
+                showError('Password must be at least 8 characters long');
+                return;
+            }
+
+            if (!/[A-Z]/.test(password)) {
+                showError('Password must contain at least one uppercase letter');
+                return;
+            }
+
+            if (!/[0-9]/.test(password)) {
+                showError('Password must contain at least one number');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            loading.classList.add('show');
+
+            try {
+                const response = await fetch('/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password, clubName, description, isAdmin: false })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to create account');
+                }
+
+                showSuccess('Account created successfully!');
+                document.getElementById('signupForm').reset();
+                loadUsers(); // Refresh users list
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message);
+            } finally {
+                loading.classList.remove('show');
+            }
+        });
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            const form = document.getElementById('signupForm');
+            form.parentElement.insertBefore(errorDiv, form);
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.textContent = message;
+            const form = document.getElementById('signupForm');
+            form.parentElement.insertBefore(successDiv, form);
+            setTimeout(() => {
+                successDiv.remove();
+            }, 5000);
+        }
+
+        // Load Users
+        async function loadUsers() {
+            const usersList = document.getElementById('users-list');
+            
+            try {
+                const response = await fetch('/admin/users');
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Error response:', errorData);
+                    usersList.innerHTML = `<div class="empty-state">Failed to load users: ${errorData.error || 'Unknown error'}</div>`;
+                    return;
+                }
+                
+                const users = await response.json();
+                console.log('Loaded users:', users);
+                
+                if (users && users.length > 0) {
+                    usersList.innerHTML = users.map(user => `
+                        <div class="data-item" data-user-id="${user.id}">
+                            <div class="data-item-header">
+                                <div class="data-item-title">${user.name || 'Unknown'}</div>
+                            </div>
+                            <div class="data-item-content">
+                                <strong>Description:</strong> ${user.description || 'N/A'}<br>
+                                <strong>ID:</strong> ${user.id}<br>
+                                <strong>Admin:</strong> ${user.is_admin ? 'Yes' : 'No'}
+                            </div>
+                            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                <button onclick="editUser('${user.id}', '${user.name}', '${user.description || ''}')" style="flex: 1; padding: 8px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">Edit</button>
+                                <button onclick="resetPassword('${user.id}', '${user.name}')" style="flex: 1; padding: 8px; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">Reset Password</button>
+                                <button onclick="deleteUser('${user.id}', '${user.name}')" style="flex: 1; padding: 8px; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">Delete</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    usersList.innerHTML = '<div class="empty-state">No users found</div>';
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                usersList.innerHTML = '<div class="empty-state">Failed to load users: ' + error.message + '</div>';
+            }
+        }
+
+        // Edit User Function
+        async function editUser(id, name, description) {
+            const newName = prompt('Enter new club name:', name);
+            if (newName === null) return;
+            
+            const newDescription = prompt('Enter new description:', description);
+            if (newDescription === null) return;
+            
+            try {
+                const response = await fetch(`/admin/users/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: newName,
+                        description: newDescription
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('User updated successfully!');
+                    loadUsers();
+                } else {
+                    alert(result.error || 'Failed to update user');
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        // Reset Password Function
+        async function resetPassword(id, name) {
+            const newPassword = prompt(`Enter new password for "${name}" (min 8 characters):`);
+            if (!newPassword) return;
+            
+            if (newPassword.length < 8) {
+                alert('Password must be at least 8 characters long');
+                return;
+            }
+            
+            if (!confirm(`Reset password for "${name}"?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/admin/users/${id}/reset-password`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ newPassword })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('Password reset successfully!');
+                } else {
+                    alert(result.error || 'Failed to reset password');
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        // Delete User Function
+        async function deleteUser(id, name) {
+            if (!confirm(`Are you sure you want to delete user "${name}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/admin/users/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('User deleted successfully!');
+                    loadUsers();
+                } else {
+                    alert(result.error || 'Failed to delete user');
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        // Load data on page load
+        loadUsers();
+
+        // Load Events
+        async function loadEvents() {
+            const eventsList = document.getElementById('events-list');
+            
+            try {
+                const response = await fetch('/admin/events');
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Error response:', errorData);
+                    eventsList.innerHTML = `<div class="empty-state">Failed to load events: ${errorData.error || 'Unknown error'}</div>`;
+                    return;
+                }
+                
+                const events = await response.json();
+                console.log('Loaded events:', events);
+                if (events.length > 0) {
+                    console.log('Sample event:', events[0]);
+                    console.log('Has proposal_link:', 'proposal_link' in events[0]);
+                }
+                
+                if (events && events.length > 0) {
+                    eventsList.innerHTML = events.map(event => `
+                        <div class="data-item" data-event-id="${event.id}">
+                            <div class="data-item-header">
+                                <div class="data-item-title">${event.event_name || event.description}</div>
+                                <div class="data-item-meta">${formatDateDDMMYYYY(event.date)}</div>
+                            </div>
+                            <div class="data-item-content">
+                                <strong>Club:</strong> ${event.club}<br>
+                                <strong>Description:</strong> ${event.description}<br>
+                                <strong>Target Grades:</strong> ${event.target_grades || 'N/A'}<br>
+                                <strong>Date:</strong> ${formatDateDDMMYYYY(event.date)}<br>
+                                <strong>Status:</strong> ${event.approved ? 'Approved' : 'Pending Approval'}<br>
+                                <strong>Proposal:</strong> ${event.proposal_link ? `<a href="${event.proposal_link}" target="_blank" style="color: #2563eb; text-decoration: none;">View Document →</a>` : '<span style="color: #f59e0b;">⚠ Not submitted</span>'}
+                                ${event.approved ? `<br><strong>Budget:</strong> ${event.budget_submitted ? 'Submitted' : 'Not yet submitted'}<br><strong>Receipts:</strong> ${event.receipts_submitted ? 'Submitted' : 'Not yet submitted'}` : ''}
+                            </div>
+                            ${!event.approved ? `
+                            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                <button onclick="approveEvent('${event.id}', '${(event.event_name || event.description).replace(/'/g, "\\'")}'" style="flex: 1; padding: 8px; background: #16a34a; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">Approve</button>
+                                <button onclick="rejectEvent('${event.id}', '${(event.event_name || event.description).replace(/'/g, "\\'")}'" style="flex: 1; padding: 8px; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">Reject</button>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    eventsList.innerHTML = '<div class="empty-state">No pending events</div>';
+                }
+            } catch (error) {
+                console.error('Error loading events:', error);
+                eventsList.innerHTML = '<div class="empty-state">Failed to load events: ' + error.message + '</div>';
+            }
+        }
+
+        // Approve Event Function
+        async function approveEvent(id, description) {
+            if (!confirm(`Approve event "${description}"?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/admin/events/${id}/approve`, {
+                    method: 'PUT'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('Event approved successfully!');
+                    loadEvents();
+                } else {
+                    alert(result.error || 'Failed to approve event');
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        // Reject Event Function
+        async function rejectEvent(id, description) {
+            if (!confirm(`Reject and delete event "${description}"?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/admin/events/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('Event rejected successfully!');
+                    loadEvents();
+                } else {
+                    alert(result.error || 'Failed to reject event');
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        // Load Manage Events
+        async function loadManageEvents() {
+            const manageEventsList = document.getElementById('manage-events-list');
+            
+            try {
+                const response = await fetch('/admin/events/documents');
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Error response:', errorData);
+                    manageEventsList.innerHTML = `<div class="empty-state">Failed to load events: ${errorData.error || 'Unknown error'}</div>`;
+                    return;
+                }
+                
+                const events = await response.json();
+                console.log('Loaded events with documents:', events);
+                
+                if (events && events.length > 0) {
+                    manageEventsList.innerHTML = `
+                        <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden;">
+                            <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                                <tr>
+                                    <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 700; color: #2563eb;">Club</th>
+                                    <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 700; color: #2563eb;">Event</th>
+                                    <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 700; color: #2563eb;">Event sDate</th>
+                                    <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 700; color: #2563eb;">Status</th>
+                                    <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 700; color: #2563eb;">Proposal</th>
+                                    <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 700; color: #2563eb;">Budget</th>
+                                    <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 700; color: #2563eb;">Receipts</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${events.map(event => `
+                                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                                        <td style="padding: 12px; font-size: 14px; color: #334155;">${event.club}</td>
+                                        <td style="padding: 12px; font-size: 14px; color: #334155; max-width: 200px;">${event.event_name || event.description}</td>
+                                        <td style="padding: 12px; font-size: 14px; color: #334155;">${formatDateDDMMYYYY(event.date)}</td>
+                                        <td style="padding: 12px;">
+                                            <span style="padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; ${event.approved ? 'background: #d1fae5; color: #065f46;' : 'background: #fef3c7; color: #92400e;'}">
+                                                ${event.approved ? 'Approved' : 'Pending'}
+                                            </span>
+                                        </td>
+                                        <td style="padding: 12px;">
+                                            ${event.proposal_link ? `<a href="${event.proposal_link}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 13px; font-weight: 600;">View →</a>` : '<span style="color: #94a3b8; font-size: 13px;">-</span>'}
+                                        </td>
+                                        <td style="padding: 12px;">
+                                            ${event.budget_files && event.budget_files.length > 0 ? 
+                                                event.budget_files.map((file, idx) => `<a href="${file.url}" target="_blank" style="display: inline-block; background: #2563eb; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600; margin-right: 6px; margin-bottom: 4px;">${file.name}</a>`).join('') 
+                                                : '<span style="color: #94a3b8; font-size: 13px;">-</span>'}
+                                        </td>
+                                        <td style="padding: 12px;">
+                                            ${event.receipt_files && event.receipt_files.length > 0 ? 
+                                                event.receipt_files.map((file, idx) => `<a href="${file.url}" target="_blank" style="display: inline-block; background: #10b981; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600; margin-right: 6px; margin-bottom: 4px;">${file.name}</a>`).join('') 
+                                                : '<span style="color: #94a3b8; font-size: 13px;">-</span>'}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    manageEventsList.innerHTML = '<div class="empty-state">No events found</div>';
+                }
+            } catch (error) {
+                console.error('Error loading events:', error);
+                manageEventsList.innerHTML = '<div class="empty-state">Failed to load events: ' + error.message + '</div>';
+            }
+        }
+
+        // Load events when approve-events section is shown
+        const originalShowSection = showSection;
+        showSection = function(sectionId) {
+            originalShowSection.call(this, sectionId);
+            if (sectionId === 'approve-events') {
+                loadEvents();
+            } else if (sectionId === 'manage-events') {
+                loadManageEvents();
+            }
+        };
+    </script>
+</body>
+</html>
