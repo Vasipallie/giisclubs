@@ -765,7 +765,7 @@ app.post('/manage-club', async (req, res, next) => {
         .single();
 
     if (!club?.name) {
-        return res.render('manage-club', { error: 'Club not found', club: {}, success: null });
+        return res.render('manage-club', { error: 'Club not found', club: {}, success: null, clubName: '', clubLogo: null, isAdmin: false });
     }
 
     // Store club name in req so multer can access it
@@ -775,7 +775,7 @@ app.post('/manage-club', async (req, res, next) => {
     uploadImages.fields([{ name: 'banner_upload', maxCount: 1 }, { name: 'logo_p_upload', maxCount: 1 }])(req, res, async (err) => {
         if (err) {
             console.error('Multer error:', err.message);
-            return res.render('manage-club', { error: `Upload error: ${err.message}`, club: {}, success: null });
+            return res.render('manage-club', { error: `Upload error: ${err.message}`, club: {}, success: null, clubName: club.name || '', clubLogo: null, isAdmin: false });
         }
         
         // Continue with the rest of the route
@@ -838,7 +838,7 @@ app.post('/manage-club', async (req, res, next) => {
 
             if (updateError) {
                 console.error('Supabase update error:', updateError);
-                return res.render('manage-club', { error: 'Failed to update club profile', club: club, success: null });
+                return res.render('manage-club', { error: 'Failed to update club profile', club: club, success: null, clubName: club.name || '', clubLogo: club.logo || null, isAdmin: false });
             }
 
             // Fetch updated club data
@@ -848,10 +848,10 @@ app.post('/manage-club', async (req, res, next) => {
                 .eq('id', user.id)
                 .single();
 
-            res.render('manage-club', { club: updatedClub || club, success: 'Club profile updated successfully', error: null });
+            res.render('manage-club', { club: updatedClub || club, success: 'Club profile updated successfully', error: null, clubName: (updatedClub || club).name || '', clubLogo: (updatedClub || club).logo || null, isAdmin: false });
         } catch (err) {
             console.error('Error in /manage-club POST:', err);
-            res.render('manage-club', { error: 'An error occurred while updating your profile', club: club, success: null });
+            res.render('manage-club', { error: 'An error occurred while updating your profile', club: club, success: null, clubName: club.name || '', clubLogo: club.logo || null, isAdmin: false });
         }
     });
 });
