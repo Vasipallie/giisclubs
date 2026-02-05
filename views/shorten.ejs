@@ -817,7 +817,7 @@
                                 <span class="short-url">giisclubs.org/<%= link.id %></span>
                                 <div class="link-actions">
                                     <button class="btn-icon btn-copy" onclick="copyToClipboard('https://giisclubs.org/<%= link.id %>', this)" title="Copy">Copy</button>
-                                    <button class="btn-icon btn-edit" onclick="editLink('<%= link.id %>', '<%= link.link %>')" title="Edit">Edit</button>
+                                    <button class="btn-icon btn-edit" onclick="editLink('<%= link.id %>', '<%= (link.link || '').replace(/'/g, '\\\'') %>')" title="Edit">Edit</button>
                                     <button class="btn-icon btn-delete" onclick="deleteLink('<%= link.id %>')" title="Delete">Del</button>
                                 </div>
                             </div>
@@ -877,6 +877,7 @@
                 const response = await fetch('/create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify(data)
                 });
                 
@@ -905,6 +906,7 @@
                 const response = await fetch(`/update/${editingLinkId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify(data)
                 });
                 
@@ -932,14 +934,43 @@
         }
 
         function copyToClipboard(text, button) {
-            navigator.clipboard.writeText(text).then(() => {
-                button.classList.add('copied');
-                button.textContent = '✓';
-                setTimeout(() => {
-                    button.classList.remove('copied');
-                    button.textContent = 'Copy';
-                }, 2000);
-            });
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopySuccess(button);
+                }).catch(err => {
+                    fallbackCopy(text, button);
+                });
+            } else {
+                fallbackCopy(text, button);
+            }
+        }
+        
+        function fallbackCopy(text, button) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed"; 
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showCopySuccess(button);
+            } catch (err) {
+                console.error('Fallback: Unable to copy', err);
+                alert('Copy failed. Please copy the link manually: ' + text);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+        
+        function showCopySuccess(button) {
+            button.classList.add('copied');
+            button.textContent = '✓';
+            setTimeout(() => {
+                button.classList.remove('copied');
+                button.textContent = 'Copy';
+            }, 2000);
         }
 
         function editLink(id, currentLink) {
@@ -957,7 +988,10 @@
             if (!confirm('Delete this link? This cannot be undone.')) return;
             
             try {
-                const response = await fetch(`/delete/${id}`, { method: 'DELETE' });
+                const response = await fetch(`/delete/${id}`, { 
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
                 const result = await response.json();
                 
                 if (result.success) {

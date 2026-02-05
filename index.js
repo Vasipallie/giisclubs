@@ -858,16 +858,22 @@ app.post('/manage-club', async (req, res, next) => {
 
 app.post('/create', async (req, res) => {
     const token = req.cookies.token;
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+    
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     // Get user's club
-    const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('club')
+    const { data: clubData, error: clubError } = await supabase
+        .from('clubs')
+        .select('name')
         .eq('id', user.id)
         .single();
     
-    if (userError || !userData?.club) {
-        userData.club = 'robotics';
-    }
+    const clubName = (clubData && clubData.name) ? clubData.name : 'robotics';
     
     const { link, customId } = req.body;
     
@@ -888,7 +894,7 @@ app.post('/create', async (req, res) => {
         .insert([{ 
             id: id,
             link: link,
-            club: userData.club || 'robotics'
+            club: clubName
         }])
         .select()
         .single();
