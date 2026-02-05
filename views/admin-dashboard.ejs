@@ -833,7 +833,9 @@
             const usersList = document.getElementById('users-list');
             
             try {
-                const response = await fetch('/admin/users');
+                const response = await fetch('/admin/users', {
+                    credentials: 'include'
+                });
                 
                 if (!response.ok) {
                     const errorData = await response.json();
@@ -884,6 +886,7 @@
                 const response = await fetch(`/admin/users/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify({
                         name: newName,
                         description: newDescription
@@ -921,6 +924,7 @@
                 const response = await fetch(`/admin/users/${id}/reset-password`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify({ newPassword })
                 });
                 
@@ -944,7 +948,8 @@
             
             try {
                 const response = await fetch(`/admin/users/${id}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    credentials: 'include'
                 });
                 
                 const result = await response.json();
@@ -968,7 +973,9 @@
             const eventsList = document.getElementById('events-list');
             
             try {
-                const response = await fetch('/admin/events');
+                const response = await fetch('/admin/events', {
+                    credentials: 'include'
+                });
                 
                 if (!response.ok) {
                     const errorData = await response.json();
@@ -1002,8 +1009,8 @@
                             </div>
                             ${!event.approved ? `
                             <div style="display: flex; gap: 8px; margin-top: 12px;">
-                                <button onclick="approveEvent('${event.id}', '${(event.event_name || event.description).replace(/'/g, "\\'")}'" style="flex: 1; padding: 8px; background: #16a34a; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">Approve</button>
-                                <button onclick="rejectEvent('${event.id}', '${(event.event_name || event.description).replace(/'/g, "\\'")}'" style="flex: 1; padding: 8px; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">Reject</button>
+                                <button onclick="approveEvent('${event.id}', '${(event.event_name || event.description).replace(/'/g, "\\'")}')" style="flex: 1; padding: 8px; background: #16a34a; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">Approve</button>
+                                <button onclick="rejectEvent('${event.id}', '${(event.event_name || event.description).replace(/'/g, "\\'")}')" style="flex: 1; padding: 8px; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">Reject</button>
                             </div>
                             ` : ''}
                         </div>
@@ -1025,7 +1032,8 @@
             
             try {
                 const response = await fetch(`/admin/events/${id}/approve`, {
-                    method: 'PUT'
+                    method: 'PUT',
+                    credentials: 'include'
                 });
                 
                 const result = await response.json();
@@ -1049,7 +1057,8 @@
             
             try {
                 const response = await fetch(`/admin/events/${id}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    credentials: 'include'
                 });
                 
                 const result = await response.json();
@@ -1070,7 +1079,9 @@
             const manageEventsList = document.getElementById('manage-events-list');
             
             try {
-                const response = await fetch('/admin/events/documents');
+                const response = await fetch('/admin/events/documents', {
+                    credentials: 'include'
+                });
                 
                 if (!response.ok) {
                     const errorData = await response.json();
