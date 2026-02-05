@@ -1031,6 +1031,51 @@ app.route('/forms/edit/:formId').get(async (req, res) => {
     res.render('form-builder', { form, editing: true, clubName: club.name });
 });
 
+// Get Form Responses JSON API
+app.get('/forms/:formId/responses', async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+    }
+    
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+    }
+    
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name')
+        .eq('id', user.id)
+        .single();
+    
+    if (!club?.name) {
+        return res.status(403).json({ success: false, error: 'No club found' });
+    }
+    
+    const { formId } = req.params;
+    const formPath = path.join(formsDir, `${formId}.json`);
+    
+    if (!fs.existsSync(formPath)) {
+        return res.status(404).json({ success: false, error: 'Form not found' });
+    }
+    
+    const form = JSON.parse(fs.readFileSync(formPath, 'utf8'));
+    
+    if (form.club !== club.name) {
+        return res.status(403).json({ success: false, error: 'Not authorized' });
+    }
+    
+    const responsesPath = path.join(responsesDir, `${formId}.json`);
+    let responses = [];
+    
+    if (fs.existsSync(responsesPath)) {
+        responses = JSON.parse(fs.readFileSync(responsesPath, 'utf8'));
+    }
+    
+    res.json({ success: true, responses });
+});
+
 // Save Form API
 app.post('/forms/save', async (req, res) => {
     const token = req.cookies.token;

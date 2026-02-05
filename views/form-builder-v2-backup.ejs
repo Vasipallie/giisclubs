@@ -116,9 +116,8 @@
             transition: var(--transition);
         }
 
-        .view-tab:hover { color: var(--text-primary); background: rgba(99,102,241,0.1); }
+        .view-tab:hover { color: var(--text-primary); }
         .view-tab.active { background: var(--bg-panel); color: var(--text-primary); box-shadow: var(--shadow-sm); }
-        .view-tab svg { width: 14px; height: 14px; margin-right: 4px; vertical-align: middle; }
 
         .top-bar-right { display: flex; align-items: center; gap: 8px; }
 
@@ -279,80 +278,7 @@
             cursor: grab;
         }
 
-        .field-drag-handle:active { cursor: grabbing; }
         .form-field:hover .field-drag-handle { opacity: 1; }
-        .form-field.dragging { 
-            opacity: 0.5; 
-            transform: rotate(3deg); 
-            z-index: 1000; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        }
-        .canvas.drag-over { background: linear-gradient(135deg, var(--primary-light), #f0f9ff); }
-        .canvas-drop-zone { 
-            min-height: 60px; 
-            border: 2px dashed var(--primary); 
-            border-radius: var(--radius-md); 
-            background: var(--primary-light); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: var(--primary); 
-            font-weight: 600; 
-            margin: 8px 0; 
-            opacity: 0; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            transform: scale(0.95);
-        }
-        .canvas-drop-zone.active { 
-            opacity: 1; 
-            transform: scale(1);
-        }
-        .canvas-drop-zone.snap-zone:hover {
-            border-color: var(--primary);
-            background: var(--primary);
-            color: white;
-            transform: scale(1.02);
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
-        }
-        .drag-ghost {
-            pointer-events: none !important;
-            filter: blur(1px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
-        }
-        
-        .field-reorder-controls { 
-            position: absolute; 
-            right: 80px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            display: flex; 
-            gap: 4px; 
-            opacity: 0; 
-            transition: var(--transition); 
-            z-index: 3;
-        }
-        .section-field .field-reorder-controls { 
-            right: 200px; 
-        }
-        .form-field:hover .field-reorder-controls { opacity: 1; }
-        .reorder-btn { 
-            width: 24px; 
-            height: 24px; 
-            background: var(--bg-panel); 
-            border: 1px solid var(--border); 
-            border-radius: 4px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            transition: var(--transition); 
-        }
-        .reorder-btn:hover { 
-            background: var(--primary); 
-            border-color: var(--primary); 
-            color: white; 
-        }
-        .reorder-btn svg { width: 12px; height: 12px; }
         .field-label { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
         .field-required { color: var(--danger); }
 
@@ -380,11 +306,6 @@
             gap: 4px;
             opacity: 0;
             transition: var(--transition);
-            z-index: 3;
-        }
-        
-        .section-field .field-actions {
-            right: 120px;
         }
 
         .form-field:hover .field-actions, .form-field.selected .field-actions { opacity: 1; }
@@ -484,81 +405,15 @@
         .shortcut kbd { padding: 2px 6px; background: var(--bg-main); border: 1px solid var(--border); border-radius: 4px; font-size: 11px; font-family: inherit; }
 
         /* ===== MODAL ===== */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: var(--transition); backdrop-filter: blur(4px); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: var(--transition); }
         .modal-overlay.show { opacity: 1; visibility: visible; }
         .modal { background: var(--bg-panel); border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); max-width: 600px; width: 90%; max-height: 85vh; overflow: hidden; transform: scale(0.95) translateY(20px); transition: var(--transition); }
-        .modal.modal-lg { max-width: 900px; }
-        .modal.modal-xl { max-width: 1200px; }
         .modal-overlay.show .modal { transform: scale(1) translateY(0); }
-        .modal-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .modal-header-content { flex: 1; }
+        .modal-header { padding: 24px; border-bottom: 1px solid var(--border); }
         .modal-header h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
         .modal-header p { font-size: 14px; color: var(--text-secondary); }
-        .modal-close { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--text-muted); cursor: pointer; border-radius: var(--radius-md); transition: var(--transition); }
-        .modal-close:hover { background: var(--bg-main); color: var(--text-primary); }
-        .modal-close svg { width: 20px; height: 20px; }
         .modal-body { padding: 24px; max-height: 60vh; overflow-y: auto; }
         .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; }
-
-        /* ===== SECTION & PAGEBREAK STYLES ===== */
-        .section-field { 
-            background: linear-gradient(135deg, var(--primary-light), #f0f9ff); 
-            border-left: 4px solid var(--primary); 
-            padding: 20px 24px; 
-            margin: 20px 0; 
-            position: relative;
-            transition: var(--transition);
-        }
-        .section-field:hover { 
-            background: linear-gradient(135deg, var(--primary), #6366f1); 
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
-        }
-        .section-field:hover .section-title, 
-        .section-field:hover .section-desc { color: white; }
-        .section-field:hover .step-indicator {
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-        }
-        .section-field .section-title { 
-            font-size: 18px; 
-            font-weight: 700; 
-            color: var(--text-primary); 
-            margin-bottom: 4px;
-            transition: var(--transition);
-        }
-        .section-field .section-desc { 
-            font-size: 14px; 
-            color: var(--text-secondary);
-            transition: var(--transition);
-        }
-        .step-indicator { 
-            position: absolute; 
-            top: 16px; 
-            right: 16px; 
-            background: var(--primary); 
-            color: white; 
-            padding: 6px 12px; 
-            border-radius: 12px; 
-            font-size: 11px; 
-            font-weight: 600;
-            transition: var(--transition);
-            z-index: 2;
-        }
-        .pagebreak-field { background: repeating-linear-gradient(90deg, var(--border) 0, var(--border) 8px, transparent 8px, transparent 16px); height: 3px; margin: 32px 0; position: relative; }
-        .pagebreak-field::before { content: 'Page Break'; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--bg-panel); padding: 4px 16px; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
-        .pagebreak-field::after { content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: var(--bg-panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E") center no-repeat; border-radius: var(--radius-sm); border: 1px solid var(--border); }
-        .step-indicator { position: absolute; top: 16px; right: 16px; background: var(--bg-panel); border: 2px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: var(--radius-lg); font-size: 12px; font-weight: 600; box-shadow: var(--shadow-sm); }
-
-        /* ===== RESPONSES TABLE ===== */
-        .responses-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .responses-table th { background: var(--bg-main); padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-primary); border-bottom: 2px solid var(--border); position: sticky; top: 0; }
-        .responses-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text-secondary); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .responses-table tr:hover td { background: var(--bg-main); }
-        .responses-empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
-        .responses-empty svg { width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.5; }
-        .responses-count { background: var(--primary); color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
 
         /* ===== TEMPLATE GRID ===== */
         .template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -598,26 +453,10 @@
             </div>
         </div>
         <div class="top-bar-center">
-            <button class="view-tab active" data-view="build">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-                Build
-            </button>
-            <button class="view-tab" data-view="design">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/></svg>
-                Design
-            </button>
-            <button class="view-tab" data-view="settings">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-                Settings
-            </button>
-            <button class="view-tab" data-view="responses">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                Responses<span class="responses-count" id="responsesCount">0</span>
-            </button>
-            <button class="view-tab" data-view="preview">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                Preview
-            </button>
+            <button class="view-tab active" data-view="build">Build</button>
+            <button class="view-tab" data-view="design">Design</button>
+            <button class="view-tab" data-view="settings">Settings</button>
+            <button class="view-tab" data-view="preview">Preview</button>
         </div>
         <div class="top-bar-right">
             <button class="btn btn-ghost" onclick="undo()" title="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6.36 2.64L3 13"/></svg></button>
@@ -772,10 +611,7 @@
     <!-- TEMPLATE MODAL -->
     <div class="modal-overlay" id="templateModal">
         <div class="modal">
-            <div class="modal-header">
-                <div class="modal-header-content"><h2>Choose a Template</h2><p>Start with a pre-built template or create from scratch</p></div>
-                <button class="modal-close" onclick="closeTemplateModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-            </div>
+            <div class="modal-header"><h2>Choose a Template</h2><p>Start with a pre-built template or create from scratch</p></div>
             <div class="modal-body">
                 <div class="template-grid">
                     <div class="template-card selected" data-template="blank"><div class="template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div><div class="template-name">Blank Form</div><div class="template-desc">Start from scratch</div></div>
@@ -787,45 +623,6 @@
                 </div>
             </div>
             <div class="modal-footer"><button class="btn btn-ghost" onclick="closeTemplateModal()">Cancel</button><button class="btn btn-primary" onclick="useTemplate()">Use Template</button></div>
-        </div>
-    </div>
-
-    <!-- DESIGN MODAL -->
-    <div class="modal-overlay" id="designModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-header-content"><h2>Design</h2><p>Customize the look and feel of your form</p></div>
-                <button class="modal-close" onclick="closeDesignModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-            </div>
-            <div class="modal-body" id="designModalBody"></div>
-            <div class="modal-footer"><button class="btn btn-primary" onclick="closeDesignModal()">Done</button></div>
-        </div>
-    </div>
-
-    <!-- SETTINGS MODAL -->
-    <div class="modal-overlay" id="settingsModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-header-content"><h2>Settings</h2><p>Configure form behavior and submission settings</p></div>
-                <button class="modal-close" onclick="closeSettingsModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-            </div>
-            <div class="modal-body" id="settingsModalBody"></div>
-            <div class="modal-footer"><button class="btn btn-primary" onclick="closeSettingsModal()">Done</button></div>
-        </div>
-    </div>
-
-    <!-- RESPONSES MODAL -->
-    <div class="modal-overlay" id="responsesModal">
-        <div class="modal modal-xl">
-            <div class="modal-header">
-                <div class="modal-header-content"><h2>Responses</h2><p id="responsesSubtitle">View and manage form submissions</p></div>
-                <button class="modal-close" onclick="closeResponsesModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-            </div>
-            <div class="modal-body" id="responsesModalBody" style="max-height:70vh;"></div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="exportResponses()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export CSV</button>
-                <button class="btn btn-primary" onclick="closeResponsesModal()">Done</button>
-            </div>
         </div>
     </div>
 
@@ -878,43 +675,11 @@
             application: { title: 'Application Form', description: 'Complete all required fields.', fields: [{ type: 'text', label: 'Full Name', required: true },{ type: 'email', label: 'Email', required: true },{ type: 'phone', label: 'Phone', required: true },{ type: 'date', label: 'Date of Birth', required: false },{ type: 'textarea', label: 'Why are you interested?', required: true },{ type: 'file', label: 'Upload Resume', required: false }] }
         };
 
-        // Helper function to flatten sectioned form data for editing
-        function flattenFormData(fields) {
-            if (!Array.isArray(fields) || fields.length === 0) return [];
-            
-            // Check if it's already sectioned (array of sections with questions)
-            const isSectioned = fields.length > 0 && typeof fields[0] === 'object' && Array.isArray(fields[0]?.questions);
-            
-            if (isSectioned) {
-                const flattened = [];
-                fields.forEach((section, index) => {
-                    // Add section field if it has a title or it's not the first section
-                    if (section.title || index > 0) {
-                        flattened.push({
-                            id: section.id || generateId(),
-                            type: 'section',
-                            label: section.title || 'Section',
-                            description: section.description || ''
-                        });
-                    }
-                    // Add all questions from this section
-                    if (Array.isArray(section.questions)) {
-                        section.questions.forEach(q => flattened.push(q));
-                    }
-                });
-                return flattened;
-            }
-            
-            // Already flat, return as is
-            return fields;
-        }
-
         // ===== INIT =====
         document.addEventListener('DOMContentLoaded', function() {
             <% if (typeof form !== 'undefined' && form && form.fields) { %>
             try {
-                const rawFields = <%- JSON.stringify(form.fields) %>;
-                formData.fields = flattenFormData(rawFields).map(f => ({ ...f, id: f.id || generateId() }));
+                formData.fields = <%- JSON.stringify(form.fields) %>.map(f => ({ ...f, id: f.id || generateId() }));
                 formData.title = '<%= form.title || "" %>';
                 formData.description = '<%= form.description || "" %>';
             } catch(e) {}
@@ -923,19 +688,8 @@
             try { formData.settings = { ...formData.settings, ...<%- JSON.stringify(form.settings) %> }; } catch(e) {}
             <% } %>
 
-            if (!formId && formData.fields.length === 0) {
-                // Auto-add Section 1 for new forms
-                formData.fields.push({
-                    id: generateId(),
-                    type: 'section',
-                    label: 'Section 1',
-                    description: 'Add your questions below'
-                });
-                renderCanvas();
-                showTemplateModal();
-            } else {
-                renderCanvas();
-            }
+            if (!formId && formData.fields.length === 0) showTemplateModal();
+            else renderCanvas();
 
             setupDragAndDrop();
             setupColorPicker();
@@ -943,74 +697,14 @@
             syncTitles();
             setupPropertyTabs();
             saveHistory();
-            
-            // Load responses count
-            if (formId) loadResponses();
         });
 
         function generateId() { return 'f_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 9); }
         function showToast(msg, type = 'success') { const t = document.getElementById('toast'); t.textContent = msg; t.style.background = type === 'error' ? 'var(--danger)' : 'var(--text-primary)'; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-        
-        function getStepNumber(fieldIndex) {
-            let stepCount = 1;
-            for (let i = 0; i < fieldIndex; i++) {
-                if (formData.fields[i] && formData.fields[i].type === 'section') {
-                    stepCount++;
-                }
-            }
-            return stepCount;
-        }
-        
-        function getFormSections() {
-            const sections = [];
-            let currentSection = { id: 'main', title: '', description: '', questions: [] };
-            
-            formData.fields.forEach((field, index) => {
-                if (field.type === 'section') {
-                    // Save current section if it has questions
-                    if (currentSection.questions.length > 0) {
-                        sections.push(currentSection);
-                    }
-                    // Start new section
-                    currentSection = {
-                        id: field.id,
-                        title: field.label || 'Section',
-                        description: field.description || '',
-                        questions: []
-                    };
-                } else if (field.type !== 'pagebreak') {
-                    // Add field to current section (skip pagebreaks)
-                    currentSection.questions.push(field);
-                }
-            });
-            
-            // Add the last section
-            if (currentSection.questions.length > 0 || sections.length === 0) {
-                sections.push(currentSection);
-            }
-            
-            return sections;
-        }
 
         // ===== TEMPLATE MODAL =====
         function showTemplateModal() { document.getElementById('templateModal').classList.add('show'); }
-        function closeTemplateModal() { 
-            document.getElementById('templateModal').classList.remove('show'); 
-            if (formData.fields.length === 0) {
-                // Ensure we have Section 1
-                formData.fields.push({
-                    id: generateId(),
-                    type: 'section',
-                    label: 'Section 1',
-                    description: 'Add your questions below'
-                });
-            }
-            // If we only have a section, add a text field
-            if (formData.fields.length === 1 && formData.fields[0].type === 'section') {
-                addField('text');
-            }
-            renderCanvas(); 
-        }
+        function closeTemplateModal() { document.getElementById('templateModal').classList.remove('show'); if (formData.fields.length === 0) addField('text'); renderCanvas(); }
         function useTemplate() {
             const sel = document.querySelector('.template-card.selected');
             if (!sel) return;
@@ -1042,71 +736,6 @@
             const type = fieldTypes[field.type] || { label: field.type };
             const isSel = field.id === selectedFieldId;
             let preview = '';
-            
-            // Special handling for layout elements
-            if (field.type === 'section') {
-                const stepNumber = getStepNumber(index);
-                return `<div class="form-field section-field ${isSel ? 'selected' : ''}" data-id="${field.id}" data-index="${index}" data-step="${stepNumber}" draggable="true">
-                    <div class="field-drag-handle" title="Drag to reorder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
-                    <div class="field-reorder-controls">
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'up')" title="Move up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'down')" title="Move down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
-                    </div>
-                    <div class="field-actions">
-                        <button class="field-action-btn" onclick="duplicateField('${field.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
-                        <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
-                    </div>
-                    <div class="section-title">${field.label || 'Section Title'}</div>
-                    <div class="section-desc">${field.description || 'Section description (optional)'}</div>
-                    <div class="step-indicator">Step ${stepNumber}</div>
-                </div>`;
-            }
-            
-            if (field.type === 'pagebreak') {
-                return `<div class="form-field ${isSel ? 'selected' : ''}" data-id="${field.id}" data-index="${index}" draggable="true" style="padding:8px 20px;">
-                    <div class="field-drag-handle" title="Drag to reorder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
-                    <div class="field-reorder-controls">
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'up')" title="Move up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'down')" title="Move down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
-                    </div>
-                    <div class="field-actions">
-                        <button class="field-action-btn" onclick="duplicateField('${field.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
-                        <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
-                    </div>
-                    <div class="pagebreak-field"></div>
-                </div>`;
-            }
-            
-            if (field.type === 'heading') {
-                return `<div class="form-field ${isSel ? 'selected' : ''}" data-id="${field.id}" data-index="${index}" draggable="true">
-                    <div class="field-drag-handle" title="Drag to reorder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
-                    <div class="field-reorder-controls">
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'up')" title="Move up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'down')" title="Move down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
-                    </div>
-                    <div class="field-actions">
-                        <button class="field-action-btn" onclick="duplicateField('${field.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
-                        <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
-                    </div>
-                    <h3 style="font-size:${field.fontSize || 18}px;font-weight:${field.fontWeight || 600};color:var(--text-primary);">${field.label || 'Heading'}</h3>
-                </div>`;
-            }
-            
-            if (field.type === 'paragraph') {
-                return `<div class="form-field ${isSel ? 'selected' : ''}" data-id="${field.id}" data-index="${index}" draggable="true">
-                    <div class="field-drag-handle" title="Drag to reorder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
-                    <div class="field-reorder-controls">
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'up')" title="Move up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'down')" title="Move down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
-                    </div>
-                    <div class="field-actions">
-                        <button class="field-action-btn" onclick="duplicateField('${field.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
-                        <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
-                    </div>
-                    <p style="color:var(--text-secondary);line-height:1.6;">${field.content || 'Paragraph text. Click to edit...'}</p>
-                </div>`;
-            }
-            
             switch(field.type) {
                 case 'text': case 'email': case 'phone': case 'url': case 'number':
                     preview = `<input type="text" class="field-input" placeholder="${field.placeholder || 'Your answer'}" disabled>`; break;
@@ -1121,23 +750,21 @@
                 case 'date': preview = `<input type="date" class="field-input" disabled>`; break;
                 case 'time': preview = `<input type="time" class="field-input" disabled>`; break;
                 case 'rating': preview = `<div style="font-size:24px;color:var(--text-muted);">★★★★★</div>`; break;
-                case 'scale': preview = `<div style="display:flex;gap:8px;align-items:center;"><span style="font-size:12px;">${field.scaleMin || 1}</span><input type="range" min="${field.scaleMin || 1}" max="${field.scaleMax || 10}" style="flex:1;" disabled><span style="font-size:12px;">${field.scaleMax || 10}</span></div>`; break;
+                case 'scale': preview = `<div style="display:flex;gap:8px;align-items:center;"><span style="font-size:12px;">1</span><input type="range" style="flex:1;" disabled><span style="font-size:12px;">10</span></div>`; break;
                 case 'file': preview = `<div style="border:2px dashed var(--border);padding:20px;text-align:center;border-radius:var(--radius-md);color:var(--text-muted);">📎 Click or drag to upload</div>`; break;
                 case 'signature': preview = `<div style="border:1px solid var(--border);padding:30px;text-align:center;border-radius:var(--radius-md);color:var(--text-muted);">✍️ Click to sign</div>`; break;
                 case 'toggle': preview = `<label class="toggle-switch" style="pointer-events:none;"><input type="checkbox"><span class="toggle-slider"></span></label>`; break;
+                case 'heading': preview = `<h3 style="font-size:18px;font-weight:600;">${field.label || 'Heading'}</h3>`; break;
+                case 'paragraph': preview = `<p style="color:var(--text-secondary);">${field.content || 'Paragraph text...'}</p>`; break;
                 default: preview = `<input type="text" class="field-input" placeholder="..." disabled>`;
             }
             return `<div class="form-field ${isSel ? 'selected' : ''}" data-id="${field.id}" data-index="${index}" draggable="true">
-                <div class="field-drag-handle" title="Drag to reorder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
-                <div class="field-reorder-controls">
-                    <div class="reorder-btn" onclick="moveField('${field.id}', 'up')" title="Move up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
-                    <div class="reorder-btn" onclick="moveField('${field.id}', 'down')" title="Move down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
-                </div>
+                <div class="field-drag-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
                 <div class="field-actions">
                     <button class="field-action-btn" onclick="duplicateField('${field.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
-                    <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+                    <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
                 </div>
-                <label class="field-label">${field.label || 'Untitled Question'}${field.required ? '<span class="field-required">*</span>' : ''}</label>
+                ${field.type !== 'heading' && field.type !== 'paragraph' ? `<label class="field-label">${field.label || 'Untitled Question'}${field.required ? '<span class="field-required">*</span>' : ''}</label>` : ''}
                 ${preview}
                 ${field.helperText ? `<div class="field-helper">${field.helperText}</div>` : ''}
             </div>`;
@@ -1171,28 +798,6 @@
             renderCanvas(); selectField(dup.id); saveHistory(); triggerAutosave(); showToast('Field duplicated');
         }
 
-        function moveField(id, direction) {
-            const idx = formData.fields.findIndex(f => f.id === id);
-            if (idx === -1) return;
-            
-            let newIdx;
-            if (direction === 'up' && idx > 0) {
-                newIdx = idx - 1;
-            } else if (direction === 'down' && idx < formData.fields.length - 1) {
-                newIdx = idx + 1;
-            } else {
-                return; // Can't move further
-            }
-            
-            // Swap fields
-            [formData.fields[idx], formData.fields[newIdx]] = [formData.fields[newIdx], formData.fields[idx]];
-            renderCanvas();
-            triggerAutosave();
-            
-            // Keep the field selected
-            setTimeout(() => selectField(id), 50);
-        }
-
         function deleteField(id) {
             const idx = formData.fields.findIndex(f => f.id === id);
             if (idx === -1) return;
@@ -1202,241 +807,26 @@
         }
 
         // ===== PROPERTIES =====
-        let currentPropertyTab = 'general';
-        
         function renderFieldProperties(id) {
             const field = formData.fields.find(f => f.id === id);
             if (!field) return;
             document.getElementById('propertiesTitle').textContent = fieldTypes[field.type]?.label || 'Field';
-            renderPropertyTab(id, currentPropertyTab);
-        }
-        
-        function renderPropertyTab(id, tab) {
-            currentPropertyTab = tab;
-            const field = formData.fields.find(f => f.id === id);
-            if (!field) return;
-            
-            // Update tab buttons
-            document.querySelectorAll('.prop-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-            
             const content = document.getElementById('propertiesContent');
-            
-            if (tab === 'general') {
-                // Different properties based on field type
-                if (field.type === 'section') {
-                    content.innerHTML = `
-                        <div class="prop-section"><div class="prop-section-title">Section Content</div>
-                            <div class="prop-group"><label class="prop-label">Title</label><input type="text" class="prop-input" value="${field.label || ''}" onchange="updateField('${id}','label',this.value)"></div>
-                            <div class="prop-group"><label class="prop-label">Description</label><textarea class="prop-input" rows="3" onchange="updateField('${id}','description',this.value)">${field.description || ''}</textarea></div>
-                        </div>
-                    `;
-                } else if (field.type === 'pagebreak') {
-                    content.innerHTML = `
-                        <div class="prop-section"><div class="prop-section-title">Page Break</div>
-                            <p style="font-size:13px;color:var(--text-secondary);">This creates a new page in multi-page forms. Users will see a "Next" button to proceed.</p>
-                            <div class="prop-group" style="margin-top:16px;"><label class="prop-label">Button Text</label><input type="text" class="prop-input" value="${field.buttonText || 'Next'}" onchange="updateField('${id}','buttonText',this.value)"></div>
-                        </div>
-                    `;
-                } else if (field.type === 'heading') {
-                    content.innerHTML = `
-                        <div class="prop-section"><div class="prop-section-title">Heading</div>
-                            <div class="prop-group"><label class="prop-label">Text</label><input type="text" class="prop-input" value="${field.label || ''}" onchange="updateField('${id}','label',this.value)"></div>
-                            <div class="prop-group"><label class="prop-label">Size</label>
-                                <select class="prop-select" onchange="updateField('${id}','fontSize',parseInt(this.value))">
-                                    <option value="24" ${field.fontSize === 24 ? 'selected' : ''}>Large (24px)</option>
-                                    <option value="18" ${!field.fontSize || field.fontSize === 18 ? 'selected' : ''}>Medium (18px)</option>
-                                    <option value="14" ${field.fontSize === 14 ? 'selected' : ''}>Small (14px)</option>
-                                </select>
-                            </div>
-                        </div>
-                    `;
-                } else if (field.type === 'paragraph') {
-                    content.innerHTML = `
-                        <div class="prop-section"><div class="prop-section-title">Paragraph</div>
-                            <div class="prop-group"><label class="prop-label">Content</label><textarea class="prop-input" rows="5" onchange="updateField('${id}','content',this.value)">${field.content || ''}</textarea></div>
-                        </div>
-                    `;
-                } else if (field.type === 'scale') {
-                    content.innerHTML = `
-                        <div class="prop-section"><div class="prop-section-title">Basic</div>
-                            <div class="prop-group"><label class="prop-label">Label</label><input type="text" class="prop-input" value="${field.label || ''}" onchange="updateField('${id}','label',this.value)"></div>
-                            <div class="prop-group"><label class="prop-label">Helper Text</label><input type="text" class="prop-input" value="${field.helperText || ''}" onchange="updateField('${id}','helperText',this.value)"></div>
-                        </div>
-                        <div class="prop-section"><div class="prop-section-title">Scale Range</div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                                <div class="prop-group"><label class="prop-label">Min</label><input type="number" class="prop-input" value="${field.scaleMin || 1}" onchange="updateField('${id}','scaleMin',parseInt(this.value))"></div>
-                                <div class="prop-group"><label class="prop-label">Max</label><input type="number" class="prop-input" value="${field.scaleMax || 10}" onchange="updateField('${id}','scaleMax',parseInt(this.value))"></div>
-                            </div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
-                                <div class="prop-group"><label class="prop-label">Min Label</label><input type="text" class="prop-input" value="${field.scaleMinLabel || ''}" placeholder="e.g., Not satisfied" onchange="updateField('${id}','scaleMinLabel',this.value)"></div>
-                                <div class="prop-group"><label class="prop-label">Max Label</label><input type="text" class="prop-input" value="${field.scaleMaxLabel || ''}" placeholder="e.g., Very satisfied" onchange="updateField('${id}','scaleMaxLabel',this.value)"></div>
-                            </div>
-                        </div>
-                        <div class="prop-section"><div class="prop-section-title">Validation</div>
-                            <div class="prop-toggle-row"><span class="prop-toggle-label">Required</span><label class="toggle-switch"><input type="checkbox" ${field.required ? 'checked' : ''} onchange="updateField('${id}','required',this.checked)"><span class="toggle-slider"></span></label></div>
-                        </div>
-                    `;
-                } else if (field.type === 'rating') {
-                    content.innerHTML = `
-                        <div class="prop-section"><div class="prop-section-title">Basic</div>
-                            <div class="prop-group"><label class="prop-label">Label</label><input type="text" class="prop-input" value="${field.label || ''}" onchange="updateField('${id}','label',this.value)"></div>
-                            <div class="prop-group"><label class="prop-label">Helper Text</label><input type="text" class="prop-input" value="${field.helperText || ''}" onchange="updateField('${id}','helperText',this.value)"></div>
-                        </div>
-                        <div class="prop-section"><div class="prop-section-title">Rating Options</div>
-                            <div class="prop-group"><label class="prop-label">Max Stars</label>
-                                <select class="prop-select" onchange="updateField('${id}','maxStars',parseInt(this.value))">
-                                    <option value="5" ${!field.maxStars || field.maxStars === 5 ? 'selected' : ''}>5 Stars</option>
-                                    <option value="10" ${field.maxStars === 10 ? 'selected' : ''}>10 Stars</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="prop-section"><div class="prop-section-title">Validation</div>
-                            <div class="prop-toggle-row"><span class="prop-toggle-label">Required</span><label class="toggle-switch"><input type="checkbox" ${field.required ? 'checked' : ''} onchange="updateField('${id}','required',this.checked)"><span class="toggle-slider"></span></label></div>
-                        </div>
-                    `;
-                } else {
-                    // Standard field properties
-                    content.innerHTML = `
-                        <div class="prop-section"><div class="prop-section-title">Basic</div>
-                            <div class="prop-group"><label class="prop-label">Label</label><input type="text" class="prop-input" value="${field.label || ''}" onchange="updateField('${id}','label',this.value)"></div>
-                            <div class="prop-group"><label class="prop-label">Placeholder</label><input type="text" class="prop-input" value="${field.placeholder || ''}" onchange="updateField('${id}','placeholder',this.value)"></div>
-                            <div class="prop-group"><label class="prop-label">Helper Text</label><input type="text" class="prop-input" value="${field.helperText || ''}" onchange="updateField('${id}','helperText',this.value)"></div>
-                        </div>
-                        <div class="prop-section"><div class="prop-section-title">Validation</div>
-                            <div class="prop-toggle-row"><span class="prop-toggle-label">Required</span><label class="toggle-switch"><input type="checkbox" ${field.required ? 'checked' : ''} onchange="updateField('${id}','required',this.checked)"><span class="toggle-slider"></span></label></div>
-                        </div>
-                        ${fieldTypes[field.type]?.hasOptions ? `
-                        <div class="prop-section"><div class="prop-section-title">Options</div>
-                            <div id="optionsList">${(field.options || []).map((opt, i) => `<div style="display:flex;gap:8px;margin-bottom:8px;"><input type="text" class="prop-input" value="${opt}" onchange="updateOption('${id}',${i},this.value)" style="flex:1;"><button class="btn btn-ghost" onclick="removeOption('${id}',${i})" style="padding:8px;">✕</button></div>`).join('')}</div>
-                            <button class="btn btn-secondary" onclick="addOption('${id}')" style="width:100%;margin-top:8px;">+ Add Option</button>
-                        </div>` : ''}
-                    `;
-                }
-            } else if (tab === 'style') {
-                // Style properties for individual field
-                content.innerHTML = `
-                    <div class="prop-section"><div class="prop-section-title">Field Appearance</div>
-                        <div class="prop-group"><label class="prop-label">Background Color</label>
-                            <div class="color-custom">
-                                <input type="color" value="${field.bgColor || '#ffffff'}" onchange="updateField('${id}','bgColor',this.value)">
-                                <input type="text" class="prop-input" value="${field.bgColor || '#ffffff'}" onchange="updateField('${id}','bgColor',this.value)">
-                            </div>
-                        </div>
-                        <div class="prop-group"><label class="prop-label">Border Color</label>
-                            <div class="color-custom">
-                                <input type="color" value="${field.borderColor || '#e2e8f0'}" onchange="updateField('${id}','borderColor',this.value)">
-                                <input type="text" class="prop-input" value="${field.borderColor || '#e2e8f0'}" onchange="updateField('${id}','borderColor',this.value)">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="prop-section"><div class="prop-section-title">Text</div>
-                        <div class="prop-group"><label class="prop-label">Font Size</label>
-                            <select class="prop-select" onchange="updateField('${id}','fontSize',parseInt(this.value))">
-                                <option value="12" ${field.fontSize === 12 ? 'selected' : ''}>Small (12px)</option>
-                                <option value="14" ${!field.fontSize || field.fontSize === 14 ? 'selected' : ''}>Normal (14px)</option>
-                                <option value="16" ${field.fontSize === 16 ? 'selected' : ''}>Large (16px)</option>
-                                <option value="18" ${field.fontSize === 18 ? 'selected' : ''}>Extra Large (18px)</option>
-                            </select>
-                        </div>
-                        <div class="prop-group"><label class="prop-label">Label Weight</label>
-                            <select class="prop-select" onchange="updateField('${id}','fontWeight',parseInt(this.value))">
-                                <option value="400" ${field.fontWeight === 400 ? 'selected' : ''}>Normal</option>
-                                <option value="500" ${!field.fontWeight || field.fontWeight === 500 ? 'selected' : ''}>Medium</option>
-                                <option value="600" ${field.fontWeight === 600 ? 'selected' : ''}>Semi-bold</option>
-                                <option value="700" ${field.fontWeight === 700 ? 'selected' : ''}>Bold</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="prop-section"><div class="prop-section-title">Layout</div>
-                        <div class="prop-group"><label class="prop-label">Width</label>
-                            <select class="prop-select" onchange="updateField('${id}','width',this.value)">
-                                <option value="full" ${!field.width || field.width === 'full' ? 'selected' : ''}>Full Width</option>
-                                <option value="half" ${field.width === 'half' ? 'selected' : ''}>Half Width</option>
-                                <option value="third" ${field.width === 'third' ? 'selected' : ''}>One Third</option>
-                            </select>
-                        </div>
-                    </div>
-                `;
-            } else if (tab === 'logic') {
-                // Conditional logic
-                content.innerHTML = `
-                    <div class="prop-section"><div class="prop-section-title">Conditional Visibility</div>
-                        <div class="prop-toggle-row"><span class="prop-toggle-label">Show conditionally</span><label class="toggle-switch"><input type="checkbox" ${field.hasCondition ? 'checked' : ''} onchange="toggleCondition('${id}',this.checked)"><span class="toggle-slider"></span></label></div>
-                    </div>
-                    ${field.hasCondition ? `
-                    <div class="prop-section"><div class="prop-section-title">Condition</div>
-                        <div class="prop-group"><label class="prop-label">Show this field when</label>
-                            <select class="prop-select" onchange="updateField('${id}','conditionField',this.value)">
-                                <option value="">Select a field...</option>
-                                ${formData.fields.filter(f => f.id !== id && !fieldTypes[f.type]?.isLayout).map(f => `<option value="${f.id}" ${field.conditionField === f.id ? 'selected' : ''}>${f.label || 'Untitled'}</option>`).join('')}
-                            </select>
-                        </div>
-                        <div class="prop-group"><label class="prop-label">Condition</label>
-                            <select class="prop-select" onchange="updateField('${id}','conditionOperator',this.value)">
-                                <option value="equals" ${field.conditionOperator === 'equals' ? 'selected' : ''}>Equals</option>
-                                <option value="not_equals" ${field.conditionOperator === 'not_equals' ? 'selected' : ''}>Does not equal</option>
-                                <option value="contains" ${field.conditionOperator === 'contains' ? 'selected' : ''}>Contains</option>
-                                <option value="not_empty" ${field.conditionOperator === 'not_empty' ? 'selected' : ''}>Is not empty</option>
-                                <option value="is_empty" ${field.conditionOperator === 'is_empty' ? 'selected' : ''}>Is empty</option>
-                            </select>
-                        </div>
-                        ${field.conditionOperator !== 'not_empty' && field.conditionOperator !== 'is_empty' ? `
-                        <div class="prop-group"><label class="prop-label">Value</label><input type="text" class="prop-input" value="${field.conditionValue || ''}" onchange="updateField('${id}','conditionValue',this.value)"></div>
-                        ` : ''}
-                    </div>
-                    ` : `
-                    <div style="padding:20px;text-align:center;color:var(--text-muted);">
-                        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:12px;opacity:0.5;"><path d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <p style="font-size:13px;">Enable conditional visibility to show/hide this field based on other answers.</p>
-                    </div>
-                    `}
-                    <div class="prop-section" style="margin-top:24px;"><div class="prop-section-title">Validation Rules</div>
-                        ${field.type === 'number' ? `
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                            <div class="prop-group"><label class="prop-label">Min Value</label><input type="number" class="prop-input" value="${field.minValue || ''}" onchange="updateField('${id}','minValue',this.value ? parseInt(this.value) : null)"></div>
-                            <div class="prop-group"><label class="prop-label">Max Value</label><input type="number" class="prop-input" value="${field.maxValue || ''}" onchange="updateField('${id}','maxValue',this.value ? parseInt(this.value) : null)"></div>
-                        </div>
-                        ` : ''}
-                        ${field.type === 'text' || field.type === 'textarea' ? `
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                            <div class="prop-group"><label class="prop-label">Min Length</label><input type="number" class="prop-input" value="${field.minLength || ''}" onchange="updateField('${id}','minLength',this.value ? parseInt(this.value) : null)"></div>
-                            <div class="prop-group"><label class="prop-label">Max Length</label><input type="number" class="prop-input" value="${field.maxLength || ''}" onchange="updateField('${id}','maxLength',this.value ? parseInt(this.value) : null)"></div>
-                        </div>
-                        <div class="prop-group"><label class="prop-label">Pattern (Regex)</label><input type="text" class="prop-input" value="${field.pattern || ''}" placeholder="e.g., [A-Za-z]+" onchange="updateField('${id}','pattern',this.value)"></div>
-                        ` : ''}
-                        ${field.type === 'email' ? `
-                        <div class="prop-toggle-row"><span class="prop-toggle-label">Validate email format</span><label class="toggle-switch"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label></div>
-                        ` : ''}
-                        ${field.type === 'file' ? `
-                        <div class="prop-group"><label class="prop-label">Allowed File Types</label><input type="text" class="prop-input" value="${field.allowedTypes || ''}" placeholder="e.g., .pdf,.doc,.docx" onchange="updateField('${id}','allowedTypes',this.value)"></div>
-                        <div class="prop-group"><label class="prop-label">Max File Size (MB)</label><input type="number" class="prop-input" value="${field.maxFileSize || ''}" onchange="updateField('${id}','maxFileSize',this.value ? parseInt(this.value) : null)"></div>
-                        ` : ''}
-                    </div>
-                `;
-            }
-        }
-        
-        function toggleCondition(id, enabled) {
-            const field = formData.fields.find(f => f.id === id);
-            if (!field) return;
-            
-            field.hasCondition = enabled;
-            
-            if (enabled) {
-                // Set default values if not already set
-                field.conditionField = field.conditionField || '';
-                field.conditionOperator = field.conditionOperator || 'equals';
-                field.conditionValue = field.conditionValue || '';
-            } else {
-                // Clean up condition properties
-                delete field.conditionField;
-                delete field.conditionOperator;
-                delete field.conditionValue;
-            }
-            
-            renderFieldProperties(id);
-            triggerAutosave();
-            showToast(enabled ? 'Conditional logic enabled ⚡' : 'Conditional logic disabled');
+            content.innerHTML = `
+                <div class="prop-section"><div class="prop-section-title">Basic</div>
+                    <div class="prop-group"><label class="prop-label">Label</label><input type="text" class="prop-input" value="${field.label || ''}" onchange="updateField('${id}','label',this.value)"></div>
+                    <div class="prop-group"><label class="prop-label">Placeholder</label><input type="text" class="prop-input" value="${field.placeholder || ''}" onchange="updateField('${id}','placeholder',this.value)"></div>
+                    <div class="prop-group"><label class="prop-label">Helper Text</label><input type="text" class="prop-input" value="${field.helperText || ''}" onchange="updateField('${id}','helperText',this.value)"></div>
+                </div>
+                <div class="prop-section"><div class="prop-section-title">Validation</div>
+                    <div class="prop-toggle-row"><span class="prop-toggle-label">Required</span><label class="toggle-switch"><input type="checkbox" ${field.required ? 'checked' : ''} onchange="updateField('${id}','required',this.checked)"><span class="toggle-slider"></span></label></div>
+                </div>
+                ${fieldTypes[field.type]?.hasOptions ? `
+                <div class="prop-section"><div class="prop-section-title">Options</div>
+                    <div id="optionsList">${(field.options || []).map((opt, i) => `<div style="display:flex;gap:8px;margin-bottom:8px;"><input type="text" class="prop-input" value="${opt}" onchange="updateOption('${id}',${i},this.value)" style="flex:1;"><button class="btn btn-ghost" onclick="removeOption('${id}',${i})" style="padding:8px;">✕</button></div>`).join('')}</div>
+                    <button class="btn btn-secondary" onclick="addOption('${id}')" style="width:100%;margin-top:8px;">+ Add Option</button>
+                </div>` : ''}
+            `;
         }
 
         function renderFormProperties() {
@@ -1489,13 +879,7 @@
         }
 
         // ===== PROPERTY TABS =====
-        function setupPropertyTabs() { 
-            document.querySelectorAll('.prop-tab').forEach(t => t.addEventListener('click', function() { 
-                if (selectedFieldId) {
-                    renderPropertyTab(selectedFieldId, this.dataset.tab);
-                }
-            })); 
-        }
+        function setupPropertyTabs() { document.querySelectorAll('.prop-tab').forEach(t => t.addEventListener('click', function() { document.querySelectorAll('.prop-tab').forEach(x => x.classList.remove('active')); this.classList.add('active'); })); }
 
         // ===== COLOR PICKER =====
         function setupColorPicker() {
@@ -1566,12 +950,7 @@
             
             const title = document.getElementById('formTitle').value.trim() || 'Untitled Form';
             const desc = document.getElementById('canvasDescription').value.trim();
-            
-            // Structure form data with sections if there are section fields
-            const hasSections = formData.fields.some(f => f.type === 'section');
-            const structuredFields = hasSections ? getFormSections() : formData.fields;
-            
-            const payload = { id: formId || null, title, description: desc, fields: structuredFields, settings: formData.settings, clubName };
+            const payload = { id: formId || null, title, description: desc, fields: formData.fields, settings: formData.settings, clubName };
             
             try {
                 const res = await fetch('/forms/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -1600,19 +979,13 @@
             
             const title = document.getElementById('formTitle').value.trim() || 'Untitled Form';
             const desc = document.getElementById('canvasDescription').value.trim();
-            
-            // Structure form data with sections if there are section fields
-            const hasSections = formData.fields.some(f => f.type === 'section');
-            const structuredFields = hasSections ? getFormSections() : formData.fields;
-            
-            const payload = { id: formId || null, title, description: desc, fields: structuredFields, settings: formData.settings, clubName };
+            const payload = { id: formId || null, title, description: desc, fields: formData.fields, settings: formData.settings, clubName };
             try {
                 const res = await fetch('/forms/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const r = await res.json();
                 if (r.success) {
                     formId = r.formId;
-                    const stepCount = getFormSections().length;
-                    showToast(`Form published with ${stepCount} step${stepCount !== 1 ? 's' : ''}! 🎉`);
+                    showToast('Form published! 🎉');
                     s.innerHTML = '<span class="dot"></span><span>All changes saved</span>';
                     if (window.history.replaceState) window.history.replaceState({}, '', `/forms/edit/${formId}`);
                 }
@@ -1647,301 +1020,34 @@
         let currentView = 'build';
         
         function switchView(view) {
-            // Update active tab styling
+            currentView = view;
             document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
             
+            const leftPanel = document.querySelector('.left-panel');
+            const rightPanel = document.querySelector('.right-panel');
+            const canvasArea = document.getElementById('canvasArea');
+            
+            // Reset panels
+            leftPanel.style.display = '';
+            rightPanel.style.display = '';
+            
             if (view === 'build') {
-                currentView = 'build';
-                // Just stay on build mode
+                renderFormProperties();
+                document.getElementById('propertiesTitle').textContent = selectedFieldId ? 'Field Properties' : 'Form Settings';
             } else if (view === 'design') {
-                showDesignModal();
-                // Reset to build tab
-                document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === 'build'));
+                selectedFieldId = null;
+                renderCanvas();
+                renderDesignPanel();
             } else if (view === 'settings') {
-                showSettingsModal();
-                // Reset to build tab
-                document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === 'build'));
-            } else if (view === 'responses') {
-                showResponsesModal();
-                // Reset to build tab
-                document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === 'build'));
+                selectedFieldId = null;
+                renderCanvas();
+                renderSettingsPanel();
             } else if (view === 'preview') {
                 previewForm();
-                // Reset to build tab
-                document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === 'build'));
-            }
-        }
-        
-        // ===== DESIGN MODAL =====
-        function showDesignModal() {
-            const body = document.getElementById('designModalBody');
-            body.innerHTML = `
-                <div class="prop-section">
-                    <div class="prop-section-title">Theme Color</div>
-                    <div class="color-grid" id="designColorGrid">
-                        <div class="color-swatch ${formData.settings.primaryColor === '#6366f1' ? 'selected' : ''}" style="background: #6366f1;" data-color="#6366f1"></div>
-                        <div class="color-swatch ${formData.settings.primaryColor === '#8b5cf6' ? 'selected' : ''}" style="background: #8b5cf6;" data-color="#8b5cf6"></div>
-                        <div class="color-swatch ${formData.settings.primaryColor === '#ec4899' ? 'selected' : ''}" style="background: #ec4899;" data-color="#ec4899"></div>
-                        <div class="color-swatch ${formData.settings.primaryColor === '#ef4444' ? 'selected' : ''}" style="background: #ef4444;" data-color="#ef4444"></div>
-                        <div class="color-swatch ${formData.settings.primaryColor === '#f59e0b' ? 'selected' : ''}" style="background: #f59e0b;" data-color="#f59e0b"></div>
-                        <div class="color-swatch ${formData.settings.primaryColor === '#10b981' ? 'selected' : ''}" style="background: #10b981;" data-color="#10b981"></div>
-                        <div class="color-swatch ${formData.settings.primaryColor === '#06b6d4' ? 'selected' : ''}" style="background: #06b6d4;" data-color="#06b6d4"></div>
-                        <div class="color-swatch ${formData.settings.primaryColor === '#3b82f6' ? 'selected' : ''}" style="background: #3b82f6;" data-color="#3b82f6"></div>
-                    </div>
-                    <div class="color-custom" style="margin-top:12px;">
-                        <input type="color" id="customColorDesign" value="${formData.settings.primaryColor || '#6366f1'}" onchange="updatePrimaryColor(this.value)">
-                        <input type="text" class="prop-input" id="customColorHexDesign" value="${formData.settings.primaryColor || '#6366f1'}" onchange="updatePrimaryColor(this.value)">
-                    </div>
-                </div>
-                <div class="prop-section">
-                    <div class="prop-section-title">Form Style</div>
-                    <div class="prop-group">
-                        <label class="prop-label">Corner Radius</label>
-                        <select class="prop-select" onchange="formData.settings.borderRadius = this.value; triggerAutosave();">
-                            <option value="rounded" ${formData.settings.borderRadius === 'rounded' || !formData.settings.borderRadius ? 'selected' : ''}>Rounded</option>
-                            <option value="sharp" ${formData.settings.borderRadius === 'sharp' ? 'selected' : ''}>Sharp</option>
-                            <option value="pill" ${formData.settings.borderRadius === 'pill' ? 'selected' : ''}>Pill</option>
-                        </select>
-                    </div>
-                    <div class="prop-group">
-                        <label class="prop-label">Field Spacing</label>
-                        <select class="prop-select" onchange="formData.settings.spacing = this.value; triggerAutosave();">
-                            <option value="compact" ${formData.settings.spacing === 'compact' ? 'selected' : ''}>Compact</option>
-                            <option value="normal" ${formData.settings.spacing === 'normal' || !formData.settings.spacing ? 'selected' : ''}>Normal</option>
-                            <option value="relaxed" ${formData.settings.spacing === 'relaxed' ? 'selected' : ''}>Relaxed</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="prop-section">
-                    <div class="prop-section-title">Background</div>
-                    <div class="prop-group">
-                        <label class="prop-label">Background Type</label>
-                        <select class="prop-select" onchange="formData.settings.bgType = this.value; triggerAutosave();">
-                            <option value="solid" ${formData.settings.bgType === 'solid' || !formData.settings.bgType ? 'selected' : ''}>Solid Color</option>
-                            <option value="gradient" ${formData.settings.bgType === 'gradient' ? 'selected' : ''}>Gradient</option>
-                            <option value="pattern" ${formData.settings.bgType === 'pattern' ? 'selected' : ''}>Pattern</option>
-                        </select>
-                    </div>
-                </div>
-            `;
-            
-            // Setup color swatches
-            body.querySelectorAll('.color-swatch').forEach(s => s.addEventListener('click', function() {
-                body.querySelectorAll('.color-swatch').forEach(x => x.classList.remove('selected'));
-                this.classList.add('selected');
-                updatePrimaryColor(this.dataset.color);
-            }));
-            
-            document.getElementById('designModal').classList.add('show');
-        }
-        
-        function closeDesignModal() {
-            document.getElementById('designModal').classList.remove('show');
-        }
-        
-        // ===== SETTINGS MODAL =====
-        function showSettingsModal() {
-            const body = document.getElementById('settingsModalBody');
-            body.innerHTML = `
-                <div class="prop-section">
-                    <div class="prop-section-title">Form Behavior</div>
-                    <div class="prop-toggle-row">
-                        <span class="prop-toggle-label">Show progress bar</span>
-                        <label class="toggle-switch"><input type="checkbox" ${formData.settings.showProgress !== false ? 'checked' : ''} onchange="formData.settings.showProgress = this.checked; triggerAutosave();"><span class="toggle-slider"></span></label>
-                    </div>
-                    <div class="prop-toggle-row">
-                        <span class="prop-toggle-label">Limit to one response per user</span>
-                        <label class="toggle-switch"><input type="checkbox" ${formData.settings.limitResponses ? 'checked' : ''} onchange="formData.settings.limitResponses = this.checked; triggerAutosave();"><span class="toggle-slider"></span></label>
-                    </div>
-                    <div class="prop-toggle-row">
-                        <span class="prop-toggle-label">Shuffle questions randomly</span>
-                        <label class="toggle-switch"><input type="checkbox" ${formData.settings.shuffleQuestions ? 'checked' : ''} onchange="formData.settings.shuffleQuestions = this.checked; triggerAutosave();"><span class="toggle-slider"></span></label>
-                    </div>
-                    <div class="prop-toggle-row">
-                        <span class="prop-toggle-label">Show question numbers</span>
-                        <label class="toggle-switch"><input type="checkbox" ${formData.settings.showNumbers !== false ? 'checked' : ''} onchange="formData.settings.showNumbers = this.checked; triggerAutosave();"><span class="toggle-slider"></span></label>
-                    </div>
-                </div>
-                <div class="prop-section">
-                    <div class="prop-section-title">Submission</div>
-                    <div class="prop-group">
-                        <label class="prop-label">Submit Button Text</label>
-                        <input type="text" class="prop-input" value="${formData.settings.submitText || 'Submit'}" onchange="formData.settings.submitText = this.value; triggerAutosave();">
-                    </div>
-                    <div class="prop-group">
-                        <label class="prop-label">Success Message</label>
-                        <textarea class="prop-input" rows="3" onchange="formData.settings.successMessage = this.value; triggerAutosave();">${formData.settings.successMessage || 'Thank you for your response! 🎉'}</textarea>
-                    </div>
-                    <div class="prop-group">
-                        <label class="prop-label">Redirect URL (optional)</label>
-                        <input type="url" class="prop-input" value="${formData.settings.redirectUrl || ''}" placeholder="https://example.com/thank-you" onchange="formData.settings.redirectUrl = this.value; triggerAutosave();">
-                    </div>
-                </div>
-                <div class="prop-section">
-                    <div class="prop-section-title">Notifications</div>
-                    <div class="prop-toggle-row">
-                        <span class="prop-toggle-label">Email notifications on submission</span>
-                        <label class="toggle-switch"><input type="checkbox" ${formData.settings.emailNotifications ? 'checked' : ''} onchange="formData.settings.emailNotifications = this.checked; triggerAutosave();"><span class="toggle-slider"></span></label>
-                    </div>
-                </div>
-            `;
-            document.getElementById('settingsModal').classList.add('show');
-        }
-        
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').classList.remove('show');
-        }
-        
-        // ===== RESPONSES MODAL =====
-        let responsesData = [];
-        
-        async function loadResponses() {
-            if (!formId) return;
-            try {
-                const res = await fetch('/forms/' + formId + '/responses');
-                const data = await res.json();
-                if (data.success) {
-                    responsesData = data.responses || [];
-                    document.getElementById('responsesCount').textContent = responsesData.length;
-                }
-            } catch(e) {
-                console.error('Error loading responses:', e);
-            }
-        }
-        
-        function showResponsesModal() {
-            const body = document.getElementById('responsesModalBody');
-            
-            if (!formId) {
-                body.innerHTML = `
-                    <div class="responses-empty">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;">Publish your form first</h3>
-                        <p style="font-size:13px;">You need to publish your form before you can see responses.</p>
-                    </div>
-                `;
-            } else if (responsesData.length === 0) {
-                body.innerHTML = `
-                    <div class="responses-empty">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;">No responses yet</h3>
-                        <p style="font-size:13px;">Share your form to start collecting responses.</p>
-                        <button class="btn btn-primary" onclick="showShareModal(); closeResponsesModal();" style="margin-top:16px;">Share Form</button>
-                    </div>
-                `;
-            } else {
-                // Create better response display with individual cards
-                const formFields = formData.fields.filter(f => !fieldTypes[f.type]?.isLayout);
-                
-                let html = `
-                    <style>
-                        .response-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 16px; overflow: hidden; }
-                        .response-header { background: var(--bg-main); padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-                        .response-title { font-weight: 600; color: var(--text-primary); }
-                        .response-date { font-size: 12px; color: var(--text-muted); background: var(--bg-panel); padding: 4px 8px; border-radius: 4px; }
-                        .response-body { padding: 20px; }
-                        .response-field { margin-bottom: 16px; }
-                        .response-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
-                        .response-value { background: var(--bg-card); padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--border); font-size: 14px; color: var(--text-primary); min-height: 40px; display: flex; align-items: center; }
-                        .response-value.array { flex-wrap: wrap; gap: 6px; }
-                        .response-chip { background: var(--primary); color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; }
-                        .responses-controls { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
-                        .view-toggle { display: flex; background: var(--bg-main); border-radius: var(--radius-md); padding: 2px; }
-                        .view-toggle button { background: none; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
-                        .view-toggle button.active { background: var(--primary); color: white; }
-                        .export-btn { padding: 8px 14px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-primary); }
-                        .export-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
-                    </style>
-                    <div class="responses-controls">
-                        <div class="view-toggle">
-                            <button class="active" onclick="toggleResponseView('cards', this)">Cards</button>
-                            <button onclick="toggleResponseView('table', this)">Table</button>
-                        </div>
-                        <button class="export-btn" onclick="exportResponses()">📊 Export CSV</button>
-                        <div style="margin-left: auto; font-size: 13px; color: var(--text-muted);">${responsesData.length} response${responsesData.length !== 1 ? 's' : ''}</div>
-                    </div>
-                    <div id="responsesContainer">`;
-                
-                responsesData.forEach((response, i) => {
-                    html += `
-                        <div class="response-card">
-                            <div class="response-header">
-                                <div class="response-title">Response #${i + 1}</div>
-                                <div class="response-date">${new Date(response.submittedAt).toLocaleString()}</div>
-                            </div>
-                            <div class="response-body">`;
-                    
-                    formFields.forEach(field => {
-                        const fieldKey = `field_${field.id}`;
-                        const value = response.data?.[fieldKey] || response.data?.[field.id] || '-';
-                        const displayValue = Array.isArray(value) ? value : [value];
-                        
-                        html += `
-                            <div class="response-field">
-                                <div class="response-label">${field.label || 'Untitled Question'}</div>
-                                <div class="response-value ${Array.isArray(value) ? 'array' : ''}">`;
-                        
-                        if (Array.isArray(value) && value.length > 1) {
-                            value.forEach(v => {
-                                html += `<span class="response-chip">${v}</span>`;
-                            });
-                        } else {
-                            html += displayValue[0] || '-';
-                        }
-                        
-                        html += `</div></div>`;
-                    });
-                    
-                    html += `</div></div>`;
-                });
-                
-                html += `</div>`;
-                body.innerHTML = html;
-            }
-            
-            document.getElementById('responsesSubtitle').textContent = `${responsesData.length} response${responsesData.length !== 1 ? 's' : ''}`;
-            document.getElementById('responsesModal').classList.add('show');
-        }
-        
-        function closeResponsesModal() {
-            document.getElementById('responsesModal').classList.remove('show');
-        }
-        
-        function exportResponses() {
-            if (responsesData.length === 0) {
-                showToast('No responses to export', 'error');
+                // Stay on build view
+                switchView('build');
                 return;
             }
-            
-            // Build CSV
-            const headers = ['#', 'Submitted', ...formData.fields.filter(f => !fieldTypes[f.type]?.isLayout).map(f => f.label || 'Untitled')];
-            let csv = headers.join(',') + '\n';
-            
-            responsesData.forEach((response, i) => {
-                const row = [i + 1, new Date(response.submittedAt).toISOString()];
-                formData.fields.filter(f => !fieldTypes[f.type]?.isLayout).forEach(field => {
-                    let value = response.data?.[field.id] || '';
-                    if (Array.isArray(value)) value = value.join('; ');
-                    // Escape CSV
-                    value = String(value).replace(/"/g, '""');
-                    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-                        value = '"' + value + '"';
-                    }
-                    row.push(value);
-                });
-                csv += row.join(',') + '\n';
-            });
-            
-            // Download
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = (formData.title || 'form') + '-responses.csv';
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            showToast('Responses exported! 📥');
         }
 
         function renderDesignPanel() {
@@ -1989,8 +1095,39 @@
         }
 
         function renderSettingsPanel() {
-            // This is now handled by the settings modal
-            showSettingsModal();
+            document.getElementById('propertiesTitle').textContent = 'Settings';
+            const content = document.getElementById('propertiesContent');
+            content.innerHTML = `
+                <div class="prop-section">
+                    <div class="prop-section-title">Form Behavior</div>
+                    <div class="prop-toggle-row">
+                        <span class="prop-toggle-label">Show progress bar</span>
+                        <label class="toggle-switch"><input type="checkbox" ${formData.settings.showProgress !== false ? 'checked' : ''} onchange="formData.settings.showProgress = this.checked; triggerAutosave();"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="prop-toggle-row">
+                        <span class="prop-toggle-label">Limit to one response</span>
+                        <label class="toggle-switch"><input type="checkbox" ${formData.settings.limitResponses ? 'checked' : ''} onchange="formData.settings.limitResponses = this.checked; triggerAutosave();"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="prop-toggle-row">
+                        <span class="prop-toggle-label">Shuffle questions</span>
+                        <label class="toggle-switch"><input type="checkbox" ${formData.settings.shuffleQuestions ? 'checked' : ''} onchange="formData.settings.shuffleQuestions = this.checked; triggerAutosave();"><span class="toggle-slider"></span></label>
+                    </div>
+                </div>
+                <div class="prop-section">
+                    <div class="prop-section-title">Submit Button</div>
+                    <div class="prop-group">
+                        <label class="prop-label">Button Text</label>
+                        <input type="text" class="prop-input" value="${formData.settings.submitText || 'Submit'}" onchange="formData.settings.submitText = this.value; triggerAutosave();">
+                    </div>
+                </div>
+                <div class="prop-section">
+                    <div class="prop-section-title">Confirmation</div>
+                    <div class="prop-group">
+                        <label class="prop-label">Success Message</label>
+                        <textarea class="prop-input" rows="3" onchange="formData.settings.successMessage = this.value; triggerAutosave();">${formData.settings.successMessage || 'Thank you for your response! 🎉'}</textarea>
+                    </div>
+                </div>
+            `;
         }
 
         function updatePrimaryColor(color) {

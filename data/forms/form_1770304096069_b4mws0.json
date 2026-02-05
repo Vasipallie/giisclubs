@@ -1,0 +1,36 @@
+{
+  "id": "form_1770304096069_b4mws0",
+  "title": "Untitled Form",
+  "description": "",
+  "fields": [
+    {
+      "id": "f_ml9lclhnbq4xrdfc4",
+      "title": "Section 1",
+      "description": "Add your questions below",
+      "questions": [
+        {
+          "id": "f_ml9lclhnhx5scjnlh",
+          "type": "text",
+          "label": "Short Text",
+          "required": false,
+          "placeholder": "",
+          "helperText": ""
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "theme": "default",
+    "primaryColor": "#f59e0b",
+    "showProgress": true,
+    "limitResponses": false,
+    "shuffleQuestions": false,
+    "submitText": "Submit",
+    "successMessage": "Thank you for your response! 🎉",
+    "borderRadius": "pill",
+    "spacing": "relaxed"
+  },
+  "club": "GIIS Chess Club",
+  "createdAt": "2026-02-05T15:08:16.069Z",
+  "updatedAt": "2026-02-05T15:11:47.117Z"
+}

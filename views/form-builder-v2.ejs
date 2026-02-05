@@ -279,80 +279,7 @@
             cursor: grab;
         }
 
-        .field-drag-handle:active { cursor: grabbing; }
         .form-field:hover .field-drag-handle { opacity: 1; }
-        .form-field.dragging { 
-            opacity: 0.5; 
-            transform: rotate(3deg); 
-            z-index: 1000; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        }
-        .canvas.drag-over { background: linear-gradient(135deg, var(--primary-light), #f0f9ff); }
-        .canvas-drop-zone { 
-            min-height: 60px; 
-            border: 2px dashed var(--primary); 
-            border-radius: var(--radius-md); 
-            background: var(--primary-light); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: var(--primary); 
-            font-weight: 600; 
-            margin: 8px 0; 
-            opacity: 0; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            transform: scale(0.95);
-        }
-        .canvas-drop-zone.active { 
-            opacity: 1; 
-            transform: scale(1);
-        }
-        .canvas-drop-zone.snap-zone:hover {
-            border-color: var(--primary);
-            background: var(--primary);
-            color: white;
-            transform: scale(1.02);
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
-        }
-        .drag-ghost {
-            pointer-events: none !important;
-            filter: blur(1px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
-        }
-        
-        .field-reorder-controls { 
-            position: absolute; 
-            right: 80px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            display: flex; 
-            gap: 4px; 
-            opacity: 0; 
-            transition: var(--transition); 
-            z-index: 3;
-        }
-        .section-field .field-reorder-controls { 
-            right: 200px; 
-        }
-        .form-field:hover .field-reorder-controls { opacity: 1; }
-        .reorder-btn { 
-            width: 24px; 
-            height: 24px; 
-            background: var(--bg-panel); 
-            border: 1px solid var(--border); 
-            border-radius: 4px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            transition: var(--transition); 
-        }
-        .reorder-btn:hover { 
-            background: var(--primary); 
-            border-color: var(--primary); 
-            color: white; 
-        }
-        .reorder-btn svg { width: 12px; height: 12px; }
         .field-label { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
         .field-required { color: var(--danger); }
 
@@ -380,11 +307,6 @@
             gap: 4px;
             opacity: 0;
             transition: var(--transition);
-            z-index: 3;
-        }
-        
-        .section-field .field-actions {
-            right: 120px;
         }
 
         .form-field:hover .field-actions, .form-field.selected .field-actions { opacity: 1; }
@@ -501,55 +423,12 @@
         .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; }
 
         /* ===== SECTION & PAGEBREAK STYLES ===== */
-        .section-field { 
-            background: linear-gradient(135deg, var(--primary-light), #f0f9ff); 
-            border-left: 4px solid var(--primary); 
-            padding: 20px 24px; 
-            margin: 20px 0; 
-            position: relative;
-            transition: var(--transition);
-        }
-        .section-field:hover { 
-            background: linear-gradient(135deg, var(--primary), #6366f1); 
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
-        }
-        .section-field:hover .section-title, 
-        .section-field:hover .section-desc { color: white; }
-        .section-field:hover .step-indicator {
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-        }
-        .section-field .section-title { 
-            font-size: 18px; 
-            font-weight: 700; 
-            color: var(--text-primary); 
-            margin-bottom: 4px;
-            transition: var(--transition);
-        }
-        .section-field .section-desc { 
-            font-size: 14px; 
-            color: var(--text-secondary);
-            transition: var(--transition);
-        }
-        .step-indicator { 
-            position: absolute; 
-            top: 16px; 
-            right: 16px; 
-            background: var(--primary); 
-            color: white; 
-            padding: 6px 12px; 
-            border-radius: 12px; 
-            font-size: 11px; 
-            font-weight: 600;
-            transition: var(--transition);
-            z-index: 2;
-        }
+        .section-field { background: linear-gradient(135deg, var(--primary-light), #f0f9ff); border-left: 4px solid var(--primary); padding: 20px 24px; margin: 20px 0; }
+        .section-field .section-title { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .section-field .section-desc { font-size: 14px; color: var(--text-secondary); }
         .pagebreak-field { background: repeating-linear-gradient(90deg, var(--border) 0, var(--border) 8px, transparent 8px, transparent 16px); height: 3px; margin: 32px 0; position: relative; }
         .pagebreak-field::before { content: 'Page Break'; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--bg-panel); padding: 4px 16px; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
         .pagebreak-field::after { content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: var(--bg-panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E") center no-repeat; border-radius: var(--radius-sm); border: 1px solid var(--border); }
-        .step-indicator { position: absolute; top: 16px; right: 16px; background: var(--bg-panel); border: 2px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: var(--radius-lg); font-size: 12px; font-weight: 600; box-shadow: var(--shadow-sm); }
 
         /* ===== RESPONSES TABLE ===== */
         .responses-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -878,43 +757,11 @@
             application: { title: 'Application Form', description: 'Complete all required fields.', fields: [{ type: 'text', label: 'Full Name', required: true },{ type: 'email', label: 'Email', required: true },{ type: 'phone', label: 'Phone', required: true },{ type: 'date', label: 'Date of Birth', required: false },{ type: 'textarea', label: 'Why are you interested?', required: true },{ type: 'file', label: 'Upload Resume', required: false }] }
         };
 
-        // Helper function to flatten sectioned form data for editing
-        function flattenFormData(fields) {
-            if (!Array.isArray(fields) || fields.length === 0) return [];
-            
-            // Check if it's already sectioned (array of sections with questions)
-            const isSectioned = fields.length > 0 && typeof fields[0] === 'object' && Array.isArray(fields[0]?.questions);
-            
-            if (isSectioned) {
-                const flattened = [];
-                fields.forEach((section, index) => {
-                    // Add section field if it has a title or it's not the first section
-                    if (section.title || index > 0) {
-                        flattened.push({
-                            id: section.id || generateId(),
-                            type: 'section',
-                            label: section.title || 'Section',
-                            description: section.description || ''
-                        });
-                    }
-                    // Add all questions from this section
-                    if (Array.isArray(section.questions)) {
-                        section.questions.forEach(q => flattened.push(q));
-                    }
-                });
-                return flattened;
-            }
-            
-            // Already flat, return as is
-            return fields;
-        }
-
         // ===== INIT =====
         document.addEventListener('DOMContentLoaded', function() {
             <% if (typeof form !== 'undefined' && form && form.fields) { %>
             try {
-                const rawFields = <%- JSON.stringify(form.fields) %>;
-                formData.fields = flattenFormData(rawFields).map(f => ({ ...f, id: f.id || generateId() }));
+                formData.fields = <%- JSON.stringify(form.fields) %>.map(f => ({ ...f, id: f.id || generateId() }));
                 formData.title = '<%= form.title || "" %>';
                 formData.description = '<%= form.description || "" %>';
             } catch(e) {}
@@ -923,19 +770,8 @@
             try { formData.settings = { ...formData.settings, ...<%- JSON.stringify(form.settings) %> }; } catch(e) {}
             <% } %>
 
-            if (!formId && formData.fields.length === 0) {
-                // Auto-add Section 1 for new forms
-                formData.fields.push({
-                    id: generateId(),
-                    type: 'section',
-                    label: 'Section 1',
-                    description: 'Add your questions below'
-                });
-                renderCanvas();
-                showTemplateModal();
-            } else {
-                renderCanvas();
-            }
+            if (!formId && formData.fields.length === 0) showTemplateModal();
+            else renderCanvas();
 
             setupDragAndDrop();
             setupColorPicker();
@@ -950,67 +786,10 @@
 
         function generateId() { return 'f_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 9); }
         function showToast(msg, type = 'success') { const t = document.getElementById('toast'); t.textContent = msg; t.style.background = type === 'error' ? 'var(--danger)' : 'var(--text-primary)'; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-        
-        function getStepNumber(fieldIndex) {
-            let stepCount = 1;
-            for (let i = 0; i < fieldIndex; i++) {
-                if (formData.fields[i] && formData.fields[i].type === 'section') {
-                    stepCount++;
-                }
-            }
-            return stepCount;
-        }
-        
-        function getFormSections() {
-            const sections = [];
-            let currentSection = { id: 'main', title: '', description: '', questions: [] };
-            
-            formData.fields.forEach((field, index) => {
-                if (field.type === 'section') {
-                    // Save current section if it has questions
-                    if (currentSection.questions.length > 0) {
-                        sections.push(currentSection);
-                    }
-                    // Start new section
-                    currentSection = {
-                        id: field.id,
-                        title: field.label || 'Section',
-                        description: field.description || '',
-                        questions: []
-                    };
-                } else if (field.type !== 'pagebreak') {
-                    // Add field to current section (skip pagebreaks)
-                    currentSection.questions.push(field);
-                }
-            });
-            
-            // Add the last section
-            if (currentSection.questions.length > 0 || sections.length === 0) {
-                sections.push(currentSection);
-            }
-            
-            return sections;
-        }
 
         // ===== TEMPLATE MODAL =====
         function showTemplateModal() { document.getElementById('templateModal').classList.add('show'); }
-        function closeTemplateModal() { 
-            document.getElementById('templateModal').classList.remove('show'); 
-            if (formData.fields.length === 0) {
-                // Ensure we have Section 1
-                formData.fields.push({
-                    id: generateId(),
-                    type: 'section',
-                    label: 'Section 1',
-                    description: 'Add your questions below'
-                });
-            }
-            // If we only have a section, add a text field
-            if (formData.fields.length === 1 && formData.fields[0].type === 'section') {
-                addField('text');
-            }
-            renderCanvas(); 
-        }
+        function closeTemplateModal() { document.getElementById('templateModal').classList.remove('show'); if (formData.fields.length === 0) addField('text'); renderCanvas(); }
         function useTemplate() {
             const sel = document.querySelector('.template-card.selected');
             if (!sel) return;
@@ -1045,30 +824,20 @@
             
             // Special handling for layout elements
             if (field.type === 'section') {
-                const stepNumber = getStepNumber(index);
-                return `<div class="form-field section-field ${isSel ? 'selected' : ''}" data-id="${field.id}" data-index="${index}" data-step="${stepNumber}" draggable="true">
-                    <div class="field-drag-handle" title="Drag to reorder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
-                    <div class="field-reorder-controls">
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'up')" title="Move up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'down')" title="Move down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
-                    </div>
+                return `<div class="form-field section-field ${isSel ? 'selected' : ''}" data-id="${field.id}" data-index="${index}" draggable="true">
+                    <div class="field-drag-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
                     <div class="field-actions">
                         <button class="field-action-btn" onclick="duplicateField('${field.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
                         <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
                     </div>
                     <div class="section-title">${field.label || 'Section Title'}</div>
                     <div class="section-desc">${field.description || 'Section description (optional)'}</div>
-                    <div class="step-indicator">Step ${stepNumber}</div>
                 </div>`;
             }
             
             if (field.type === 'pagebreak') {
                 return `<div class="form-field ${isSel ? 'selected' : ''}" data-id="${field.id}" data-index="${index}" draggable="true" style="padding:8px 20px;">
-                    <div class="field-drag-handle" title="Drag to reorder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
-                    <div class="field-reorder-controls">
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'up')" title="Move up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'down')" title="Move down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
-                    </div>
+                    <div class="field-drag-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
                     <div class="field-actions">
                         <button class="field-action-btn" onclick="duplicateField('${field.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
                         <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
@@ -1079,11 +848,7 @@
             
             if (field.type === 'heading') {
                 return `<div class="form-field ${isSel ? 'selected' : ''}" data-id="${field.id}" data-index="${index}" draggable="true">
-                    <div class="field-drag-handle" title="Drag to reorder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
-                    <div class="field-reorder-controls">
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'up')" title="Move up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'down')" title="Move down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
-                    </div>
+                    <div class="field-drag-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
                     <div class="field-actions">
                         <button class="field-action-btn" onclick="duplicateField('${field.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
                         <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
@@ -1094,11 +859,7 @@
             
             if (field.type === 'paragraph') {
                 return `<div class="form-field ${isSel ? 'selected' : ''}" data-id="${field.id}" data-index="${index}" draggable="true">
-                    <div class="field-drag-handle" title="Drag to reorder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
-                    <div class="field-reorder-controls">
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'up')" title="Move up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
-                        <div class="reorder-btn" onclick="moveField('${field.id}', 'down')" title="Move down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
-                    </div>
+                    <div class="field-drag-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
                     <div class="field-actions">
                         <button class="field-action-btn" onclick="duplicateField('${field.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
                         <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
@@ -1128,14 +889,10 @@
                 default: preview = `<input type="text" class="field-input" placeholder="..." disabled>`;
             }
             return `<div class="form-field ${isSel ? 'selected' : ''}" data-id="${field.id}" data-index="${index}" draggable="true">
-                <div class="field-drag-handle" title="Drag to reorder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
-                <div class="field-reorder-controls">
-                    <div class="reorder-btn" onclick="moveField('${field.id}', 'up')" title="Move up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
-                    <div class="reorder-btn" onclick="moveField('${field.id}', 'down')" title="Move down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
-                </div>
+                <div class="field-drag-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>
                 <div class="field-actions">
                     <button class="field-action-btn" onclick="duplicateField('${field.id}')" title="Duplicate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
-                    <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+                    <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
                 </div>
                 <label class="field-label">${field.label || 'Untitled Question'}${field.required ? '<span class="field-required">*</span>' : ''}</label>
                 ${preview}
@@ -1169,28 +926,6 @@
             const dup = { ...JSON.parse(JSON.stringify(formData.fields[idx])), id: generateId() };
             formData.fields.splice(idx + 1, 0, dup);
             renderCanvas(); selectField(dup.id); saveHistory(); triggerAutosave(); showToast('Field duplicated');
-        }
-
-        function moveField(id, direction) {
-            const idx = formData.fields.findIndex(f => f.id === id);
-            if (idx === -1) return;
-            
-            let newIdx;
-            if (direction === 'up' && idx > 0) {
-                newIdx = idx - 1;
-            } else if (direction === 'down' && idx < formData.fields.length - 1) {
-                newIdx = idx + 1;
-            } else {
-                return; // Can't move further
-            }
-            
-            // Swap fields
-            [formData.fields[idx], formData.fields[newIdx]] = [formData.fields[newIdx], formData.fields[idx]];
-            renderCanvas();
-            triggerAutosave();
-            
-            // Keep the field selected
-            setTimeout(() => selectField(id), 50);
         }
 
         function deleteField(id) {
@@ -1417,26 +1152,8 @@
         }
         
         function toggleCondition(id, enabled) {
-            const field = formData.fields.find(f => f.id === id);
-            if (!field) return;
-            
-            field.hasCondition = enabled;
-            
-            if (enabled) {
-                // Set default values if not already set
-                field.conditionField = field.conditionField || '';
-                field.conditionOperator = field.conditionOperator || 'equals';
-                field.conditionValue = field.conditionValue || '';
-            } else {
-                // Clean up condition properties
-                delete field.conditionField;
-                delete field.conditionOperator;
-                delete field.conditionValue;
-            }
-            
-            renderFieldProperties(id);
-            triggerAutosave();
-            showToast(enabled ? 'Conditional logic enabled ⚡' : 'Conditional logic disabled');
+            updateField(id, 'hasCondition', enabled);
+            renderPropertyTab(id, 'logic');
         }
 
         function renderFormProperties() {
@@ -1566,12 +1283,7 @@
             
             const title = document.getElementById('formTitle').value.trim() || 'Untitled Form';
             const desc = document.getElementById('canvasDescription').value.trim();
-            
-            // Structure form data with sections if there are section fields
-            const hasSections = formData.fields.some(f => f.type === 'section');
-            const structuredFields = hasSections ? getFormSections() : formData.fields;
-            
-            const payload = { id: formId || null, title, description: desc, fields: structuredFields, settings: formData.settings, clubName };
+            const payload = { id: formId || null, title, description: desc, fields: formData.fields, settings: formData.settings, clubName };
             
             try {
                 const res = await fetch('/forms/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -1600,19 +1312,13 @@
             
             const title = document.getElementById('formTitle').value.trim() || 'Untitled Form';
             const desc = document.getElementById('canvasDescription').value.trim();
-            
-            // Structure form data with sections if there are section fields
-            const hasSections = formData.fields.some(f => f.type === 'section');
-            const structuredFields = hasSections ? getFormSections() : formData.fields;
-            
-            const payload = { id: formId || null, title, description: desc, fields: structuredFields, settings: formData.settings, clubName };
+            const payload = { id: formId || null, title, description: desc, fields: formData.fields, settings: formData.settings, clubName };
             try {
                 const res = await fetch('/forms/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const r = await res.json();
                 if (r.success) {
                     formId = r.formId;
-                    const stepCount = getFormSections().length;
-                    showToast(`Form published with ${stepCount} step${stepCount !== 1 ? 's' : ''}! 🎉`);
+                    showToast('Form published! 🎉');
                     s.innerHTML = '<span class="dot"></span><span>All changes saved</span>';
                     if (window.history.replaceState) window.history.replaceState({}, '', `/forms/edit/${formId}`);
                 }
@@ -1830,73 +1536,33 @@
                     </div>
                 `;
             } else {
-                // Create better response display with individual cards
-                const formFields = formData.fields.filter(f => !fieldTypes[f.type]?.isLayout);
+                // Get all unique field labels for headers
+                const headers = formData.fields.filter(f => !fieldTypes[f.type]?.isLayout).map(f => f.label || 'Untitled');
                 
-                let html = `
-                    <style>
-                        .response-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 16px; overflow: hidden; }
-                        .response-header { background: var(--bg-main); padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-                        .response-title { font-weight: 600; color: var(--text-primary); }
-                        .response-date { font-size: 12px; color: var(--text-muted); background: var(--bg-panel); padding: 4px 8px; border-radius: 4px; }
-                        .response-body { padding: 20px; }
-                        .response-field { margin-bottom: 16px; }
-                        .response-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
-                        .response-value { background: var(--bg-card); padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--border); font-size: 14px; color: var(--text-primary); min-height: 40px; display: flex; align-items: center; }
-                        .response-value.array { flex-wrap: wrap; gap: 6px; }
-                        .response-chip { background: var(--primary); color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; }
-                        .responses-controls { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
-                        .view-toggle { display: flex; background: var(--bg-main); border-radius: var(--radius-md); padding: 2px; }
-                        .view-toggle button { background: none; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
-                        .view-toggle button.active { background: var(--primary); color: white; }
-                        .export-btn { padding: 8px 14px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-primary); }
-                        .export-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
-                    </style>
-                    <div class="responses-controls">
-                        <div class="view-toggle">
-                            <button class="active" onclick="toggleResponseView('cards', this)">Cards</button>
-                            <button onclick="toggleResponseView('table', this)">Table</button>
-                        </div>
-                        <button class="export-btn" onclick="exportResponses()">📊 Export CSV</button>
-                        <div style="margin-left: auto; font-size: 13px; color: var(--text-muted);">${responsesData.length} response${responsesData.length !== 1 ? 's' : ''}</div>
-                    </div>
-                    <div id="responsesContainer">`;
+                let tableHtml = `
+                    <div style="overflow-x:auto;">
+                        <table class="responses-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Submitted</th>
+                                    ${headers.map(h => `<th>${h}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
                 
                 responsesData.forEach((response, i) => {
-                    html += `
-                        <div class="response-card">
-                            <div class="response-header">
-                                <div class="response-title">Response #${i + 1}</div>
-                                <div class="response-date">${new Date(response.submittedAt).toLocaleString()}</div>
-                            </div>
-                            <div class="response-body">`;
-                    
-                    formFields.forEach(field => {
-                        const fieldKey = `field_${field.id}`;
-                        const value = response.data?.[fieldKey] || response.data?.[field.id] || '-';
-                        const displayValue = Array.isArray(value) ? value : [value];
-                        
-                        html += `
-                            <div class="response-field">
-                                <div class="response-label">${field.label || 'Untitled Question'}</div>
-                                <div class="response-value ${Array.isArray(value) ? 'array' : ''}">`;
-                        
-                        if (Array.isArray(value) && value.length > 1) {
-                            value.forEach(v => {
-                                html += `<span class="response-chip">${v}</span>`;
-                            });
-                        } else {
-                            html += displayValue[0] || '-';
-                        }
-                        
-                        html += `</div></div>`;
+                    tableHtml += `<tr><td>${i + 1}</td><td>${new Date(response.submittedAt).toLocaleString()}</td>`;
+                    formData.fields.filter(f => !fieldTypes[f.type]?.isLayout).forEach(field => {
+                        const value = response.data?.[field.id] || '-';
+                        tableHtml += `<td title="${Array.isArray(value) ? value.join(', ') : value}">${Array.isArray(value) ? value.join(', ') : value}</td>`;
                     });
-                    
-                    html += `</div></div>`;
+                    tableHtml += '</tr>';
                 });
                 
-                html += `</div>`;
-                body.innerHTML = html;
+                tableHtml += '</tbody></table></div>';
+                body.innerHTML = tableHtml;
             }
             
             document.getElementById('responsesSubtitle').textContent = `${responsesData.length} response${responsesData.length !== 1 ? 's' : ''}`;

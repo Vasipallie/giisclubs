@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= form.title %> | GIIS Clubs</title>
+    <link rel="icon" type="image/png" href="/resources/1.png">
+    <% const settings = form.settings || {}; %>
+    <% const headerColor = settings.headerColor || '#1a237e'; %>
+    <% const bgStyle = settings.bgStyle || 'gradient'; %>
+    <% const fontStyle = settings.fontStyle || 'default'; %>
+    <% const submitText = settings.submitText || 'Submit'; %>
+    <% const confirmationMsg = settings.confirmationMsg || 'Thank you for your response!'; %>
+    <% const showProgress = settings.showProgress !== false; %>
+    <% 
+        let bgCSS = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        if (bgStyle === 'solid') bgCSS = headerColor;
+        else if (bgStyle === 'light') bgCSS = '#f0f2f5';
+        
+        let fontFamily = "'Garet', -apple-system, BlinkMacSystemFont, sans-serif";
+        if (fontStyle === 'modern') fontFamily = "'Inter', -apple-system, sans-serif";
+        else if (fontStyle === 'classic') fontFamily = "Georgia, serif";
+        else if (fontStyle === 'mono') fontFamily = "'Courier New', monospace";
+    %>
+    <style>
+        @font-face {
+            font-family: 'Garet';
+            src: url('/fonts/GaretR.otf') format('opentype');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Garet';
+            src: url('/fonts/GaretH.otf') format('opentype');
+            font-weight: 700;
+        }
+        <% if (fontStyle === 'modern') { %>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        <% } %>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: <%= fontFamily %>;
+            background: <%= bgCSS %>;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .form-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            <% if (!showProgress) { %>display: none;<% } %>
+        }
+        .progress-fill {
+            height: 100%;
+            background: <%= headerColor %>;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .form-header {
+            background: #fff;
+            border-radius: 12px 12px 0 0;
+            padding: 32px;
+            border-top: 6px solid <%= headerColor %>;
+        }
+        .form-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: <%= headerColor %>;
+            margin-bottom: 8px;
+        }
+        .form-description {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .form-body {
+            background: #fff;
+            border-radius: 0 0 12px 12px;
+            padding: 8px 32px 32px;
+        }
+        .field-group {
+            background: #fafafa;
+            border: 1px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+        .section-block {
+            margin-top: 18px;
+        }
+        .section-block.hidden {
+            display: none;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin: 18px 0 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        .section-desc {
+            color: #666;
+            font-size: 14px;
+            margin: -2px 0 14px;
+            line-height: 1.5;
+        }
+        .help-text {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
+        }
+        .field-group:focus-within {
+            border-color: #1a237e;
+        }
+        .field-group.error {
+            border-color: #d32f2f;
+            background: #fff5f5;
+        }
+        .error-text {
+            margin-top: 8px;
+            color: #d32f2f;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .field-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .field-label .required {
+            color: #d32f2f;
+            margin-left: 4px;
+        }
+        .text-input, .textarea-input, .select-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            background: #fff;
+        }
+        .text-input:focus, .textarea-input:focus, .select-input:focus {
+            outline: none;
+            border-color: #1a237e;
+        }
+        .textarea-input {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .select-input {
+            cursor: pointer;
+        }
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .radio-option, .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .radio-option:hover, .checkbox-option:hover {
+            border-color: #1a237e;
+            background: #f8f9ff;
+        }
+        .radio-option input, .checkbox-option input {
+            width: 18px;
+            height: 18px;
+            accent-color: #1a237e;
+        }
+        .radio-option span, .checkbox-option span {
+            font-size: 14px;
+            color: #333;
+        }
+        .rating-container {
+            display: flex;
+            gap: 8px;
+        }
+        .rating-star {
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: none;
+            font-size: 32px;
+            cursor: pointer;
+            color: #ddd;
+            transition: all 0.15s;
+        }
+        .rating-star:hover, .rating-star.active {
+            color: #ffc107;
+            transform: scale(1.1);
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #1a237e, #3f51b5);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: opacity 0.2s;
+            font-family: inherit;
+        }
+        .nav-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 1px solid #dfe3f2;
+            background: #fff;
+            color: #1a237e;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .nav-btn:hover { background: #f5f7ff; }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .submit-btn:hover {
+            opacity: 0.9;
+        }
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .success-message {
+            text-align: center;
+            padding: 60px 40px;
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, <%= headerColor %>, <%= headerColor %>cc);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: #fff;
+            stroke-width: 3;
+        }
+        .success-message h2 {
+            color: <%= headerColor %>;
+            margin-bottom: 12px;
+        }
+        .success-message p {
+            color: #666;
+        }
+        .form-footer {
+            text-align: center;
+            padding: 24px;
+            color: <%= bgStyle === 'light' ? '#666' : 'rgba(255,255,255,0.8)' %>;
+            font-size: 14px;
+        }
+        .form-footer a {
+            color: <%= bgStyle === 'light' ? headerColor : '#fff' %>;
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            body { padding: 20px 12px; }
+            .form-header, .form-body { padding: 20px; }
+            .form-title { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="form-header">
+            <h1 class="form-title"><%= form.title %></h1>
+            <% if (form.description) { %>
+            <p class="form-description"><%= form.description %></p>
+            <% } %>
+        </div>
+
+        <div class="form-body" id="formBody">
+            <form id="responseForm" enctype="multipart/form-data">
+                <% const _sections = (typeof sections !== 'undefined' && sections) ? sections : [{ title: '', description: '', questions: (form.fields || []) }]; %>
+                <% _sections.forEach(function(section, sIdx) { %>
+                    <div class="section-block" data-section-index="<%= sIdx %>">
+                        <% if (section.title) { %>
+                            <div class="section-title"><%= section.title %></div>
+                        <% } else if (sIdx > 0) { %>
+                            <div class="section-title">Section <%= sIdx + 1 %></div>
+                        <% } %>
+                        <% if (section.description) { %>
+                            <div class="section-desc"><%= section.description %></div>
+                        <% } %>
+
+                        <% (section.questions || []).forEach(function(field) { %>
+                        <div class="field-group question-block" data-question-id="<%= field.id %>" data-type="<%= field.type %>" data-options='<%- JSON.stringify(field.options || []) %>' data-goto-sections='<%- JSON.stringify(field.gotoSections || []) %>'>
+                            <label class="field-label">
+                                <%= field.label %>
+                                <% if (field.required) { %><span class="required">*</span><% } %>
+                            </label>
+
+                            <% if (field.type === 'text') { %>
+                            <input type="text" name="field_<%= field.id %>" class="text-input" placeholder="<%= field.placeholder || '' %>" <%= field.required ? 'required' : '' %>>
+
+                            <% } else if (field.type === 'textarea') { %>
+                            <textarea name="field_<%= field.id %>" class="textarea-input" placeholder="<%= field.placeholder || '' %>" <%= field.required ? 'required' : '' %>></textarea>
+
+                            <% } else if (field.type === 'email') { %>
+                            <input type="email" name="field_<%= field.id %>" class="text-input" placeholder="<%= field.placeholder || '' %>" <%= field.required ? 'required' : '' %>>
+
+                            <% } else if (field.type === 'number') { %>
+                            <input type="number" name="field_<%= field.id %>" class="text-input" placeholder="<%= field.placeholder || '' %>" <%= field.required ? 'required' : '' %>>
+
+                            <% } else if (field.type === 'phone') { %>
+                            <input type="tel" name="field_<%= field.id %>" class="text-input" placeholder="<%= field.placeholder || '' %>" <%= field.required ? 'required' : '' %>>
+
+                            <% } else if (field.type === 'date') { %>
+                            <input type="date" name="field_<%= field.id %>" class="text-input" <%= field.required ? 'required' : '' %>>
+
+                            <% } else if (field.type === 'time') { %>
+                            <input type="time" name="field_<%= field.id %>" class="text-input" <%= field.required ? 'required' : '' %>>
+
+                            <% } else if (field.type === 'select') { %>
+                            <select name="field_<%= field.id %>" class="select-input" <%= field.required ? 'required' : '' %>>
+                                <option value="">Select an option</option>
+                                <% (field.options || []).forEach(function(opt) { %>
+                                <option value="<%= opt %>"><%= opt %></option>
+                                <% }); %>
+                            </select>
+
+                            <% } else if (field.type === 'radio') { %>
+                            <div class="radio-group">
+                                <% (field.options || []).forEach(function(opt) { %>
+                                <label class="radio-option">
+                                    <input type="radio" name="field_<%= field.id %>" value="<%= opt %>" <%= field.required ? 'required' : '' %>>
+                                    <span><%= opt %></span>
+                                </label>
+                                <% }); %>
+                            </div>
+
+                            <% } else if (field.type === 'checkbox') { %>
+                            <div class="checkbox-group">
+                                <% (field.options || []).forEach(function(opt) { %>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" name="field_<%= field.id %>" value="<%= opt %>">
+                                    <span><%= opt %></span>
+                                </label>
+                                <% }); %>
+                            </div>
+
+                            <% } else if (field.type === 'linear') { %>
+                            <div class="radio-group">
+                                <% 
+                                    const min = (typeof field.scaleMin === 'number') ? field.scaleMin : 1;
+                                    const max = (typeof field.scaleMax === 'number') ? field.scaleMax : 5;
+                                    for (let i = min; i <= max; i++) { 
+                                %>
+                                <label class="radio-option">
+                                    <input type="radio" name="field_<%= field.id %>" value="<%= i %>" <%= field.required ? 'required' : '' %>>
+                                    <span><%= i %></span>
+                                </label>
+                                <% } %>
+                            </div>
+
+                            <% } else if (field.type === 'rating') { %>
+                            <div class="rating-container" data-field="field_<%= field.id %>" data-max="<%= field.maxRating || 5 %>">
+                                <% for (let i = 1; i <= (field.maxRating || 5); i++) { %>
+                                <button type="button" class="rating-star" data-value="<%= i %>">★</button>
+                                <% } %>
+                            </div>
+                            <input type="hidden" name="field_<%= field.id %>" value="" class="rating-value">
+
+                            <% } else if (field.type === 'file') { %>
+                            <input type="file" class="text-input" name="field_<%= field.id %>" <%= field.allowMultiple ? 'multiple' : '' %>>
+                            <div class="help-text">Max size: <%= field.maxSize || 5 %> MB</div>
+
+                            <% } else { %>
+                            <input type="text" name="field_<%= field.id %>" class="text-input" placeholder="<%= field.placeholder || '' %>" <%= field.required ? 'required' : '' %>>
+                            <% } %>
+                        </div>
+                        <% }); %>
+                    </div>
+                <% }); %>
+
+                <div class="nav-row">
+                    <button type="button" class="nav-btn" id="backBtn">Back</button>
+                    <button type="button" class="nav-btn" id="nextBtn">Next</button>
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn"><%= submitText %></button>
+            </form>
+        </div>
+
+        <div class="form-footer">
+            Powered by <a href="/">GIIS Clubs</a>
+        </div>
+    </div>
+
+    <script>
+        const formId = '<%= form.id %>';
+        const confirmationMsg = '<%= confirmationMsg.replace(/'/g, "\\'") %>';
+        const showProgress = <%= settings.showProgress !== false %>;
+        const headerColor = '<%= headerColor %>';
+        const submitText = '<%= submitText.replace(/'/g, "\\'") %>';
+
+        // Rating stars
+        document.querySelectorAll('.rating-container').forEach(container => {
+            const stars = container.querySelectorAll('.rating-star');
+            const hiddenInput = container.nextElementSibling;
+            
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const value = this.dataset.value;
+                    hiddenInput.value = value;
+                    
+                    stars.forEach((s, i) => {
+                        if (i < parseInt(value)) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+                
+                star.addEventListener('mouseenter', function() {
+                    const value = this.dataset.value;
+                    stars.forEach((s, i) => {
+                        if (i < parseInt(value)) {
+                            s.style.color = '#ffc107';
+                        } else {
+                            s.style.color = '#ddd';
+                        }
+                    });
+                });
+            });
+            
+            container.addEventListener('mouseleave', function() {
+                const currentValue = hiddenInput.value;
+                stars.forEach((s, i) => {
+                    if (currentValue && i < parseInt(currentValue)) {
+                        s.style.color = '#ffc107';
+                    } else if (s.classList.contains('active')) {
+                        s.style.color = '#ffc107';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+        });
+
+        // Section branching (Google Forms-style)
+        const sectionsData = <%- JSON.stringify((typeof sections !== 'undefined' && sections) ? sections : [{ title: '', description: '', questions: (form.fields || []) }]) %>;
+        const sectionEls = Array.from(document.querySelectorAll('.section-block'));
+        const backBtn = document.getElementById('backBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const navStack = [];
+        let currentSectionIndex = 0;
+
+        function getBranchTargetForSection(sectionIndex) {
+            const sectionEl = sectionEls[sectionIndex];
+            if (!sectionEl) return null;
+
+            const questionEls = Array.from(sectionEl.querySelectorAll('.question-block'));
+            for (const qEl of questionEls) {
+                const qType = qEl.dataset.type;
+                if (qType !== 'radio' && qType !== 'select') continue;
+
+                const options = JSON.parse(qEl.dataset.options || '[]');
+                const gotoSections = JSON.parse(qEl.dataset.gotoSections || '[]');
+                if (!Array.isArray(options) || !Array.isArray(gotoSections)) continue;
+
+                let selectedIndex = null;
+                if (qType === 'select') {
+                    const selectEl = qEl.querySelector('select');
+                    if (selectEl && selectEl.selectedIndex > 0) {
+                        selectedIndex = selectEl.selectedIndex - 1;
+                    }
+                } else if (qType === 'radio') {
+                    const checked = qEl.querySelector('input[type="radio"]:checked');
+                    if (checked) {
+                        selectedIndex = options.indexOf(checked.value);
+                    }
+                }
+
+                if (selectedIndex !== null && selectedIndex >= 0) {
+                    const target = gotoSections[selectedIndex];
+                    if (target === 'submit') return 'submit';
+                    if (typeof target === 'number' && !Number.isNaN(target)) return target;
+                }
+            }
+
+            return null;
+        }
+
+        function getNextSectionIndex() {
+            const target = getBranchTargetForSection(currentSectionIndex);
+            if (target === 'submit') return 'submit';
+            if (typeof target === 'number' && target >= 0 && target < sectionEls.length) return target;
+            const next = currentSectionIndex + 1;
+            return next < sectionEls.length ? next : 'submit';
+        }
+
+        function showSection(index) {
+            sectionEls.forEach((el, idx) => {
+                el.classList.toggle('hidden', idx !== index);
+            });
+            currentSectionIndex = index;
+            backBtn.disabled = navStack.length === 0;
+            const next = getNextSectionIndex();
+            const isSubmit = next === 'submit';
+            submitBtn.style.display = isSubmit ? 'block' : 'none';
+            nextBtn.style.display = isSubmit ? 'none' : 'block';
+            
+            // Update progress bar
+            if (showProgress) {
+                const progressFill = document.getElementById('progressFill');
+                if (progressFill) {
+                    const progress = ((navStack.length + 1) / sectionEls.length) * 100;
+                    progressFill.style.width = progress + '%';
+                    progressFill.style.background = headerColor;
+                }
+            }
+        }
+
+        function updateSectionVisibility() {
+            showSection(currentSectionIndex);
+        }
+
+        function clearErrors(sectionEl) {
+            sectionEl.querySelectorAll('.field-group').forEach(group => {
+                group.classList.remove('error');
+                const err = group.querySelector('.error-text');
+                if (err) err.remove();
+            });
+        }
+
+        function setError(group, message) {
+            group.classList.add('error');
+            let err = group.querySelector('.error-text');
+            if (!err) {
+                err = document.createElement('div');
+                err.className = 'error-text';
+                group.appendChild(err);
+            }
+            err.textContent = message;
+        }
+
+        function validateSection(sectionIndex) {
+            const sectionEl = sectionEls[sectionIndex];
+            if (!sectionEl) return true;
+            clearErrors(sectionEl);
+
+            let valid = true;
+            const fieldGroups = Array.from(sectionEl.querySelectorAll('.field-group'));
+            fieldGroups.forEach(group => {
+                const labelEl = group.querySelector('.field-label');
+                const isRequired = labelEl && labelEl.querySelector('.required');
+                if (!isRequired) return;
+
+                const type = group.dataset.type;
+                const textInput = group.querySelector('input[type="text"], input[type="email"], input[type="number"], input[type="tel"], input[type="date"], input[type="time"], textarea');
+                const selectInput = group.querySelector('select');
+                const checkedRadio = group.querySelector('input[type="radio"]:checked');
+                const checkedCheckbox = group.querySelectorAll('input[type="checkbox"]:checked');
+                const ratingValue = group.querySelector('.rating-value');
+                const fileInput = group.querySelector('input[type="file"]');
+
+                if (type === 'radio') {
+                    if (!checkedRadio) {
+                        valid = false;
+                        setError(group, 'Please select an option.');
+                    }
+                    return;
+                }
+
+                if (type === 'checkbox') {
+                    if (!checkedCheckbox || checkedCheckbox.length === 0) {
+                        valid = false;
+                        setError(group, 'Please select at least one option.');
+                    }
+                    return;
+                }
+
+                if (type === 'select') {
+                    if (!selectInput || !selectInput.value) {
+                        valid = false;
+                        setError(group, 'Please choose an option.');
+                    }
+                    return;
+                }
+
+                if (type === 'rating') {
+                    if (!ratingValue || !ratingValue.value) {
+                        valid = false;
+                        setError(group, 'Please select a rating.');
+                    }
+                    return;
+                }
+
+                if (type === 'file') {
+                    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                        valid = false;
+                        setError(group, 'Please upload a file.');
+                    }
+                    return;
+                }
+
+                if (textInput) {
+                    if (!textInput.value || !String(textInput.value).trim()) {
+                        valid = false;
+                        setError(group, 'This field is required.');
+                    }
+                }
+            });
+
+            return valid;
+        }
+
+        function validateAllVisible() {
+            // Validate all sections in navStack (visited) + current section
+            const sectionsToValidate = [...navStack, currentSectionIndex];
+            let allValid = true;
+            for (const idx of sectionsToValidate) {
+                if (!validateSection(idx)) {
+                    allValid = false;
+                }
+            }
+            return allValid;
+        }
+
+        document.querySelectorAll('.question-block select, .question-block input[type="radio"]').forEach(el => {
+            el.addEventListener('change', updateSectionVisibility);
+        });
+
+        backBtn.addEventListener('click', () => {
+            if (navStack.length === 0) return;
+            const prev = navStack.pop();
+            showSection(prev);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (!validateSection(currentSectionIndex)) return;
+            const next = getNextSectionIndex();
+            if (next === 'submit') return;
+            navStack.push(currentSectionIndex);
+            showSection(next);
+        });
+
+        submitBtn.style.display = 'none';
+        updateSectionVisibility();
+
+        // Form submission
+        document.getElementById('responseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!validateAllVisible()) {
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            const formData = new FormData(this);
+
+            try {
+                const res = await fetch('/forms/submit/' + formId, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await res.json();
+                
+                if (result.success) {
+                    document.getElementById('formBody').innerHTML = `
+                        <div class="success-message">
+                            <div class="success-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <h2>Response Submitted!</h2>
+                            <p>${confirmationMsg}</p>
+                        </div>
+                    `;
+                } else {
+                    alert(result.error || 'Submission failed. Please try again.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = submitText;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Submission failed. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = submitText;
+            }
+        });
+    </script>
+</body>
+</html>

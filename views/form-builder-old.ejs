@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Builder | GIIS Clubs</title>
+    <link rel="icon" type="image/png" href="/resources/1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-light: #eef2ff;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-main: #f8fafc;
+            --bg-canvas: #ffffff;
+            --bg-panel: #ffffff;
+            --border: #e2e8f0;
+            --border-focus: #6366f1;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --transition: all 0.2s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            height: 56px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            height: 32px;
+        }
+
+        .form-name-input {
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: var(--radius-md);
+            outline: none;
+            transition: var(--transition);
+            min-width: 200px;
+        }
+
+        .form-name-input:hover {
+            background: var(--bg-main);
+        }
+
+        .form-name-input:focus {
+            background: var(--bg-main);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .autosave-status {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .autosave-status .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+        }
+
+        .top-bar-center {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--bg-main);
+            padding: 4px;
+            border-radius: var(--radius-lg);
+        }
+
+        .view-tab {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .view-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .view-tab.active {
+            background: var(--bg-panel);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-main);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary {
+            background: var(--bg-main);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main-layout {
+            display: flex;
+            height: calc(100vh - 56px);
+            margin-top: 56px;
+        }
+
+        /* ===== LEFT PANEL - FIELD TYPES ===== */
+        .left-panel {
+            width: 280px;
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-search {
+            margin-top: 12px;
+            position: relative;
+        }
+
+        .panel-search input {
+            width: 100%;
+            padding: 10px 12px 10px 36px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .panel-search input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .panel-search svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+        }
+
+        .field-categories {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .field-category {
+            margin-bottom: 20px;
+        }
+
+        .category-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            padding: 0 4px;
+        }
+
+        .field-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .field-item {
+            padding: 12px 10px;
+            background: var(--bg-main);
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            cursor: grab;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .field-item:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .field-item:active {
+            cursor: grabbing;
+        }
+
+        .field-item-icon {
+            width: 28px;
+            height: 28px;
+            margin: 0 auto 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-panel);
+            border-radius: var(--radius-sm);
+            color: var(--primary);
+        }
+
+        .field-item-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .field-item-name {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* ===== CANVAS AREA ===== */
+        .canvas-area {
+            flex: 1;
+            background: var(--bg-main);
+            overflow-y: auto;
+            padding: 32px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .canvas-wrapper {
+            width: 100%;
+            max-width: 720px;
+        }
+
+        .form-canvas {
+            background: var(--bg-panel);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            min-height: 600px;
+            overflow: hidden;
+        }
+
+        .canvas-header {
+            padding: 32px 32px 24px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .canvas-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), #8b5cf6, #ec4899);
+        }
+
+        .canvas-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            margin-bottom: 8px;
+        }
+
+        .canvas-title::placeholder {
+            color: var(--text-muted);
+        }
+
+        .canvas-description {
+            font-size: 15px;
+            color: var(--text-secondary);
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            resize: none;
+            line-height: 1.6;
+        }
+
+        .canvas-description::placeholder {
+            color: var(--text-muted);
+        }
+
+        .canvas-body {
+            padding: 24px 32px 32px;
+        }
+
+        /* ===== FORM FIELDS ON CANVAS ===== */
+        .form-field {
+            padding: 20px;
+            border: 2px solid transparent;
+            border-radius: var(--radius-lg);
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .form-field:hover {
+            background: var(--bg-main);
+            border-color: var(--border);
+        }
+
+        .form-field.selected {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .form-field.dragging {
+            opacity: 0.5;
+            transform: rotate(2deg);
+        }
+
+        .field-drag-handle {
+            position: absolute;
+            left: -32px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: var(--transition);
+            cursor: grab;
+        }
+
+        .form-field:hover .field-drag-handle {
+            opacity: 1;
+        }
+
+        .field-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .field-required {
+            color: var(--danger);
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            color: var(--text-primary);
+            background: var(--bg-panel);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .field-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .field-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .field-helper {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .field-actions {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .form-field:hover .field-actions,
+        .form-field.selected .field-actions {
+            opacity: 1;
+        }
+
+        .field-action-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: var(--bg-panel);
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .field-action-btn:hover {
+            background: var(--bg-main);
+            color: var(--text-primary);
+        }
+
+        .field-action-btn.delete:hover {
+            background: #fef2f2;
+            color: var(--danger);
+        }
+
+        .field-action-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ===== DROP ZONE ===== */
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            text-align: center;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .drop-zone.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .drop-zone-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            background: var(--bg-main);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .drop-zone-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .drop-zone-text {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .drop-zone-hint {
+            font-size: 12px;
+        }
+
+        /* ===== RIGHT PANEL - PROPERTIES ===== */
+        .right-panel {
+            width: 340px;
+            background: var(--bg-panel);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .properties-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .properties-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .properties-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-main);
+        }
+
+        .prop-tab {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+
+        .prop-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .prop-tab.active {
+            background: var(--bg-panel);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .properties-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .prop-section {
+            margin-bottom: 24px;
+        }
+
+        .prop-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .prop-group {
+            margin-bottom: 16px;
+        }
+
+        .prop-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .prop-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            outline: none;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .prop-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .prop-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            outline: none;
+            background: var(--bg-panel);
+            cursor: pointer;
+        }
+
+        .prop-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .prop-toggle-row:last-child {
+            border-bottom: none;
+        }
+
+        .prop-toggle-label {
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 22px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: var(--border);
+            border-radius: 22px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            left: 2px;
+            top: 2px;
+            background: #fff;
+            border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--primary);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(18px);
+        }
+
+        /* ===== COLOR PICKER ===== */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .color-swatch {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.1);
+        }
+
+        .color-swatch.selected {
+            border-color: var(--text-primary);
+        }
+
+        .color-custom {
+            display: flex;
+            gap: 8px;
+        }
+
+        .color-custom input[type="color"] {
+            width: 40px;
+            height: 36px;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+
+        .color-custom input[type="text"] {
+            flex: 1;
+        }
+
+        /* ===== RANGE SLIDER ===== */
+        .prop-range-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .prop-range {
+            flex: 1;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            -webkit-appearance: none;
+            outline: none;
+        }
+
+        .prop-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .prop-range::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .prop-range-value {
+            font-size: 12px;
+            color: var(--text-muted);
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* ===== BOTTOM BAR ===== */
+        .bottom-bar {
+            height: 40px;
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .shortcuts {
+            display: flex;
+            gap: 16px;
+        }
+
+        .shortcut {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .shortcut kbd {
+            padding: 2px 6px;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 11px;
+            font-family: inherit;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-panel);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow: hidden;
+            transform: scale(0.95) translateY(20px);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .modal-header p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* ===== TEMPLATE GRID ===== */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .template-card {
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .template-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .template-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .template-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .template-icon svg {
+            width: 28px;
+            height: 28px;
+            color: #fff;
+        }
+
+        .template-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .template-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--text-primary);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: var(--radius-lg);
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: var(--shadow-xl);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 1100;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-canvas {
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .empty-canvas-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .empty-canvas-icon svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .empty-canvas h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-canvas p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            .left-panel { width: 240px; }
+            .right-panel { width: 300px; }
+        }
+
+        @media (max-width: 992px) {
+            .left-panel { display: none; }
+            .right-panel { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <div class="logo-section">
+                <a href="/home"><img src="/resources/2.png" alt="GIIS Clubs" class="logo"></a>
+            </div>
+            <input type="text" class="form-name-input" id="formTitle" placeholder="Untitled Form" value="<%= typeof form !== 'undefined' && form ? form.title : '' %>">
+            <div class="autosave-status" id="autosaveStatus">
+                <span class="dot"></span>
+                <span>All changes saved</span>
+            </div>
+        </div>
+
+        <div class="top-bar-center">
+            <button class="view-tab active" data-view="build">Build</button>
+            <button class="view-tab" data-view="design">Design</button>
+            <button class="view-tab" data-view="settings">Settings</button>
+            <button class="view-tab" data-view="preview">Preview</button>
+        </div>
+
+        <div class="top-bar-right">
+            <button class="btn btn-ghost" onclick="undo()" title="Undo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6.36 2.64L3 13"/></svg>
+            </button>
+            <button class="btn btn-ghost" onclick="redo()" title="Redo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 019-9 9 9 0 016.36 2.64L21 13"/></svg>
+            </button>
+            <div style="width: 1px; height: 24px; background: var(--border); margin: 0 8px;"></div>
+            <button class="btn btn-secondary" onclick="showShareModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                Share
+            </button>
+            <button class="btn btn-primary" onclick="saveForm()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                Publish
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-layout">
+        <!-- LEFT PANEL - FIELD TYPES -->
+        <div class="left-panel">
+            <div class="panel-header">
+                <div class="panel-title">Form Elements</div>
+                <div class="panel-search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" placeholder="Search fields..." id="fieldSearch">
+                </div>
+            </div>
+            <div class="field-categories">
+                <!-- Input Fields -->
+                <div class="field-category">
+                    <div class="category-title">Input Fields</div>
+                    <div class="field-grid">
+                        <div class="field-item" draggable="true" data-type="text">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                            </div>
+                            <div class="field-item-name">Short Text</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="textarea">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h6"/></svg>
+                            </div>
+                            <div class="field-item-name">Long Text</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="email">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            </div>
+                            <div class="field-item-name">Email</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="number">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                            </div>
+                            <div class="field-item-name">Number</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="phone">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+                            </div>
+                            <div class="field-item-name">Phone</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="password">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                            </div>
+                            <div class="field-item-name">Password</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Choice Fields -->
+                <div class="field-category">
+                    <div class="category-title">Choice Fields</div>
+                    <div class="field-grid">
+                        <div class="field-item" draggable="true" data-type="select">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                            </div>
+                            <div class="field-item-name">Dropdown</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="radio">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+                            </div>
+                            <div class="field-item-name">Radio</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="checkbox">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                            </div>
+                            <div class="field-item-name">Checkboxes</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="multiselect">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6"/><path d="M9 15h6"/></svg>
+                            </div>
+                            <div class="field-item-name">Multi-Select</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date & Time -->
+                <div class="field-category">
+                    <div class="category-title">Date & Time</div>
+                    <div class="field-grid">
+                        <div class="field-item" draggable="true" data-type="date">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </div>
+                            <div class="field-item-name">Date</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="time">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </div>
+                            <div class="field-item-name">Time</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="datetime">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><circle cx="16" cy="16" r="4"/><path d="M16 14v2l1 1"/></svg>
+                            </div>
+                            <div class="field-item-name">Date & Time</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rating & Scale -->
+                <div class="field-category">
+                    <div class="category-title">Rating & Scale</div>
+                    <div class="field-grid">
+                        <div class="field-item" draggable="true" data-type="rating">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            </div>
+                            <div class="field-item-name">Star Rating</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="scale">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg>
+                            </div>
+                            <div class="field-item-name">Linear Scale</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="slider">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="10" cy="12" r="2" fill="currentColor"/></svg>
+                            </div>
+                            <div class="field-item-name">Slider</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="nps">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
+                            </div>
+                            <div class="field-item-name">NPS Score</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media & Files -->
+                <div class="field-category">
+                    <div class="category-title">Media & Files</div>
+                    <div class="field-grid">
+                        <div class="field-item" draggable="true" data-type="file">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            </div>
+                            <div class="field-item-name">File Upload</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="image">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            </div>
+                            <div class="field-item-name">Image</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="signature">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                            </div>
+                            <div class="field-item-name">Signature</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layout -->
+                <div class="field-category">
+                    <div class="category-title">Layout</div>
+                    <div class="field-grid">
+                        <div class="field-item" draggable="true" data-type="section">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+                            </div>
+                            <div class="field-item-name">Section</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="pagebreak">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16"/><path d="M4 5h16"/><path d="M4 12h4"/><path d="M16 12h4"/><path d="M9 12h2"/><path d="M13 12h2"/></svg>
+                            </div>
+                            <div class="field-item-name">Page Break</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="heading">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="M17 10l5 2.5L17 15"/></svg>
+                            </div>
+                            <div class="field-item-name">Heading</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="paragraph">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+                            </div>
+                            <div class="field-item-name">Paragraph</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Special -->
+                <div class="field-category">
+                    <div class="category-title">Special</div>
+                    <div class="field-grid">
+                        <div class="field-item" draggable="true" data-type="color">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 00-7.07 17.07" stroke-dasharray="2 2"/></svg>
+                            </div>
+                            <div class="field-item-name">Color Picker</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="toggle">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="5" width="22" height="14" rx="7"/><circle cx="16" cy="12" r="3"/></svg>
+                            </div>
+                            <div class="field-item-name">Toggle</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="hidden">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                            </div>
+                            <div class="field-item-name">Hidden</div>
+                        </div>
+                        <div class="field-item" draggable="true" data-type="captcha">
+                            <div class="field-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                            </div>
+                            <div class="field-item-name">Captcha</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CANVAS AREA -->
+        <div class="canvas-area" id="canvasArea">
+            <div class="canvas-wrapper">
+                <div class="form-canvas" id="formCanvas">
+                    <div class="canvas-header">
+                        <input type="text" class="canvas-title" id="canvasTitle" placeholder="Untitled Form" value="<%= typeof form !== 'undefined' && form ? form.title : '' %>">
+                        <textarea class="canvas-description" id="canvasDescription" placeholder="Add a description..." rows="2"><%= typeof form !== 'undefined' && form ? form.description : '' %></textarea>
+                    </div>
+                    <div class="canvas-body" id="canvasBody">
+                        <!-- Fields will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL - PROPERTIES -->
+        <div class="right-panel" id="rightPanel">
+            <div class="properties-header">
+                <div class="properties-title" id="propertiesTitle">Form Settings</div>
+            </div>
+            <div class="properties-tabs">
+                <button class="prop-tab active" data-tab="general">General</button>
+                <button class="prop-tab" data-tab="style">Style</button>
+                <button class="prop-tab" data-tab="logic">Logic</button>
+            </div>
+            <div class="properties-content" id="propertiesContent">
+                <!-- Dynamic properties will be rendered here -->
+                <div class="prop-section">
+                    <div class="prop-section-title">Form Appearance</div>
+                    <div class="prop-group">
+                        <label class="prop-label">Theme</label>
+                        <select class="prop-select" id="formTheme">
+                            <option value="default">Default</option>
+                            <option value="modern">Modern</option>
+                            <option value="minimal">Minimal</option>
+                            <option value="bold">Bold</option>
+                            <option value="elegant">Elegant</option>
+                        </select>
+                    </div>
+                    <div class="prop-group">
+                        <label class="prop-label">Primary Color</label>
+                        <div class="color-grid">
+                            <div class="color-swatch selected" style="background: #6366f1;" data-color="#6366f1"></div>
+                            <div class="color-swatch" style="background: #8b5cf6;" data-color="#8b5cf6"></div>
+                            <div class="color-swatch" style="background: #ec4899;" data-color="#ec4899"></div>
+                            <div class="color-swatch" style="background: #ef4444;" data-color="#ef4444"></div>
+                            <div class="color-swatch" style="background: #f59e0b;" data-color="#f59e0b"></div>
+                            <div class="color-swatch" style="background: #10b981;" data-color="#10b981"></div>
+                            <div class="color-swatch" style="background: #06b6d4;" data-color="#06b6d4"></div>
+                            <div class="color-swatch" style="background: #3b82f6;" data-color="#3b82f6"></div>
+                        </div>
+                        <div class="color-custom">
+                            <input type="color" id="customColor" value="#6366f1">
+                            <input type="text" class="prop-input" id="customColorHex" value="#6366f1" placeholder="#6366f1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="prop-section">
+                    <div class="prop-section-title">Form Behavior</div>
+                    <div class="prop-toggle-row">
+                        <span class="prop-toggle-label">Show progress bar</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="showProgress" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="prop-toggle-row">
+                        <span class="prop-toggle-label">Collect email addresses</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="collectEmail">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="prop-toggle-row">
+                        <span class="prop-toggle-label">Limit to one response</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="limitResponses">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="prop-toggle-row">
+                        <span class="prop-toggle-label">Shuffle questions</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="shuffleQuestions">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="prop-section">
+                    <div class="prop-section-title">Submit Button</div>
+                    <div class="prop-group">
+                        <label class="prop-label">Button Text</label>
+                        <input type="text" class="prop-input" id="submitText" value="Submit" placeholder="Submit">
+                    </div>
+                    <div class="prop-group">
+                        <label class="prop-label">Success Message</label>
+                        <textarea class="prop-input" id="successMessage" rows="3" placeholder="Thank you for your response!">Thank you for your response! 🎉</textarea>
+                    </div>
+                    <div class="prop-group">
+                        <label class="prop-label">Redirect URL (optional)</label>
+                        <input type="text" class="prop-input" id="redirectUrl" placeholder="https://...">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM BAR -->
+    <div class="bottom-bar">
+        <div class="shortcuts">
+            <div class="shortcut"><kbd>⌘</kbd><kbd>S</kbd> Save</div>
+            <div class="shortcut"><kbd>⌘</kbd><kbd>Z</kbd> Undo</div>
+            <div class="shortcut"><kbd>⌘</kbd><kbd>D</kbd> Duplicate</div>
+            <div class="shortcut"><kbd>Del</kbd> Delete</div>
+        </div>
+        <div id="validationHints">
+            <span style="color: var(--success);">✓ Form is valid</span>
+        </div>
+    </div>
+
+    <!-- TEMPLATE MODAL -->
+    <div class="modal-overlay" id="templateModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Choose a Template</h2>
+                <p>Start with a pre-built template or create from scratch</p>
+            </div>
+            <div class="modal-body">
+                <div class="template-grid">
+                    <div class="template-card selected" data-template="blank">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        </div>
+                        <div class="template-name">Blank Form</div>
+                        <div class="template-desc">Start from scratch</div>
+                    </div>
+                    <div class="template-card" data-template="contact">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </div>
+                        <div class="template-name">Contact Form</div>
+                        <div class="template-desc">Name, email, message</div>
+                    </div>
+                    <div class="template-card" data-template="event">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <div class="template-name">Event Registration</div>
+                        <div class="template-desc">Sign up for events</div>
+                    </div>
+                    <div class="template-card" data-template="feedback">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                        </div>
+                        <div class="template-name">Feedback</div>
+                        <div class="template-desc">Collect user feedback</div>
+                    </div>
+                    <div class="template-card" data-template="survey">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        </div>
+                        <div class="template-name">Survey</div>
+                        <div class="template-desc">Multi-question survey</div>
+                    </div>
+                    <div class="template-card" data-template="application">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+                        </div>
+                        <div class="template-name">Application</div>
+                        <div class="template-desc">Job or club application</div>
+                    </div>
+                    <div class="template-card" data-template="quiz">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                        <div class="template-name">Quiz</div>
+                        <div class="template-desc">Multiple choice quiz</div>
+                    </div>
+                    <div class="template-card" data-template="order">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+                        </div>
+                        <div class="template-name">Order Form</div>
+                        <div class="template-desc">Product orders</div>
+                    </div>
+                    <div class="template-card" data-template="newsletter">
+                        <div class="template-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div class="template-name">Newsletter</div>
+                        <div class="template-desc">Email subscription</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeTemplateModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="useTemplate()">Use Template</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ===== GLOBAL STATE =====
+        let formId = '<%= typeof form !== "undefined" && form ? form.id : "" %>';
+        const clubName = '<%= typeof clubName !== "undefined" ? clubName : "" %>';
+        let isNewForm = !formId;
+        let selectedFieldId = null;
+        let history = [];
+        let historyIndex = -1;
+        let autosaveTimer = null;
+
+        // Form data structure
+        let formData = {
+            title: '',
+            description: '',
+            fields: [],
+            settings: {
+                theme: 'default',
+                primaryColor: '#6366f1',
+                showProgress: true,
+                collectEmail: false,
+                limitResponses: false,
+                shuffleQuestions: false,
+                submitText: 'Submit',
+                successMessage: 'Thank you for your response! 🎉',
+                redirectUrl: ''
+            }
+        };
+
+        // Field type definitions
+        const fieldTypes = {
+            text: { label: 'Short Text', icon: 'T', defaultLabel: 'Your answer' },
+            textarea: { label: 'Long Text', icon: '¶', defaultLabel: 'Your detailed answer' },
+            email: { label: 'Email', icon: '@', defaultLabel: 'email@example.com' },
+            number: { label: 'Number', icon: '#', defaultLabel: '0' },
+            phone: { label: 'Phone', icon: '☎', defaultLabel: '+1 (555) 123-4567' },
+            password: { label: 'Password', icon: '🔒', defaultLabel: '••••••••' },
+            select: { label: 'Dropdown', icon: '▼', defaultLabel: 'Select an option', hasOptions: true },
+            radio: { label: 'Radio', icon: '◉', defaultLabel: 'Choose one', hasOptions: true },
+            checkbox: { label: 'Checkboxes', icon: '☑', defaultLabel: 'Select all that apply', hasOptions: true },
+            multiselect: { label: 'Multi-Select', icon: '☰', defaultLabel: 'Select multiple', hasOptions: true },
+            date: { label: 'Date', icon: '📅', defaultLabel: 'mm/dd/yyyy' },
+            time: { label: 'Time', icon: '⏰', defaultLabel: 'hh:mm' },
+            datetime: { label: 'Date & Time', icon: '📆', defaultLabel: 'mm/dd/yyyy hh:mm' },
+            rating: { label: 'Star Rating', icon: '★', defaultLabel: 'Rate from 1 to 5' },
+            scale: { label: 'Linear Scale', icon: '📊', defaultLabel: 'Rate from 1 to 10' },
+            slider: { label: 'Slider', icon: '⟷', defaultLabel: 'Slide to select' },
+            nps: { label: 'NPS Score', icon: '👍', defaultLabel: 'How likely are you to recommend?' },
+            file: { label: 'File Upload', icon: '📎', defaultLabel: 'Click to upload' },
+            image: { label: 'Image', icon: '🖼', defaultLabel: 'Upload an image' },
+            signature: { label: 'Signature', icon: '✍', defaultLabel: 'Draw your signature' },
+            section: { label: 'Section', icon: '§', isLayout: true },
+            pagebreak: { label: 'Page Break', icon: '⊟', isLayout: true },
+            heading: { label: 'Heading', icon: 'H', isLayout: true },
+            paragraph: { label: 'Paragraph', icon: '¶', isLayout: true },
+            color: { label: 'Color Picker', icon: '🎨', defaultLabel: 'Pick a color' },
+            toggle: { label: 'Toggle', icon: '⬤', defaultLabel: 'Yes / No' },
+            hidden: { label: 'Hidden', icon: '👁', defaultLabel: '' },
+            captcha: { label: 'Captcha', icon: '🛡', defaultLabel: 'Verify you are human' }
+        };
+
+        // Templates
+        const templates = {
+            blank: { title: 'Untitled Form', description: '', fields: [] },
+            contact: {
+                title: 'Contact Us',
+                description: 'We\'d love to hear from you. Please fill out this form.',
+                fields: [
+                    { type: 'text', label: 'Full Name', required: true, placeholder: 'John Doe' },
+                    { type: 'email', label: 'Email Address', required: true, placeholder: 'john@example.com' },
+                    { type: 'phone', label: 'Phone Number', required: false, placeholder: '+1 (555) 123-4567' },
+                    { type: 'textarea', label: 'Message', required: true, placeholder: 'How can we help you?' }
+                ]
+            },
+            event: {
+                title: 'Event Registration',
+                description: 'Please fill out this form to register for the event.',
+                fields: [
+                    { type: 'text', label: 'Full Name', required: true },
+                    { type: 'email', label: 'Email Address', required: true },
+                    { type: 'phone', label: 'Phone Number', required: false },
+                    { type: 'select', label: 'T-Shirt Size', required: false, options: ['S', 'M', 'L', 'XL', 'XXL'] },
+                    { type: 'radio', label: 'Dietary Preferences', required: false, options: ['No restrictions', 'Vegetarian', 'Vegan', 'Gluten-free', 'Other'] },
+                    { type: 'textarea', label: 'Any special requirements?', required: false }
+                ]
+            },
+            feedback: {
+                title: 'Feedback Form',
+                description: 'We value your feedback! Please let us know your thoughts.',
+                fields: [
+                    { type: 'rating', label: 'Overall Satisfaction', required: true, maxRating: 5 },
+                    { type: 'radio', label: 'Would you recommend us?', required: true, options: ['Definitely', 'Probably', 'Not sure', 'Probably not', 'Definitely not'] },
+                    { type: 'textarea', label: 'What did you like most?', required: false },
+                    { type: 'textarea', label: 'What could we improve?', required: false }
+                ]
+            },
+            survey: {
+                title: 'Customer Survey',
+                description: 'Please take a moment to complete our survey.',
+                fields: [
+                    { type: 'radio', label: 'How often do you use our service?', required: true, options: ['Daily', 'Weekly', 'Monthly', 'Rarely', 'First time'] },
+                    { type: 'scale', label: 'How satisfied are you with our service?', required: true, scaleMin: 1, scaleMax: 10, labelMin: 'Not satisfied', labelMax: 'Very satisfied' },
+                    { type: 'checkbox', label: 'What features do you use?', required: false, options: ['Feature A', 'Feature B', 'Feature C', 'Feature D'] },
+                    { type: 'textarea', label: 'Additional comments', required: false }
+                ]
+            },
+            application: {
+                title: 'Application Form',
+                description: 'Please complete all required fields.',
+                fields: [
+                    { type: 'text', label: 'Full Name', required: true },
+                    { type: 'email', label: 'Email', required: true },
+                    { type: 'phone', label: 'Phone', required: true },
+                    { type: 'date', label: 'Date of Birth', required: true },
+                    { type: 'textarea', label: 'Why are you interested in this position?', required: true },
+                    { type: 'file', label: 'Upload Resume', required: false, accept: '.pdf,.doc,.docx' }
+                ]
+            },
+            quiz: {
+                title: 'Quiz',
+                description: 'Test your knowledge!',
+                fields: [
+                    { type: 'radio', label: 'Question 1: What is 2 + 2?', required: true, options: ['3', '4', '5', '6'] },
+                    { type: 'radio', label: 'Question 2: What color is the sky?', required: true, options: ['Red', 'Blue', 'Green', 'Yellow'] },
+                    { type: 'checkbox', label: 'Question 3: Which are programming languages?', required: true, options: ['Python', 'HTML', 'JavaScript', 'Photoshop'] }
+                ]
+            },
+            order: {
+                title: 'Order Form',
+                description: 'Place your order below.',
+                fields: [
+                    { type: 'text', label: 'Full Name', required: true },
+                    { type: 'email', label: 'Email', required: true },
+                    { type: 'text', label: 'Shipping Address', required: true },
+                    { type: 'select', label: 'Product', required: true, options: ['Product A - $10', 'Product B - $20', 'Product C - $30'] },
+                    { type: 'number', label: 'Quantity', required: true, min: 1, max: 100 },
+                    { type: 'textarea', label: 'Special Instructions', required: false }
+                ]
+            },
+            newsletter: {
+                title: 'Subscribe to Newsletter',
+                description: 'Stay updated with our latest news!',
+                fields: [
+                    { type: 'text', label: 'First Name', required: true },
+                    { type: 'email', label: 'Email Address', required: true },
+                    { type: 'checkbox', label: 'Interests', required: false, options: ['Technology', 'Design', 'Business', 'Marketing'] }
+                ]
+            }
+        };
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load existing form data if editing
+            <% if (typeof form !== 'undefined' && form && form.fields) { %>
+            try {
+                const existingFields = <%- JSON.stringify(form.fields) %>;
+                formData.fields = existingFields.map(f => ({ ...f, id: f.id || generateId() }));
+                formData.title = '<%= form.title || "" %>';
+                formData.description = '<%= form.description || "" %>';
+            } catch(e) { console.error('Error loading form:', e); }
+            <% } %>
+
+            <% if (typeof form !== 'undefined' && form && form.settings) { %>
+            try {
+                const existingSettings = <%- JSON.stringify(form.settings) %>;
+                formData.settings = { ...formData.settings, ...existingSettings };
+            } catch(e) { console.error('Error loading settings:', e); }
+            <% } %>
+
+            // Show template modal for new forms
+            if (isNewForm && formData.fields.length === 0) {
+                showTemplateModal();
+            } else {
+                renderCanvas();
+            }
+
+            // Setup event listeners
+            setupDragAndDrop();
+            setupViewTabs();
+            setupPropertyTabs();
+            setupColorPicker();
+            setupKeyboardShortcuts();
+            syncTitles();
+        });
+
+        // ===== UTILITY FUNCTIONS =====
+        function generateId() {
+            return 'f_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.background = type === 'error' ? 'var(--danger)' : 'var(--text-primary)';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ===== TEMPLATE MODAL =====
+        function showTemplateModal() {
+            document.getElementById('templateModal').classList.add('show');
+        }
+
+        function closeTemplateModal() {
+            document.getElementById('templateModal').classList.remove('show');
+            if (formData.fields.length === 0) {
+                addField('text');
+            }
+            renderCanvas();
+        }
+
+        function useTemplate() {
+            const selected = document.querySelector('.template-card.selected');
+            if (!selected) return;
+            
+            const templateName = selected.dataset.template;
+            const template = templates[templateName];
+            
+            formData.title = template.title;
+            formData.description = template.description;
+            formData.fields = template.fields.map(f => ({
+                ...f,
+                id: generateId()
+            }));
+
+            document.getElementById('formTitle').value = template.title;
+            document.getElementById('canvasTitle').value = template.title;
+            document.getElementById('canvasDescription').value = template.description;
+            
+            closeTemplateModal();
+            saveHistory();
+        }
+
+        // Template card selection
+        document.querySelectorAll('.template-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // ===== CANVAS RENDERING =====
+        function renderCanvas() {
+            const canvasBody = document.getElementById('canvasBody');
+            
+            if (formData.fields.length === 0) {
+                canvasBody.innerHTML = `
+                    <div class="drop-zone" id="mainDropZone">
+                        <div class="drop-zone-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </div>
+                        <div class="drop-zone-text">Drag fields here</div>
+                        <div class="drop-zone-hint">or click a field type on the left to add</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            formData.fields.forEach((field, index) => {
+                html += renderField(field, index);
+            });
+
+            html += `
+                <div class="drop-zone" id="endDropZone" style="padding: 20px; margin-top: 8px;">
+                    <div class="drop-zone-text" style="font-size: 13px;">Drop here to add at end</div>
+                </div>
+            `;
+
+            canvasBody.innerHTML = html;
+            setupFieldEvents();
+        }
+
+        function renderField(field, index) {
+            const type = fieldTypes[field.type] || { label: field.type };
+            const isSelected = field.id === selectedFieldId;
+            
+            let inputPreview = '';
+            switch(field.type) {
+                case 'text':
+                case 'email':
+                case 'phone':
+                case 'password':
+                case 'number':
+                    inputPreview = `<input type="text" class="field-input" placeholder="${field.placeholder || type.defaultLabel}" disabled>`;
+                    break;
+                case 'textarea':
+                    inputPreview = `<textarea class="field-input" placeholder="${field.placeholder || type.defaultLabel}" rows="3" disabled></textarea>`;
+                    break;
+                case 'select':
+                    inputPreview = `<select class="field-input" disabled><option>${field.placeholder || 'Select an option'}</option></select>`;
+                    break;
+                case 'radio':
+                    inputPreview = (field.options || ['Option 1', 'Option 2', 'Option 3']).map(opt => 
+                        `<label style="display: flex; align-items: center; gap: 8px; padding: 8px 0;"><input type="radio" disabled> ${opt}</label>`
+                    ).join('');
+                    break;
+                case 'checkbox':
+                    inputPreview = (field.options || ['Option 1', 'Option 2', 'Option 3']).map(opt => 
+                        `<label style="display: flex; align-items: center; gap: 8px; padding: 8px 0;"><input type="checkbox" disabled> ${opt}</label>`
+                    ).join('');
+                    break;
+                case 'date':
+                    inputPreview = `<input type="date" class="field-input" disabled>`;
+                    break;
+                case 'time':
+                    inputPreview = `<input type="time" class="field-input" disabled>`;
+                    break;
+                case 'rating':
+                    inputPreview = `<div style="display: flex; gap: 4px; font-size: 24px; color: var(--text-muted);">★★★★★</div>`;
+                    break;
+                case 'scale':
+                    inputPreview = `<div style="display: flex; gap: 8px; align-items: center;"><span style="font-size: 12px;">1</span><input type="range" style="flex: 1;" disabled><span style="font-size: 12px;">10</span></div>`;
+                    break;
+                case 'file':
+                    inputPreview = `<div style="border: 2px dashed var(--border); padding: 20px; text-align: center; border-radius: var(--radius-md); color: var(--text-muted);">📎 Click or drag to upload</div>`;
+                    break;
+                case 'heading':
+                    inputPreview = `<h3 style="font-size: 18px; font-weight: 600;">${field.label || 'Heading'}</h3>`;
+                    break;
+                case 'paragraph':
+                    inputPreview = `<p style="color: var(--text-secondary);">${field.content || 'Paragraph text goes here...'}</p>`;
+                    break;
+                default:
+                    inputPreview = `<input type="text" class="field-input" placeholder="${type.defaultLabel || ''}" disabled>`;
+            }
+
+            return `
+                <div class="form-field ${isSelected ? 'selected' : ''}" data-id="${field.id}" data-index="${index}" draggable="true">
+                    <div class="field-drag-handle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+                    </div>
+                    <div class="field-actions">
+                        <button class="field-action-btn" onclick="duplicateField('${field.id}')" title="Duplicate">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        </button>
+                        <button class="field-action-btn delete" onclick="deleteField('${field.id}')" title="Delete">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                        </button>
+                    </div>
+                    ${field.type !== 'heading' && field.type !== 'paragraph' ? `
+                    <label class="field-label">
+                        ${field.label || 'Untitled Question'}
+                        ${field.required ? '<span class="field-required">*</span>' : ''}
+                    </label>
+                    ` : ''}
+                    ${inputPreview}
+                    ${field.helperText ? `<div class="field-helper">${field.helperText}</div>` : ''}
+                </div>
+            `;
+        }
+
+        function setupFieldEvents() {
+            document.querySelectorAll('.form-field').forEach(field => {
+                field.addEventListener('click', function(e) {
+                    if (e.target.closest('.field-action-btn')) return;
+                    selectField(this.dataset.id);
+                });
+            });
+        }
+
+        // ===== FIELD MANAGEMENT =====
+        function addField(type, afterIndex = null) {
+            const newField = {
+                id: generateId(),
+                type: type,
+                label: fieldTypes[type]?.label || 'Question',
+                required: false,
+                placeholder: '',
+                helperText: ''
+            };
+
+            if (fieldTypes[type]?.hasOptions) {
+                newField.options = ['Option 1', 'Option 2', 'Option 3'];
+            }
+
+            if (afterIndex !== null && afterIndex >= 0) {
+                formData.fields.splice(afterIndex + 1, 0, newField);
+            } else {
+                formData.fields.push(newField);
+            }
+
+            renderCanvas();
+            selectField(newField.id);
+            saveHistory();
+            triggerAutosave();
+        }
+
+        function selectField(fieldId) {
+            selectedFieldId = fieldId;
+            renderCanvas();
+            renderFieldProperties(fieldId);
+        }
+
+        function duplicateField(fieldId) {
+            const index = formData.fields.findIndex(f => f.id === fieldId);
+            if (index === -1) return;
+
+            const original = formData.fields[index];
+            const duplicate = {
+                ...JSON.parse(JSON.stringify(original)),
+                id: generateId()
+            };
+
+            formData.fields.splice(index + 1, 0, duplicate);
+            renderCanvas();
+            selectField(duplicate.id);
+            saveHistory();
+            triggerAutosave();
+            showToast('Field duplicated');
+        }
+
+        function deleteField(fieldId) {
+            const index = formData.fields.findIndex(f => f.id === fieldId);
+            if (index === -1) return;
+
+            formData.fields.splice(index, 1);
+            selectedFieldId = null;
+            renderCanvas();
+            renderFormProperties();
+            saveHistory();
+            triggerAutosave();
+            showToast('Field deleted');
+        }
+
+        // ===== FIELD PROPERTIES PANEL =====
+        function renderFieldProperties(fieldId) {
+            const field = formData.fields.find(f => f.id === fieldId);
+            if (!field) return;
+
+            document.getElementById('propertiesTitle').textContent = fieldTypes[field.type]?.label || 'Field Properties';
+            
+            const content = document.getElementById('propertiesContent');
+            content.innerHTML = `
+                <div class="prop-section">
+                    <div class="prop-section-title">Basic Settings</div>
+                    <div class="prop-group">
+                        <label class="prop-label">Label</label>
+                        <input type="text" class="prop-input" id="fieldLabel" value="${field.label || ''}" placeholder="Enter label" onchange="updateField('${fieldId}', 'label', this.value)">
+                    </div>
+                    <div class="prop-group">
+                        <label class="prop-label">Placeholder</label>
+                        <input type="text" class="prop-input" id="fieldPlaceholder" value="${field.placeholder || ''}" placeholder="Enter placeholder" onchange="updateField('${fieldId}', 'placeholder', this.value)">
+                    </div>
+                    <div class="prop-group">
+                        <label class="prop-label">Helper Text</label>
+                        <input type="text" class="prop-input" id="fieldHelper" value="${field.helperText || ''}" placeholder="Additional instructions" onchange="updateField('${fieldId}', 'helperText', this.value)">
+                    </div>
+                </div>
+
+                <div class="prop-section">
+                    <div class="prop-section-title">Validation</div>
+                    <div class="prop-toggle-row">
+                        <span class="prop-toggle-label">Required</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="fieldRequired" ${field.required ? 'checked' : ''} onchange="updateField('${fieldId}', 'required', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                ${fieldTypes[field.type]?.hasOptions ? `
+                <div class="prop-section">
+                    <div class="prop-section-title">Options</div>
+                    <div id="optionsList">
+                        ${(field.options || []).map((opt, i) => `
+                            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                <input type="text" class="prop-input" value="${opt}" onchange="updateOption('${fieldId}', ${i}, this.value)" style="flex: 1;">
+                                <button class="btn btn-ghost" onclick="removeOption('${fieldId}', ${i})" style="padding: 8px;">✕</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="btn btn-secondary" onclick="addOption('${fieldId}')" style="width: 100%; margin-top: 8px;">+ Add Option</button>
+                </div>
+                ` : ''}
+            `;
+        }
+
+        function renderFormProperties() {
+            document.getElementById('propertiesTitle').textContent = 'Form Settings';
+            // Reset to default form settings panel
+            // (Already in HTML)
+        }
+
+        function updateField(fieldId, property, value) {
+            const field = formData.fields.find(f => f.id === fieldId);
+            if (!field) return;
+            field[property] = value;
+            renderCanvas();
+            triggerAutosave();
+        }
+
+        function addOption(fieldId) {
+            const field = formData.fields.find(f => f.id === fieldId);
+            if (!field) return;
+            if (!field.options) field.options = [];
+            field.options.push(`Option ${field.options.length + 1}`);
+            renderFieldProperties(fieldId);
+            renderCanvas();
+            triggerAutosave();
+        }
+
+        function removeOption(fieldId, index) {
+            const field = formData.fields.find(f => f.id === fieldId);
+            if (!field || !field.options) return;
+            field.options.splice(index, 1);
+            renderFieldProperties(fieldId);
+            renderCanvas();
+            triggerAutosave();
+        }
+
+        function updateOption(fieldId, index, value) {
+            const field = formData.fields.find(f => f.id === fieldId);
+            if (!field || !field.options) return;
+            field.options[index] = value;
+            renderCanvas();
+            triggerAutosave();
+        }
+
+        // ===== DRAG AND DROP =====
+        function setupDragAndDrop() {
+            // Field items from left panel
+            document.querySelectorAll('.field-item').forEach(item => {
+                item.addEventListener('dragstart', function(e) {
+                    e.dataTransfer.setData('fieldType', this.dataset.type);
+                    e.dataTransfer.effectAllowed = 'copy';
+                });
+
+                item.addEventListener('click', function() {
+                    addField(this.dataset.type);
+                });
+            });
+
+            // Canvas drop zones
+            const canvasArea = document.getElementById('canvasArea');
+            canvasArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+            });
+
+            canvasArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                const fieldType = e.dataTransfer.getData('fieldType');
+                if (fieldType) {
+                    addField(fieldType);
+                }
+            });
+        }
+
+        // ===== VIEW TABS =====
+        function setupViewTabs() {
+            document.querySelectorAll('.view-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    const view = this.dataset.view;
+                    
+                    if (view === 'preview') {
+                        previewForm();
+                    }
+                    // Other views can be implemented
+                });
+            });
+        }
+
+        // ===== PROPERTY TABS =====
+        function setupPropertyTabs() {
+            document.querySelectorAll('.prop-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.prop-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        // ===== COLOR PICKER =====
+        function setupColorPicker() {
+            document.querySelectorAll('.color-swatch').forEach(swatch => {
+                swatch.addEventListener('click', function() {
+                    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+                    this.classList.add('selected');
+                    const color = this.dataset.color;
+                    document.getElementById('customColor').value = color;
+                    document.getElementById('customColorHex').value = color;
+                    formData.settings.primaryColor = color;
+                    document.documentElement.style.setProperty('--primary', color);
+                    triggerAutosave();
+                });
+            });
+
+            document.getElementById('customColor').addEventListener('input', function() {
+                document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+                document.getElementById('customColorHex').value = this.value;
+                formData.settings.primaryColor = this.value;
+                document.documentElement.style.setProperty('--primary', this.value);
+                triggerAutosave();
+            });
+        }
+
+        // ===== KEYBOARD SHORTCUTS =====
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                // Ctrl/Cmd + S = Save
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    saveForm();
+                }
+                // Ctrl/Cmd + Z = Undo
+                if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+                    e.preventDefault();
+                    undo();
+                }
+                // Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y = Redo
+                if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+                    e.preventDefault();
+                    redo();
+                }
+                // Delete = Delete selected field
+                if (e.key === 'Delete' && selectedFieldId) {
+                    deleteField(selectedFieldId);
+                }
+                // Ctrl/Cmd + D = Duplicate
+                if ((e.ctrlKey || e.metaKey) && e.key === 'd' && selectedFieldId) {
+                    e.preventDefault();
+                    duplicateField(selectedFieldId);
+                }
+            });
+        }
+
+        // ===== TITLE SYNC =====
+        function syncTitles() {
+            const formTitle = document.getElementById('formTitle');
+            const canvasTitle = document.getElementById('canvasTitle');
+
+            formTitle.addEventListener('input', function() {
+                canvasTitle.value = this.value;
+                formData.title = this.value;
+                triggerAutosave();
+            });
+
+            canvasTitle.addEventListener('input', function() {
+                formTitle.value = this.value;
+                formData.title = this.value;
+                triggerAutosave();
+            });
+
+            document.getElementById('canvasDescription').addEventListener('input', function() {
+                formData.description = this.value;
+                triggerAutosave();
+            });
+        }
+
+        // ===== HISTORY (UNDO/REDO) =====
+        function saveHistory() {
+            if (historyIndex < history.length - 1) {
+                history = history.slice(0, historyIndex + 1);
+            }
+            history.push(JSON.stringify(formData));
+            if (history.length > 50) history.shift();
+            historyIndex = history.length - 1;
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                formData = JSON.parse(history[historyIndex]);
+                renderCanvas();
+                showToast('Undo');
+            }
+        }
+
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                formData = JSON.parse(history[historyIndex]);
+                renderCanvas();
+                showToast('Redo');
+            }
+        }
+
+        // ===== AUTOSAVE =====
+        function triggerAutosave() {
+            const status = document.getElementById('autosaveStatus');
+            status.innerHTML = '<span class="dot" style="background: var(--warning);"></span><span>Saving...</span>';
+            
+            clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+                // Auto-save logic here
+                status.innerHTML = '<span class="dot"></span><span>All changes saved</span>';
+            }, 1500);
+        }
+
+        // ===== SAVE FORM =====
+        async function saveForm() {
+            const title = document.getElementById('formTitle').value.trim() || 'Untitled Form';
+            const description = document.getElementById('canvasDescription').value.trim();
+
+            const payload = {
+                id: formId || null,
+                title: title,
+                description: description,
+                fields: formData.fields,
+                settings: formData.settings,
+                clubName: clubName
+            };
+
+            try {
+                const response = await fetch('/forms/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    formId = result.formId;
+                    isNewForm = false;
+                    showToast('Form published successfully! 🎉');
+                    
+                    // Update URL if new form
+                    if (window.history.replaceState) {
+                        window.history.replaceState({}, '', `/forms/edit/${formId}`);
+                    }
+                } else {
+                    showToast(result.error || 'Error saving form', 'error');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                showToast('Error saving form', 'error');
+            }
+        }
+
+        // ===== PREVIEW =====
+        function previewForm() {
+            if (formId) {
+                window.open(`/forms/view/${formId}`, '_blank');
+            } else {
+                showToast('Please save the form first to preview', 'error');
+            }
+        }
+
+        // ===== SHARE MODAL =====
+        function showShareModal() {
+            if (!formId) {
+                showToast('Please save the form first', 'error');
+                return;
+            }
+            const shareUrl = `${window.location.origin}/forms/view/${formId}`;
+            navigator.clipboard.writeText(shareUrl);
+            showToast('Share link copied to clipboard! 📋');
+        }
+
+        // Initial history save
+        saveHistory();
+    </script>
+</body>
+</html>
