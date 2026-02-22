@@ -738,11 +738,114 @@ app.route('/manage-club').get(async (req, res) => {
     res.render('manage-club', { 
         club: club || {}, 
         success: req.query.success || null, 
-        error: null,
+        error: req.query.error || null,
         clubName: club.name,
         clubLogo: club.logo || null,
         isAdmin
     });
+});
+
+// Add subdomain for a club and optionally update Namecheap DNS if credentials are configured
+app.post('/add-subdomain', async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) return res.redirect('/login');
+
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        if (error || !user) return res.redirect('/login');
+
+        const { subdomain, target } = req.body;
+        if (!subdomain || !/^[a-z0-9-]{3,63}$/.test(subdomain)) {
+            return res.redirect('/manage-club?error=Invalid+subdomain+format');
+        }
+
+        const targetRaw = (target || '').trim();
+        if (targetRaw && (targetRaw.length > 255 || !/^[a-zA-Z0-9\.\-:\s]+$/.test(targetRaw))) {
+            return res.redirect('/manage-club?error=Invalid+target+format');
+        }
+
+        // Ensure subdomain isn't already taken
+        const { data: existing } = await supabase
+            .from('clubs')
+            .select('id')
+            .eq('subdomain', subdomain)
+            .maybeSingle();
+
+        if (existing && existing.id) {
+            return res.redirect('/manage-club?error=Subdomain+already+taken');
+        }
+
+        // Save subdomain and optional target to club record
+        const { error: updateError } = await supabase
+            .from('clubs')
+            .update({ subdomain, subdomain_target: targetRaw || null })
+            .eq('id', user.id);
+
+        if (updateError) {
+            console.error('Failed to save subdomain:', updateError);
+            return res.redirect('/manage-club?error=Failed+to+save+subdomain');
+        }
+
+        // If Cloudflare credentials are provided, attempt to add a CNAME record
+        const cfToken = process.env.CLOUDFLARE_API_TOKEN;
+        const cfZone = process.env.CLOUDFLARE_ZONE_ID;
+
+        if (cfToken && cfZone) {
+            try {
+                const fullName = `${subdomain}.giisclubs.org`;
+
+                // Determine record type based on target
+                let recordType = 'CNAME';
+                let recordContent = 'giisclubs.org';
+                if (targetRaw) {
+                    recordContent = targetRaw;
+                    if (/^[0-9\.]+$/.test(targetRaw)) {
+                        recordType = 'A';
+                    } else if (targetRaw.includes(':')) {
+                        recordType = 'AAAA';
+                    } else {
+                        recordType = 'CNAME';
+                    }
+                } else {
+                    // default to CNAME to giisclubs.org when no target provided
+                    recordType = 'CNAME';
+                    recordContent = 'giisclubs.org';
+                }
+
+                // Check for existing record
+                let resp = await fetch(`https://api.cloudflare.com/client/v4/zones/${cfZone}/dns_records?type=${recordType}&name=${encodeURIComponent(fullName)}`, {
+                    headers: { Authorization: `Bearer ${cfToken}`, 'Content-Type': 'application/json' }
+                });
+                const existing = await resp.json();
+                if (existing && existing.success && existing.result && existing.result.length > 0) {
+                    return res.redirect('/manage-club?success=Subdomain+added+and+DNS+already+exists');
+                }
+
+                // Create DNS record
+                resp = await fetch(`https://api.cloudflare.com/client/v4/zones/${cfZone}/dns_records`, {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${cfToken}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: recordType, name: fullName, content: recordContent, ttl: 3600, proxied: false })
+                });
+                const result = await resp.json();
+
+                if (result && result.success) {
+                    return res.redirect('/manage-club?success=Subdomain+added+and+DNS+updated');
+                } else {
+                    console.error('Cloudflare response:', result);
+                    return res.redirect('/manage-club?success=Subdomain+saved+but+DNS+update+failed');
+                }
+            } catch (e) {
+                console.error('Cloudflare API error:', e);
+                return res.redirect('/manage-club?success=Subdomain+saved+but+DNS+update+failed');
+            }
+        }
+
+        return res.redirect('/manage-club?success=Subdomain+saved.+Please+create+a+CNAME+pointing+to+giisclubs.org+if+auto+configure+is+disabled');
+    } catch (err) {
+        console.error('Error in /add-subdomain:', err);
+        return res.redirect('/manage-club?error=An+unexpected+error+occurred');
+    }
 });
 
 app.post('/manage-club', async (req, res, next) => {

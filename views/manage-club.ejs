@@ -830,6 +830,42 @@
                 </div>
             </div>
         </form>
+
+        <!-- Subdomain Card -->
+        <form action="/add-subdomain" method="POST" style="margin-top:18px;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M3 5h18v14H3z"></path></svg>
+                    </div>
+                    <div class="card-header-text">
+                        <h2>Club Subdomain</h2>
+                        <p>Reserve a subdomain on giisclubs.org for your club</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="subdomain">Subdomain</label>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <input class="form-input" type="text" id="subdomain" name="subdomain" placeholder="e.g., robotics" pattern="[a-z0-9-]{3,63}" required style="flex:1;" />
+                                <div style="color:var(--muted);font-size:14px;">.giisclubs.org</div>
+                            </div>
+                            <p class="form-hint">Lowercase letters, numbers and hyphens only. 3-63 characters.</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="target">Target (IP or hostname)</label>
+                            <input class="form-input" type="text" id="target" name="target" placeholder="e.g., giisclubs.org or 76.76.21.21" style="flex:1;" />
+                            <p class="form-hint">Enter a hostname (CNAME) or IP (A/AAAA) for your record.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="submit-section">
+                    <p class="submit-hint">If Cloudflare integration is enabled, DNS will be updated automatically.</p>
+                    <button type="submit" class="btn-submit">Reserve Subdomain</button>
+                </div>
+            </div>
+        </form>
     </main>
 
     <script>
