@@ -1687,7 +1687,7 @@ app.route('/linklist/:club').get(async (req, res) => {
             .from('linklist')
             .select('*')
             .eq('club', club)
-            .order('created_at', { ascending: false });
+            .order('order', { ascending: true });
         
         if (error) {
             return res.render('404');
