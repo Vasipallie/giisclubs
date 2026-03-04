@@ -284,54 +284,59 @@
             border-left: 4px solid #ef4444;
         }
 
-        .events-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .event-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
-            overflow: hidden;
-            transition: box-shadow 0.3s ease;
+        .event-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 18px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .event-card:hover {
-            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.12);
+        .event-bar:hover {
+            border-color: #93c5fd;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.1);
         }
 
-        .event-card-header {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            padding: 20px;
-            color: white;
+        .event-main {
+            min-width: 0;
         }
 
-        .event-card-title {
-            font-size: 18px;
+        .event-title {
+            font-size: 16px;
             font-weight: 700;
-            margin-bottom: 8px;
+            color: #1e3a8a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .event-card-date {
+        .event-meta {
+            margin-top: 4px;
             font-size: 13px;
-            opacity: 0.9;
+            color: #64748b;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
-        .event-card-body {
-            padding: 20px;
-        }
-
-        .event-info {
-            margin-bottom: 16px;
-            font-size: 14px;
-        }
-
-        .event-info strong {
-            color: #2563eb;
-            display: block;
-            margin-bottom: 4px;
+        .event-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
         .status-badge {
@@ -363,75 +368,11 @@
             color: #92400e;
         }
 
-        .submission-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .submission-title {
-            font-size: 13px;
-            font-weight: 700;
+        .bar-arrow {
+            font-size: 18px;
             color: #2563eb;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .file-upload {
-            margin-bottom: 12px;
-        }
-
-        .file-upload label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #334155;
-        }
-
-        .file-upload input[type="file"] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .file-upload input[type="file"]:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 10px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        .submit-btn:hover:not(:disabled) {
-            background: #1d4ed8;
-        }
-
-        .submit-btn:disabled {
-            background: #cbd5e1;
-            cursor: not-allowed;
-        }
-
-        .submit-btn.secondary {
-            background: #64748b;
-        }
-
-        .submit-btn.secondary:hover:not(:disabled) {
-            background: #475569;
+            font-weight: 700;
+            line-height: 1;
         }
 
         .empty-state {
@@ -456,13 +397,112 @@
             font-size: 14px;
         }
 
-        .button-group {
-            display: flex;
-            gap: 8px;
+        .schedule-section {
+            margin-top: 28px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px;
         }
 
-        .button-group button {
-            flex: 1;
+        .schedule-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+
+        .schedule-subtitle {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 14px;
+        }
+
+        .calendar-wrap {
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(90px, 1fr));
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            min-width: 630px;
+        }
+
+        .calendar-head {
+            background: #f8fafc;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            padding: 10px 6px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .calendar-cell {
+            min-height: 86px;
+            border-right: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 8px;
+            font-size: 12px;
+            background: #fff;
+        }
+
+        .calendar-cell:nth-child(7n) {
+            border-right: none;
+        }
+
+        .calendar-day {
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+
+        .calendar-tag {
+            display: inline-block;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .calendar-tag.approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .calendar-tag.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .timeline-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+            font-size: 13px;
+        }
+
+        .timeline-name {
+            font-weight: 600;
+            color: #1e3a8a;
         }
 
         .loading {
@@ -485,19 +525,15 @@
             to { transform: rotate(360deg); }
         }
 
-        .link-button {
-            color: #2563eb;
-            text-decoration: none;
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 0;
-        }
+        @media (max-width: 768px) {
+            .event-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
 
-        .link-button:hover {
-            text-decoration: underline;
+            .event-status {
+                justify-content: flex-start;
+            }
         }
     </style>
 </head>
@@ -541,6 +577,10 @@
                     <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                     Manage My Events
                 </a>
+                <a href="/calendar" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Calendar
+                </a>
             </div>
 
             <div class="nav-section">
@@ -566,9 +606,9 @@
                     Manage Club
                 </a>
                 <% if (isAdmin) { %>
-                <a href="/admin-dashboard" class="nav-link">
+                <a href="/home#admin-tools" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                    Admin Dashboard
+                    Admin Tools
                 </a>
                 <% } %>
             </div>
@@ -608,11 +648,20 @@
             <div class="error"><%= error %></div>
         <% } %>
 
-        <div id="events-container" class="events-grid">
+        <div id="events-container" class="events-list">
             <div class="loading">
                 <div class="spinner"></div>
                 <p style="margin-top: 16px;">Loading your events...</p>
             </div>
+        </div>
+
+        <div class="schedule-section">
+            <div class="schedule-title">Event Timeline & Calendar</div>
+            <div class="schedule-subtitle">Approved events are your confirmed schedule. Pending events stay visible until approved.</div>
+            <div class="calendar-wrap">
+                <div id="calendar-grid" class="calendar-grid"></div>
+            </div>
+            <div id="timeline-list" class="timeline-list"></div>
         </div>
     </div>
 
@@ -642,77 +691,34 @@
                             </div>
                         </div>
                     `;
+                    renderSchedule([]);
                     return;
                 }
 
                 container.innerHTML = events.map(event => `
-                    <div class="event-card">
-                        <div class="event-card-header">
-                            <div class="event-card-title">${event.event_name || event.description}</div>
-                            <div class="event-card-date">Event Date: ${formatDateDDMMYYYY(event.date)}</div>
+                    <a href="/manage-events/${event.id}" class="event-bar">
+                        <div class="event-main">
+                            <div class="event-title">${event.event_name || event.description}</div>
+                            <div class="event-meta">
+                                <span>Date: ${formatDateDDMMYYYY(event.date)}</span>
+                                ${event.target_grades ? `<span>Grades: ${event.target_grades}</span>` : ''}
+                            </div>
                         </div>
-                        <div class="event-card-body">
-                            ${event.club ? `
-                            <div class="event-info">
-                                <strong>Club:</strong>
-                                ${event.club}
-                            </div>
-                            ` : ''}
-                            <div class="event-info">
-                                <strong>Description:</strong>
-                                ${event.description}
-                            </div>
-                            <div class="event-info">
-                                <strong>Target Grades:</strong>
-                                ${event.target_grades}
-                            </div>
-                            <div class="event-info">
-                                <strong>Approval Status:</strong>
-                                <span class="status-badge ${event.approved ? 'status-approved' : 'status-pending'}">
-                                    ${event.approved ? 'Approved' : 'Pending'}
-                                </span>
-                            </div>
-                            <div class="event-info">
-                                <strong>Proposal:</strong>
-                                <a href="${event.proposal_link}" target="_blank" class="link-button">View Document →</a>
-                            </div>
-
-                            ${event.approved ? `
-                                <div class="submission-section">
-                                    <div class="submission-title">Budget Submission</div>
-                                    ${event.budget_submitted ? `
-                                        <div style="background: #d1fae5; color: #065f46; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 12px;">
-                                            ✓ Budget previously submitted
-                                        </div>
-                                    ` : ''}
-                                    <div class="file-upload">
-                                        <label>${event.budget_submitted ? 'Upload Additional Budget File' : 'Upload Budget File'} (PDF, Excel, or Docs)</label>
-                                        <input type="file" id="budget-file-${event.id}" accept=".pdf,.xlsx,.xls,.doc,.docx" />
-                                    </div>
-                                    <button class="submit-btn" onclick="submitBudget('${event.id}')">${event.budget_submitted ? 'Submit Additional Budget' : 'Submit Budget'}</button>
-                                </div>
-
-                                <div class="submission-section">
-                                    <div class="submission-title">Receipt Submission</div>
-                                    ${event.receipts_submitted ? `
-                                        <div style="background: #d1fae5; color: #065f46; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 12px;">
-                                            ✓ Receipts previously submitted
-                                        </div>
-                                    ` : ''}
-                                    <div class="file-upload">
-                                        <label>${event.receipts_submitted ? 'Upload Additional Receipts' : 'Upload Receipts'} (PDF, Excel, or Docs)</label>
-                                        <input type="file" id="receipts-file-${event.id}" accept=".pdf,.xlsx,.xls,.doc,.docx" multiple />
-                                    </div>
-                                    <button class="submit-btn" onclick="submitReceipts('${event.id}')">${event.receipts_submitted ? 'Submit Additional Receipts' : 'Submit Receipts'}</button>
-                                </div>
-                            ` : `
-                                <div style="background: #fef3c7; color: #92400e; padding: 12px; border-radius: 6px; font-size: 13px; margin-top: 16px;">
-                                    Waiting for admin approval before you can submit budget and receipts
-                                </div>
-                            `}
+                        <div class="event-status">
+                            <span class="status-badge ${event.approved ? 'status-approved' : 'status-pending'}">
+                                ${event.approved ? 'Approved' : 'Pending'}
+                            </span>
+                            <span class="status-badge ${event.budget_submitted ? 'status-submitted' : 'status-pending-submit'}">
+                                ${event.budget_submitted ? 'Budget Submitted' : 'Budget Pending'}
+                            </span>
+                            <span class="status-badge ${event.receipts_submitted ? 'status-submitted' : 'status-pending-submit'}">
+                                ${event.receipts_submitted ? 'Receipts Submitted' : 'Receipts Pending'}
+                            </span>
+                            <span class="bar-arrow">→</span>
                         </div>
-                    </div>
+                    </a>
                 `).join('');
+                renderSchedule(events);
             } catch (error) {
                 console.error('Error loading events:', error);
                 container.innerHTML = `
@@ -720,71 +726,79 @@
                         <div class="error">Failed to load events. Please try again.</div>
                     </div>
                 `;
+                renderSchedule([]);
             }
         }
 
-        async function submitBudget(eventId) {
-            const fileInput = document.getElementById(`budget-file-${eventId}`);
-            const file = fileInput.files[0];
+        function renderSchedule(events) {
+            const calendarGrid = document.getElementById('calendar-grid');
+            const timelineList = document.getElementById('timeline-list');
 
-            if (!file) {
-                alert('Please select a file');
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+
+            const firstDay = new Date(year, month, 1);
+            const firstWeekday = firstDay.getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const weekdayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const byDate = {};
+
+            events.forEach(event => {
+                const eventDate = new Date(event.date);
+                if (eventDate.getFullYear() === year && eventDate.getMonth() === month) {
+                    const day = eventDate.getDate();
+                    if (!byDate[day]) byDate[day] = [];
+                    byDate[day].push(event);
+                }
+            });
+
+            const headHtml = weekdayLabels.map(label => `<div class="calendar-head">${label}</div>`).join('');
+            let cellsHtml = '';
+
+            for (let i = 0; i < firstWeekday; i++) {
+                cellsHtml += '<div class="calendar-cell"></div>';
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEvents = byDate[day] || [];
+                const tagHtml = dayEvents.slice(0, 2).map(event => `
+                    <div class="calendar-tag ${event.approved ? 'approved' : 'pending'}" title="${event.event_name || event.description}">
+                        ${event.event_name || event.description}
+                    </div>
+                `).join('');
+                const moreTag = dayEvents.length > 2 ? `<div class="calendar-tag pending">+${dayEvents.length - 2} more</div>` : '';
+
+                cellsHtml += `
+                    <div class="calendar-cell">
+                        <div class="calendar-day">${day}</div>
+                        ${tagHtml}
+                        ${moreTag}
+                    </div>
+                `;
+            }
+
+            calendarGrid.innerHTML = headHtml + cellsHtml;
+
+            const sorted = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+            if (sorted.length === 0) {
+                timelineList.innerHTML = '<div class="empty-state-text">No events available for timeline yet.</div>';
                 return;
             }
 
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-                const response = await fetch(`/events/${eventId}/budget`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    alert('Budget submitted successfully!');
-                    loadEvents();
-                } else {
-                    alert(result.error || 'Failed to submit budget');
-                }
-            } catch (error) {
-                alert('Network error. Please try again.');
-            }
-        }
-
-        async function submitReceipts(eventId) {
-            const fileInput = document.getElementById(`receipts-file-${eventId}`);
-            const files = fileInput.files;
-
-            if (files.length === 0) {
-                alert('Please select at least one file');
-                return;
-            }
-
-            const formData = new FormData();
-            for (let file of files) {
-                formData.append('files', file);
-            }
-
-            try {
-                const response = await fetch(`/events/${eventId}/receipts`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    alert('Receipts submitted successfully!');
-                    loadEvents();
-                } else {
-                    alert(result.error || 'Failed to submit receipts');
-                }
-            } catch (error) {
-                alert('Network error. Please try again.');
-            }
+            timelineList.innerHTML = sorted.map(event => `
+                <div class="timeline-item">
+                    <div>
+                        <div class="timeline-name">${event.event_name || event.description}</div>
+                        <div>${event.target_grades ? `Grades: ${event.target_grades}` : 'No grade filter'}</div>
+                    </div>
+                    <div>
+                        <div>${formatDateDDMMYYYY(event.date)}</div>
+                        <span class="status-badge ${event.approved ? 'status-approved' : 'status-pending'}">${event.approved ? 'Approved' : 'Pending'}</span>
+                    </div>
+                </div>
+            `).join('');
         }
 
         // Load events on page load

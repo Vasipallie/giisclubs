@@ -70,12 +70,7 @@ async function isAdmin(req, res, next) {
 
 // Admin Dashboard Route
 app.get('/admin-dashboard', isAdmin, (req, res) => {
-    const club = req.club;
-    res.render('admin-dashboard', { 
-        clubName: club?.name || 'Admin', 
-        clubLogo: club?.logo || '',
-        isAdmin: true 
-    });
+    res.redirect('/home#admin-tools');
 });
 
 const uploadImages = multer({
@@ -98,6 +93,33 @@ app.route('/').get(async (req, res) => {
         isLoggedIn = !!user;
     }
     res.render('index', { isLoggedIn });
+});
+
+app.route('/public-calendar').get(async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        let isLoggedIn = false;
+        if (token) {
+            const { data: { user } } = await supabase.auth.getUser(token);
+            isLoggedIn = !!user;
+        }
+
+        const { data: events, error } = await supabase
+            .from('events')
+            .select('id, club, event_name, description, date, target_grades')
+            .eq('approved', true)
+            .order('date', { ascending: true });
+
+        if (error) {
+            console.error('Error fetching public calendar events:', error);
+            return res.render('public-calendar', { events: [], isLoggedIn });
+        }
+
+        res.render('public-calendar', { events: events || [], isLoggedIn });
+    } catch (error) {
+        console.error('Error loading public calendar:', error);
+        res.render('public-calendar', { events: [], isLoggedIn: false });
+    }
 });
 
 app.route('/login').get(async (req, res) => {
@@ -291,6 +313,95 @@ app.route('/manage-events').get(async (req, res) => {
     }
 });
 
+app.get('/manage-events/:id', async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.redirect('/login');
+        }
+
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        if (error || !user) {
+            return res.redirect('/login');
+        }
+
+        const { id } = req.params;
+
+        const { data: club } = await supabase
+            .from('clubs')
+            .select('name, logo, is_admin')
+            .eq('id', user.id)
+            .single();
+
+        const isAdmin = club?.is_admin || false;
+        const clubName = club?.name || '';
+        const clubLogo = club?.logo || '';
+
+        const { data: event, error: eventError } = await supabase
+            .from('events')
+            .select('id, club, club_id, event_name, description, date, approved, target_grades, proposal_link, budget_submitted, receipts_submitted')
+            .eq('id', id)
+            .single();
+
+        if (eventError || !event || event.club_id !== user.id) {
+            return res.render('404');
+        }
+
+        const budgetFiles = [];
+        const receiptFiles = [];
+
+        const { data: budgetList } = await supabase.storage
+            .from('event-files')
+            .list(`budgets/${event.club_id}/${event.id}`);
+
+        if (budgetList && budgetList.length > 0) {
+            for (const file of budgetList) {
+                const { data: urlData } = supabase.storage
+                    .from('event-files')
+                    .getPublicUrl(`budgets/${event.club_id}/${event.id}/${file.name}`);
+
+                budgetFiles.push({
+                    name: file.name,
+                    path: `budgets/${event.club_id}/${event.id}/${file.name}`,
+                    url: urlData.publicUrl
+                });
+            }
+        }
+
+        const { data: receiptList } = await supabase.storage
+            .from('event-files')
+            .list(`receipts/${event.club_id}/${event.id}`);
+
+        if (receiptList && receiptList.length > 0) {
+            for (const file of receiptList) {
+                const { data: urlData } = supabase.storage
+                    .from('event-files')
+                    .getPublicUrl(`receipts/${event.club_id}/${event.id}/${file.name}`);
+
+                receiptFiles.push({
+                    name: file.name,
+                    path: `receipts/${event.club_id}/${event.id}/${file.name}`,
+                    url: urlData.publicUrl
+                });
+            }
+        }
+
+        res.render('manage-event-detail', {
+            event,
+            budgetFiles,
+            receiptFiles,
+            message: null,
+            error: null,
+            isAdmin,
+            clubName,
+            clubLogo
+        });
+    } catch (error) {
+        console.error('Error loading event detail:', error);
+        res.render('404');
+    }
+});
+
 // Get club's events API
 app.get('/api/my-events', async (req, res) => {
     try {
@@ -459,6 +570,111 @@ app.post('/events/:id/receipts', fileUpload.array('files', 10), async (req, res)
     }
 });
 
+app.delete('/events/:id/files', async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const { data: { user } } = await supabase.auth.getUser(token);
+        if (!user) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const { id } = req.params;
+        const { type, fileName, filePath } = req.body;
+
+        if (!type || !['budget', 'receipt'].includes(type)) {
+            return res.status(400).json({ error: 'Invalid request' });
+        }
+
+        const { data: event, error: eventError } = await supabase
+            .from('events')
+            .select('club_id')
+            .eq('id', id)
+            .single();
+
+        if (eventError || !event || event.club_id !== user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
+        const folder = type === 'budget' ? 'budgets' : 'receipts';
+        const expectedPrefix = `${folder}/${user.id}/${id}/`;
+
+        let objectPath = null;
+
+        if (typeof filePath === 'string' && filePath.startsWith(expectedPrefix) && !filePath.includes('..')) {
+            objectPath = filePath;
+        } else if (typeof fileName === 'string' && fileName.trim()) {
+            if (fileName.includes('..') || fileName.includes('/') || fileName.includes('\\')) {
+                return res.status(400).json({ error: 'Invalid file name' });
+            }
+
+            const { data: folderFiles, error: folderListError } = await supabase.storage
+                .from('event-files')
+                .list(`${folder}/${user.id}/${id}`);
+
+            if (folderListError) {
+                console.error('Folder list error:', folderListError);
+                return res.status(500).json({ error: 'Unable to verify file' });
+            }
+
+            const normalizedInput = decodeURIComponent(fileName.trim());
+            const matchedFile = (folderFiles || []).find((file) => {
+                const candidate = decodeURIComponent(file.name || '');
+                return file.name === fileName || candidate === normalizedInput;
+            });
+
+            if (!matchedFile) {
+                return res.status(404).json({ error: 'File not found' });
+            }
+
+            objectPath = `${folder}/${user.id}/${id}/${matchedFile.name}`;
+        } else {
+            return res.status(400).json({ error: 'Missing file identifier' });
+        }
+
+        const { error: removeError } = await supabase.storage
+            .from('event-files')
+            .remove([objectPath]);
+
+        if (removeError) {
+            console.error('File delete error:', removeError);
+            return res.status(500).json({ error: 'Failed to remove file', details: removeError.message });
+        }
+
+        const { data: remainingFiles, error: listError } = await supabase.storage
+            .from('event-files')
+            .list(`${folder}/${user.id}/${id}`);
+
+        if (listError) {
+            console.error('File list error after delete:', listError);
+            return res.json({ success: true, message: 'File removed.' });
+        }
+
+        if (!remainingFiles || remainingFiles.length === 0) {
+            const updatePayload = type === 'budget'
+                ? { budget_submitted: false }
+                : { receipts_submitted: false };
+
+            const { error: updateError } = await supabase
+                .from('events')
+                .update(updatePayload)
+                .eq('id', id);
+
+            if (updateError) {
+                console.error('Event status update error:', updateError);
+            }
+        }
+
+        res.json({ success: true, message: 'File removed.' });
+    } catch (error) {
+        console.error('Error removing file:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 app.post('/login', (req, res) => {
     const loginemail = req.body.loginemail;
     const loginpassword = req.body.loginpassword;
@@ -495,6 +711,47 @@ app.route('/home').get(async (req, res) => {
         .single();
 
     res.render('chome', { user, clubName: club?.name || '', clubLogo: club?.logo || '', isAdmin: club?.is_admin || false });
+});
+
+app.route('/calendar').get(async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.redirect('/login');
+    }
+
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+        return res.redirect('/login');
+    }
+
+    const { data: club } = await supabase
+        .from('clubs')
+        .select('name, logo, is_admin')
+        .eq('id', user.id)
+        .single();
+
+    const { data: events, error: eventsError } = await supabase
+        .from('events')
+        .select('id, club, event_name, description, date, approved, target_grades')
+        .eq('approved', true)
+        .order('date', { ascending: true });
+
+    if (eventsError) {
+        console.error('Error fetching calendar events:', eventsError);
+        return res.render('calendar', {
+            clubName: club?.name || '',
+            clubLogo: club?.logo || '',
+            isAdmin: club?.is_admin || false,
+            events: []
+        });
+    }
+
+    res.render('calendar', {
+        clubName: club?.name || '',
+        clubLogo: club?.logo || '',
+        isAdmin: club?.is_admin || false,
+        events: events || []
+    });
 });
 // Events page route
 app.route('/events').get(async (req, res) => {
@@ -912,7 +1169,8 @@ app.post('/manage-club', async (req, res, next) => {
                     .from(bucket)
                     .getPublicUrl(storagePath);
 
-                return publicUrlData?.publicUrl || null;
+                const baseUrl = publicUrlData?.publicUrl || null;
+                return baseUrl ? `${baseUrl}?t=${Date.now()}` : null;
             };
 
             // If logo was uploaded, save the file URL

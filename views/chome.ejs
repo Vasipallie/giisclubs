@@ -258,6 +258,110 @@
             color: var(--primary);
         }
 
+        .admin-panel {
+            margin-top: 28px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .admin-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 6px;
+        }
+
+        .admin-subtitle {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .admin-card {
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .admin-card h3 {
+            font-size: 15px;
+            margin-bottom: 10px;
+            color: var(--ink);
+        }
+
+        .admin-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .admin-item {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .admin-item strong {
+            color: #1e3a8a;
+            display: block;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .admin-btn {
+            border: none;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .admin-btn.approve {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .admin-btn.delete {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .calendar-mini {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .calendar-item {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            font-size: 13px;
+        }
+
         /* Mobile Toggle */
         .mobile-toggle {
             display: none;
@@ -325,6 +429,10 @@
             .cards-grid {
                 grid-template-columns: 1fr;
             }
+
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
     <style>
@@ -375,6 +483,10 @@
 
             <div class="nav-section">
                 <div class="nav-section-title">Events</div>
+                <a href="/calendar" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Calendar
+                </a>
                 <a href="/events" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     All Club Events
@@ -412,9 +524,9 @@
                     Manage Club
                 </a>
                 <% if (isAdmin) { %>
-                <a href="/admin-dashboard" class="nav-link">
+                <a href="/home#admin-tools" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                    Admin Dashboard
+                    Admin Tools
                 </a>
                 <% } %>
             </div>
@@ -451,8 +563,47 @@
         </div>
 
         <div class="content-area">
+            <% if (isAdmin) { %>
+            <section id="admin-tools" class="admin-panel">
+                <div class="admin-title">Admin Tools</div>
+                <div class="admin-subtitle">Manage approvals and users before jumping into quick links.</div>
+
+                <div class="admin-grid">
+                    <div class="admin-card">
+                        <h3>Pending Event Approvals</h3>
+                        <div id="admin-event-list" class="admin-list"></div>
+                    </div>
+
+                    <div class="admin-card">
+                        <h3>Registered Clubs</h3>
+                        <div id="admin-user-list" class="admin-list"></div>
+                    </div>
+                </div>
+
+                <div class="admin-card" style="margin-top: 16px;">
+                    <h3>Event Calendar</h3>
+                    <div class="calendar-mini">
+                        <a href="/calendar" class="card" style="padding: 14px;">
+                            <h4 class="card-title" style="margin-bottom: 6px;">Open Upcoming Events Calendar</h4>
+                            <p class="card-description">Approved events are auto-included by event date.</p>
+                            <div class="card-action">Open Calendar</div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+            <% } %>
+
             <h2 class="section-title">Quick Actions</h2>
             <div class="cards-grid">
+                <a href="/calendar" class="card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <h3 class="card-title">Events Calendar</h3>
+                    <p class="card-description">View upcoming approved events in a monthly calendar schedule.</p>
+                    <div class="card-action">Open Calendar</div>
+                </a>
+
                 <a href="/shorten" class="card">
                     <div class="card-icon">
                         <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -498,6 +649,7 @@
                     <div class="card-action">Explore Now</div>
                 </a>
             </div>
+
         </div>
     </main>
 
@@ -506,6 +658,97 @@
             document.querySelector('.sidebar').classList.toggle('open');
             document.querySelector('.sidebar-overlay').classList.toggle('open');
         }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-GB');
+        }
+
+        async function loadAdminData() {
+            const eventList = document.getElementById('admin-event-list');
+            const userList = document.getElementById('admin-user-list');
+            if (!eventList || !userList) return;
+
+            eventList.innerHTML = '<div class="admin-item">Loading events...</div>';
+            userList.innerHTML = '<div class="admin-item">Loading users...</div>';
+
+            try {
+                const [eventsResponse, usersResponse] = await Promise.all([
+                    fetch('/admin/events'),
+                    fetch('/admin/users')
+                ]);
+
+                const events = eventsResponse.ok ? await eventsResponse.json() : [];
+                const users = usersResponse.ok ? await usersResponse.json() : [];
+
+                const pendingEvents = events.filter(event => !event.approved);
+                if (pendingEvents.length === 0) {
+                    eventList.innerHTML = '<div class="admin-item">No pending approvals.</div>';
+                } else {
+                    eventList.innerHTML = pendingEvents.map(event => `
+                        <div class="admin-item">
+                            <div>
+                                <strong>${event.event_name || event.description}</strong>
+                                <div>${event.club} • ${formatDate(event.date)}</div>
+                            </div>
+                            <div class="admin-actions">
+                                <button class="admin-btn approve" onclick="approveEvent('${event.id}')">Approve</button>
+                                <button class="admin-btn delete" onclick="deleteEvent('${event.id}')">Delete</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                const visibleUsers = users.filter(user => !user.is_admin);
+                if (visibleUsers.length === 0) {
+                    userList.innerHTML = '<div class="admin-item">No clubs found.</div>';
+                } else {
+                    userList.innerHTML = visibleUsers.map(user => `
+                        <div class="admin-item">
+                            <div>
+                                <strong>${user.name}</strong>
+                                <div>${user.description || 'No description'}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                eventList.innerHTML = '<div class="admin-item">Failed to load admin data.</div>';
+                userList.innerHTML = '<div class="admin-item">Failed to load admin data.</div>';
+            }
+        }
+
+        async function approveEvent(eventId) {
+            if (!confirm('Approve this event and add it to calendar timeline?')) return;
+            try {
+                const response = await fetch(`/admin/events/${eventId}/approve`, { method: 'PUT' });
+                const result = await response.json();
+                if (!response.ok) {
+                    alert(result.error || 'Failed to approve event');
+                    return;
+                }
+                loadAdminData();
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        async function deleteEvent(eventId) {
+            if (!confirm('Delete this event?')) return;
+            try {
+                const response = await fetch(`/admin/events/${eventId}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) {
+                    alert(result.error || 'Failed to delete event');
+                    return;
+                }
+                loadAdminData();
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        loadAdminData();
     </script>
 </body>
 </html>
